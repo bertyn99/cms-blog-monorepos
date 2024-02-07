@@ -32,7 +32,7 @@ const validate = (state: any) => {
   return errors;
 };
 
-const providers = [
+/* const providers = [
   {
     label: "GitHub",
     icon: "i-simple-icons-github",
@@ -49,7 +49,7 @@ const providers = [
       console.log("Redirect to GitHub");
     },
   },
-];
+]; */
 
 function onSubmit(data: any) {
   console.log("Submitted", data);
@@ -62,7 +62,6 @@ function onSubmit(data: any) {
   <UCard class="max-w-sm w-full bg-white/75 dark:bg-white/5 backdrop-blur">
     <AuthForm
       :fields="fields"
-      :providers="providers"
       title="Welcome back"
       align="top"
       icon="i-heroicons-lock-closed"
