@@ -14,6 +14,7 @@ const fields = [
     label: "Email",
     placeholder: "Enter your email",
   },
+
   {
     name: "password",
     label: "Password",
@@ -33,8 +34,16 @@ const validate = (state: any) => {
 
 const providers = [
   {
-    label: "Continue with GitHub",
+    label: "GitHub",
     icon: "i-simple-icons-github",
+    color: "white" as const,
+    click: () => {
+      console.log("Redirect to GitHub");
+    },
+  },
+  {
+    label: "Google",
+    icon: "i-simple-icons-google",
     color: "white" as const,
     click: () => {
       console.log("Redirect to GitHub");
@@ -51,36 +60,35 @@ function onSubmit(data: any) {
 <!-- eslint-disable vue/singleline-html-element-content-newline -->
 <template>
   <UCard class="max-w-sm w-full bg-white/75 dark:bg-white/5 backdrop-blur">
-    <UAuthForm
+    <AuthForm
       :fields="fields"
-      :validate="validate"
       :providers="providers"
       title="Welcome back"
       align="top"
       icon="i-heroicons-lock-closed"
       :ui="{ base: 'text-center', footer: 'text-center' }"
-      :submit-button="{ trailingIcon: 'i-heroicons-arrow-right-20-solid' }"
+      submit-button="Sign-in"
       @submit="onSubmit"
     >
       <template #description>
         Don't have an account?
-        <NuxtLink to="/signup" class="text-primary font-medium"
+        <NuxtLink to="/register" class="text-primary font-medium"
           >Sign up</NuxtLink
         >.
       </template>
 
-      <template #password-hint>
+      <!-- <template #password-hint>
         <NuxtLink to="/" class="text-primary font-medium"
           >Forgot password?</NuxtLink
         >
       </template>
 
-      <template #footer>
+        <template #footer>
         By signing in, you agree to our
         <NuxtLink to="/" class="text-primary font-medium"
           >Terms of Service</NuxtLink
-        >.
-      </template>
-    </UAuthForm>
+        >. </template
+      > -->
+    </AuthForm>
   </UCard>
 </template>
