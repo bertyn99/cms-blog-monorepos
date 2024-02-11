@@ -1,24 +1,12 @@
 <script lang="ts" setup>
-const defineProps = {
+import type { PropType } from "vue";
+
+const { links } = defineProps({
   links: {
-    type: Array,
+    type: Array as PropType<any[]>,
     required: true,
   },
-};
-const links = [
-  {
-    label: "Vertical Navigation",
-    to: "/components/vertical-navigation",
-  },
-  {
-    label: "Command Palette",
-    to: "/components/command-palette",
-  },
-  {
-    label: "Table",
-    to: "/components/table",
-  },
-];
+});
 
 
 </script>

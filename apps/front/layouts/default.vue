@@ -1,23 +1,29 @@
 <script lang="ts" setup>
+const { breadcrumbs } = useBreadcrumbs()
 const links = [
   {
-    label: "Vertical Navigation",
-    to: "/components/vertical-navigation",
+    label: "Home",
+    to: "/admin",
   },
   {
-    label: "Command Palette",
-    to: "/components/command-palette",
+    label: "Pages",
+    to: "/admin/pages",
   },
   {
-    label: "Table",
-    to: "/components/table",
+    label: "Posts",
+    to: "/admin/posts",
   },
 ];
+
+watchEffect(() => {
+
+  console.log('layout', breadcrumbs.value);
+});
 </script>
 
 <template>
   <div class="fixed inset-0 flex overflow-hidden">
-    <SidebarPanel>
+    <SidebarPanel :links="links">
       <template #top>
 
         <UIcon name="i-mdi:cube" />
@@ -30,12 +36,14 @@ const links = [
         <div
           class="sticky top-0 z-40 h-[--header-height] flex-shrink-0 flex items-center border-b border-gray-200 dark:border-gray-800 px-4 gap-x-4">
           <div class="flex items-center justify-between flex-1 gap-x-1.5">
-            <UBreadcrumb :links="links" />
+            <UBreadcrumb :links="breadcrumbs" />
             <div class="flex items-center gap-x-4">
               <UButton size="sm" icon="i-mdi:bell" />
               <UButton size="sm" icon="i-mdi:settings" />
               <UButton size="sm" icon="i-mdi:account" />
             </div>
+            <slot name="header" />
+
           </div>
         </div>
 

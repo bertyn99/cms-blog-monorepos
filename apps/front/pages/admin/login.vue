@@ -14,6 +14,13 @@ const fields = [
     label: "Email",
     placeholder: "Enter your email",
   },
+  {
+    name: "username",
+    type: "text",
+    label: "Email",
+    placeholder: "Enter your email",
+  },
+
 
   {
     name: "password",
@@ -60,20 +67,11 @@ function onSubmit(data: any) {
 <!-- eslint-disable vue/singleline-html-element-content-newline -->
 <template>
   <UCard class="max-w-sm w-full bg-white/75 dark:bg-white/5 backdrop-blur">
-    <AuthForm
-      :fields="fields"
-      title="Welcome back"
-      align="top"
-      icon="i-heroicons-lock-closed"
-      :ui="{ base: 'text-center', footer: 'text-center' }"
-      submit-button="Sign-in"
-      @submit="onSubmit"
-    >
+    <AuthForm :fields="fields" title="Connecter vous" align="top" icon="i-heroicons-lock-closed"
+      :ui="{ base: 'text-center', footer: 'text-center' }" submit-button="Sign-in" @submit="onSubmit">
       <template #description>
         Don't have an account?
-        <NuxtLink to="/register" class="text-primary font-medium"
-          >Sign up</NuxtLink
-        >.
+        <NuxtLink to="/register" class="text-primary font-medium">Sign up</NuxtLink>.
       </template>
 
       <!-- <template #password-hint>
