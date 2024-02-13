@@ -1,9 +1,31 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@adonisjs/lucid/orm'
+import type { HasOne, BelongsTo } from '@adonisjs/lucid/types/relations'
+import { BaseModel, column, hasOne, belongsTo } from '@adonisjs/lucid/orm'
+import PostSeo from '#models/post_seos'
+import Post from '#models/posts'
 
 export default class PostTranslation extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
+
+  @column()
+  declare postId: number
+
+  // Relationship to Post
+  @belongsTo(() => Post)
+  post: BelongsTo<typeof Post>
+
+  @column()
+  declare locale: string
+
+  @column()
+  declare title: string
+
+  @column()
+  declare content: string
+
+  @hasOne(() => PostSeo)
+  declare seo: HasOne<typeof PostSeo>
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

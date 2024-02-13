@@ -6,7 +6,11 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id').primary()
-      table.integer('post_translation_id').unsigned().references('post_translations.id').onDelete('CASCADE')
+      table
+        .integer('post_translation_id')
+        .unsigned()
+        .references('post_translations.id')
+        .onDelete('CASCADE')
       table.string('meta_title').nullable()
       table.string('meta_description').nullable()
       table.string('meta_keywords').nullable()
