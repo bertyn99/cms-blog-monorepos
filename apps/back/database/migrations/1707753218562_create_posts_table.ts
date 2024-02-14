@@ -7,12 +7,12 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id').primary()
       table
-        .enu('status', ['Draft', 'Published'], {
+        .enu('status', ['Draft', 'Scheduled', 'Published'], {
           useNative: true,
           enumName: 'post_status',
           existingType: false,
         })
-        .defaultTo('draft')
+        .defaultTo('Draft')
       table.timestamp('created_at')
       table.timestamp('updated_at')
     })
