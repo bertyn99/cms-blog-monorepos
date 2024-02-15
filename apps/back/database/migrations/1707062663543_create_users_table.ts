@@ -13,7 +13,7 @@ export default class extends BaseSchema {
         .enu('role', ['User', 'Admin', 'Editor'], {
           useNative: true,
           enumName: 'user_role',
-          existingType: false,
+          existingType: true,
         })
         .defaultTo('User')
       table.timestamp('created_at').notNullable()
