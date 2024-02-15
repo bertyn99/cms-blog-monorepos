@@ -7,7 +7,7 @@
 <template>
   <main>
     <NuxtLayout name="default">
-      ddd
+      Page d'accueil
     </NuxtLayout>
   </main>
 </template>

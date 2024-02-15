@@ -20,6 +20,9 @@ importers:
       '@adonisjs/auth':
         specifier: ^9.1.1
         version: 9.1.1(@adonisjs/assembler@7.1.1)(@adonisjs/core@6.2.2)(@adonisjs/lucid@20.1.0)(@adonisjs/session@7.1.1)(@japa/plugin-adonisjs@3.0.0)
+      '@adonisjs/bouncer':
+        specifier: ^3.1.1
+        version: 3.1.1(@adonisjs/core@6.2.2)
       '@adonisjs/core':
         specifier: ^6.2.2
         version: 6.2.2(@adonisjs/assembler@7.1.1)(@vinejs/vine@1.7.1)(edge.js@6.0.1)
@@ -252,6 +255,22 @@ packages:
       media-typer: 1.1.0
       qs: 6.11.2
       raw-body: 2.5.2
+
+  /@adonisjs/bouncer@3.1.1(@adonisjs/core@6.2.2):
+    resolution: {integrity: sha512-Se1Ypsmv5dEiX78ZcJdHKCphLpbpPT5r8k1ZKIq86T23n8tgtX8AqJqzuW4Pvtrm/d5rJQrD0bfItzlcTsYRiw==}
+    engines: {node: '>=18.16.0'}
+    peerDependencies:
+      '@adonisjs/core': ^6.2.0
+      '@adonisjs/i18n': ^2.0.0
+    peerDependenciesMeta:
+      '@adonisjs/core':
+        optional: true
+      '@adonisjs/i18n':
+        optional: true
+    dependencies:
+      '@adonisjs/core': 6.2.2(@adonisjs/assembler@7.1.1)(@vinejs/vine@1.7.1)(edge.js@6.0.1)
+      '@poppinss/utils': 6.7.1
+    dev: false
 
   /@adonisjs/config@5.0.1:
     resolution: {integrity: sha512-hyednyDBGsoBthbcf7S8r8M68tS8Y7rnIBPIZKHhQikXOXgf/E9IkQWgWjJR9+ODbaiMY69roJYR5L9dElre7w==}
