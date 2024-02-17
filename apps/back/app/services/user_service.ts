@@ -3,7 +3,7 @@ import User from '#models/user'
 
 @inject()
 export default class UserService {
-  constructor() {}
+  constructor() { }
 
   async createUser(data: any) {
     try {
@@ -19,19 +19,23 @@ export default class UserService {
     }
   }
 
-  async login(data: any) {
+  async login(data: any, auth: any) {
     const user = await User.verifyCredentials(data.email, data.password)
 
     if (!user) {
       return { error: 'Invalid credentials' }
     }
+    try {
+      await auth.use('web').login(user)
 
-    const token = await User.accessTokens.create(user)
+      return {
 
-    return {
-      type: 'bearer',
-      value: token.value!.release(),
+        message: 'Logged in successfully',
+      }
+    } catch (error) {
+      throw new Error(error.message)
     }
+
   }
 
   async updateUserById(id: number, data: any) {

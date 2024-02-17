@@ -38,11 +38,41 @@ export default class PostService {
 
     async updatePostById(id: number, data: any) { }
     async deletePostById(id: number) { }
-    async getPostById(id: number) { }
-    async getAllPosts(local: string) {
-        const posts = await Post.query().preload('translations', (translation) => {
-            translation.where('locale', local);
-        }).exec();
-        return posts;
+    async getPostById(id: number) {
+        const post = await Post.query()
+            .where('id', id)
+            .preload('translations')
+            .first();
+        return post;
+
+    }
+
+    async getPostBySlug(slug: string) {
+        const post = await Post.query()
+            .whereHas('translations', (translationQuery) => {
+                translationQuery.where('slug', slug);
+            })
+            .first();
+        return post;
+    }
+
+    async getAllPosts(local: string, page: number = 1, limit: number = 10, filters: any = {}) {
+        const postsPagination = await Post.query()
+            .preload('translations', (translationQuery) => {
+                translationQuery.where('locale', local);
+            })
+            .paginate(page, limit);
+
+
+        const tmp = postsPagination.toJSON()
+        const transformedData = tmp.data.map(post => post.translations.map(translation => ({
+            ...translation.toJSON(),
+            status: post.status
+        })));
+        return {
+            ...tmp,
+            data: transformedData.flat()
+        };
+
     }
 }
