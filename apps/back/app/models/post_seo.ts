@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
 import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
-import PostTranslation from '#models/post_translations'
+import PostTranslation from '#models/post_translation'
 
 export default class PostSeo extends BaseModel {
   @column({ isPrimary: true })
