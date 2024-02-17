@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { FormError } from '#ui/types'
+
 definePageMeta({
   layout: "auth",
 });
@@ -7,21 +9,15 @@ useSeoMeta({
   title: "Login",
 });
 
+
 const fields = [
   {
     name: "email",
     type: "text",
     label: "Email",
     placeholder: "Enter your email",
-  },
-  {
-    name: "username",
-    type: "text",
-    label: "Email",
-    placeholder: "Enter your email",
-  },
 
-
+  },
   {
     name: "password",
     label: "Password",
@@ -30,14 +26,6 @@ const fields = [
   },
 ];
 
-const validate = (state: any) => {
-  const errors = [];
-  if (!state.email)
-    errors.push({ path: "email", message: "Email is required" });
-  if (!state.password)
-    errors.push({ path: "password", message: "Password is required" });
-  return errors;
-};
 
 /* const providers = [
   {
@@ -58,8 +46,17 @@ const validate = (state: any) => {
   },
 ]; */
 
-function onSubmit(data: any) {
-  console.log("Submitted", data);
+const { $api } = useNuxtApp();
+
+
+async function onSubmit(form: any) {
+  const data = await $fetch($api('/api/auth/login'), {
+    method: 'POST',
+    body: JSON.stringify(form),
+    credentials: 'include'
+  });
+
+  console.log(data);
 }
 </script>
 
@@ -70,8 +67,7 @@ function onSubmit(data: any) {
     <AuthForm :fields="fields" title="Connecter vous" align="top" icon="i-heroicons-lock-closed"
       :ui="{ base: 'text-center', footer: 'text-center' }" submit-button="Sign-in" @submit="onSubmit">
       <template #description>
-        Don't have an account?
-        <NuxtLink to="/register" class="text-primary font-medium">Sign up</NuxtLink>.
+
       </template>
 
       <!-- <template #password-hint>

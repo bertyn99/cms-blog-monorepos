@@ -13,10 +13,10 @@
     "nuxt": "^3.10.1",
     "vue": "^3.4.15",
     "vue-router": "^4.2.5"
-    
   },
   "dependencies": {
     "@nuxt/ui": "^2.13.0",
+    "@vinejs/vine": "^1.7.1",
     "@yggdra/shared": "workspace:*"
   }
 }

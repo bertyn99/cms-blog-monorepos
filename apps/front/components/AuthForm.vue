@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import type { PropType } from "vue";
+import type { FormError, FormErrorEvent } from '#ui/types'
 import type { fieldType } from "@/types";
-
+import vine, { errors } from '@vinejs/vine'
+const emit = defineEmits(['error', 'submit'])
 const props = defineProps({
   title: {
     type: String,
@@ -52,27 +54,69 @@ const props = defineProps({
     >,
     default: () => [],
   },
+  validate: {
+    type: Function as
+      | PropType<(state: any) => Promise<FormError[]>>
+      | PropType<(state: any) => FormError[]>,
+    default: () => []
+  }
 });
 //generate a reactive state object that adapts with the fields
 const state = reactive(
   props.fields.reduce(
-    (acc, field: any) => {
-      acc[field.label] = "";
+    (acc: any, field: any) => {
+      acc[field.label.toLowerCase()] = "";
       return acc;
     },
     {} as Record<string, string>
   )
 );
 
+function onSubmit() {
+  emit('submit', state)
+}
+
+const schema = vine.object({
+  email: vine.string().email(),
+  password: vine
+    .string()
+    .minLength(4)
+    .maxLength(32)
+})
+const validate = async (state: any) => {
+  const errorsR: FormError[] = [];
+  try {
+    const validator = vine.compile(schema)
+    await validator.validate(
+      state
+    )
+  } catch (error) {
+    if (error instanceof errors.E_VALIDATION_ERROR) {
+      error.messages.forEach((message: any) => {
+        errorsR.push({
+          path: message.field,
+          message: message.message,
+        });
+      });
+    }
+  }
+  return errorsR;
+};
+async function onError(event: FormErrorEvent) {
+  console.log(event.errors);
+  const element = document.getElementById(event.errors[0].id)
+  element?.focus()
+  element?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+}
+//watch state for changes
+
+
 const hasMultipleProviders = computed(() => props.providers.length > 1);
 </script>
 
 <template>
   <div :class="wrapper">
-    <UIcon
-      :name="icon"
-      class="w-16 h-16 mx-auto text-primary-500 dark:text-primary-400"
-    />
+    <UIcon :name="icon" class="w-16 h-16 mx-auto text-primary-500 dark:text-primary-400" />
     <h2 class="text-2xl text-gray-900 dark:text-white font-bold">
       {{ title }}
     </h2>
@@ -82,30 +126,14 @@ const hasMultipleProviders = computed(() => props.providers.length > 1);
     <UContainer :align="align" class="mx-0 px-0 gap-y-6 flex flex-col">
       <div v-if="providers.length" class="flex space-x-2">
         <template v-for="provider in providers" :key="provider.label">
-          <UButton
-            :color="provider.color"
-            :icon="provider.icon"
-            dynamic
-            :trailing="false"
-            :click="provider.click"
-            :label="provider.label"
-            :block="!hasMultipleProviders"
-          />
+          <UButton :color="provider.color" :icon="provider.icon" dynamic :trailing="false" :click="provider.click"
+            :label="provider.label" :block="!hasMultipleProviders" />
         </template>
       </div>
       <UDivider label="OR" />
-      <UForm :state="state" class="space-y-6">
-        <UFormGroup
-          v-for="field in fields"
-          :key="field.label"
-          :label="field.label"
-          :name="field.label"
-        >
-          <UInput
-            v-model="state[field.label]"
-            :placeholder="field.placeholder"
-            :type="field.type"
-          />
+      <UForm ref="form" :state="state" class="space-y-6" @submit="onSubmit" :validate="validate" @error="onError">
+        <UFormGroup v-for="field in fields" :key="field.label" :label="field.label" :name="field.label.toLowerCase()">
+          <UInput v-model="state[field.label.toLowerCase()]" :placeholder="field.placeholder" :type="field.type" />
         </UFormGroup>
 
         <UButton type="submit" :disabled="loading" block>{{
