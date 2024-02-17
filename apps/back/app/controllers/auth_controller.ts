@@ -1,7 +1,10 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import UserService from '#services/user_service'
 import { inject } from '@adonisjs/core'
-
+import {
+  authValidator,
+  loginValidator
+} from '#validators/user_validator'
 @inject()
 export default class AuthController {
   constructor(protected userService: UserService) { }
@@ -29,10 +32,11 @@ export default class AuthController {
     const data = request.all()
     const payload = await loginValidator.validate(data)
     try {
-      const user = await this.userService.login(payload)
+      const user = await this.userService.login(payload, auth)
 
       return user
     } catch (error) {
       return { error: error }
     }
   }
+}

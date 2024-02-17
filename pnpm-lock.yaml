@@ -26,6 +26,9 @@ importers:
       '@adonisjs/core':
         specifier: ^6.2.2
         version: 6.2.2(@adonisjs/assembler@7.1.1)(@vinejs/vine@1.7.1)(edge.js@6.0.1)
+      '@adonisjs/cors':
+        specifier: ^2.2.1
+        version: 2.2.1(@adonisjs/core@6.2.2)
       '@adonisjs/lucid':
         specifier: ^20.1.0
         version: 20.1.0(@adonisjs/assembler@7.1.1)(@adonisjs/core@6.2.2)(better-sqlite3@9.4.0)(luxon@3.4.4)(pg@8.11.3)
@@ -117,6 +120,9 @@ importers:
       '@nuxt/ui':
         specifier: ^2.13.0
         version: 2.13.0(nuxt@3.10.1)(vite@5.1.1)(vue@3.4.15)
+      '@vinejs/vine':
+        specifier: ^1.7.1
+        version: 1.7.1
       '@yggdra/shared':
         specifier: workspace:*
         version: link:../../shared
@@ -326,6 +332,15 @@ packages:
       string-width: 7.1.0
       youch: 3.3.3
       youch-terminal: 2.2.3
+
+  /@adonisjs/cors@2.2.1(@adonisjs/core@6.2.2):
+    resolution: {integrity: sha512-qnrSG8ylpgTeZBOYEN3yXxY0PBUEg1KGDhgn9VKVFGxLKT+o9GGVOSZxUK3wG341B1zB9w5vuZN1z4M0Jitb6g==}
+    engines: {node: '>=18.16.0'}
+    peerDependencies:
+      '@adonisjs/core': ^6.2.0
+    dependencies:
+      '@adonisjs/core': 6.2.2(@adonisjs/assembler@7.1.1)(@vinejs/vine@1.7.1)(edge.js@6.0.1)
+    dev: false
 
   /@adonisjs/encryption@6.0.1:
     resolution: {integrity: sha512-9Vz2xU8cryCvRgQDri+4khZIeRDM6yJFe35PdR6xyhgQaT91Qn7fJ2oAcg3yVuNp3WKxg6PTRcxva+ZTfdP3SA==}
