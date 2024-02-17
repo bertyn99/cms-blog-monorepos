@@ -10,12 +10,10 @@
 
 <script lang="ts" setup>
 
-type Post = {
-    id: number;
-    title: string;
-    content: string;
-    published: boolean;
-    created_at: Date;
-    updated_at: Date;
-}
+const { $api } = useNuxtApp();
+const config = useRuntimeConfig();
+const postRepo = postRepository($api)
+
+const { data, error } = await useAsyncData('list', () => postRepo.getAllPostBylocal('fr'))
+console.log(data.value)
 </script>

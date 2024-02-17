@@ -15,10 +15,6 @@ const links = [
   },
 ];
 
-watchEffect(() => {
-
-  console.log('layout', breadcrumbs.value);
-});
 </script>
 
 <template>
