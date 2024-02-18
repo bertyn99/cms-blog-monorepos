@@ -1,9 +1,7 @@
 <template>
     <main>
         <NuxtLayout name="default">
-
-
-            post
+            <UTable :rows="data?.data" />
         </NuxtLayout>
     </main>
 </template>

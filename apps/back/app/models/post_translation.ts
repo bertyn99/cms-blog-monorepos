@@ -27,9 +27,17 @@ export default class PostTranslation extends BaseModel {
   @hasOne(() => PostSeo)
   declare seo: HasOne<typeof PostSeo>
 
-  @column.dateTime({ autoCreate: true })
+  @column.dateTime({
+    autoCreate: true, serialize: (value: DateTime | null) => {
+      return value ? value.setZone('utc').toFormat("yyyy-MM-dd'T'HH:mm") : value
+    },
+  })
   declare createdAt: DateTime
 
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  @column.dateTime({
+    autoCreate: true, autoUpdate: true, serialize: (value: DateTime | null) => {
+      return value ? value.setZone('utc').toFormat("yyyy-MM-dd'T'HH:mm") : value
+    },
+  })
   declare updatedAt: DateTime
 }
