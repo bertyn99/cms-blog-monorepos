@@ -4,7 +4,7 @@ import PostService from '#services/post_service';
 
 @inject()
 export default class PostsController {
-  constructor(private post: PostService) {
+  constructor(private postService: PostService) {
 
   }
   /**
@@ -20,7 +20,7 @@ export default class PostsController {
 
     //get the local from the request
     const { local } = params;
-    const posts = await this.post.getAllPosts(local);
+    const posts = await this.postService.getAllPosts(local);
     return posts;
 
   }
@@ -36,9 +36,22 @@ export default class PostsController {
   async store({ request }: HttpContext) { }
 
   /**
-   * Show individual record
+   * Return Post ConTent
    */
-  async show({ params }: HttpContext) { }
+  async showPostContent({ params }: HttpContext) {
+    const { id, local } = params;
+    const postContent = await this.postService.getContentPostById(id, local);
+    return postContent;
+  }
+
+  /**
+ * Information about the post  and his translations
+ */
+  async showPost({ params }: HttpContext) {
+    const { id } = params;
+    const post = await this.postService.getPostById(id);
+    return post;
+  }
 
   /**
    * Edit individual record

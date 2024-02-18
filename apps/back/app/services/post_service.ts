@@ -39,6 +39,7 @@ export default class PostService {
     async updatePostById(id: number, data: any) { }
     async deletePostById(id: number) { }
     async getPostById(id: number) {
+        console.log('id', id)
         const post = await Post.query()
             .where('id', id)
             .preload('translations')
@@ -46,7 +47,11 @@ export default class PostService {
         return post;
 
     }
+    async getContentPostById(id: number, local: string) {
+        const postTranslation = await PostTranslation.query().where('postId', id).where('locale', local).preload('seo').first();
+        return postTranslation?.toJSON();
 
+    }
     async getPostBySlug(slug: string) {
         const post = await Post.query()
             .whereHas('translations', (translationQuery) => {
