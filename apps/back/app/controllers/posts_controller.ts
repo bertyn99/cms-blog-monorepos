@@ -7,20 +7,15 @@ export default class PostsController {
   constructor(private postService: PostService) {
 
   }
-  /**
-   * Display a list of resource
-   */
-  async index({ }: HttpContext) { }
 
 
   /**
  * Display a list of resource
  */
-  async listFilteredByLocal({ params }: HttpContext) {
-
+  async index({ params, request }: HttpContext) {
     //get the local from the request
-    const { local } = params;
-    const posts = await this.postService.getAllPosts(local);
+    const filter = request.qs();
+    const posts = await this.postService.getAllPosts(filter);
     return posts;
 
   }

@@ -61,10 +61,10 @@ export default class PostService {
         return post;
     }
 
-    async getAllPosts(local: string, page: number = 1, limit: number = 10, filters: any = {}) {
+    async getAllPosts(filters: any = {}, page: number = 1, limit: number = 10) {
         const postsPagination = await Post.query()
             .preload('translations', (translationQuery) => {
-                translationQuery.where('locale', local);
+                translationQuery.if(filters.locale, (query) => query.where('locale', filters.locale))
             })
             .paginate(page, limit);
 

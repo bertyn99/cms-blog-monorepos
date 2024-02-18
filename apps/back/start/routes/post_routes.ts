@@ -12,8 +12,6 @@ export default function postRoutes() {
             match: /^[0-9]+$/,
         })
 
-
-        router.get('/:local', [PostController, 'listFilteredByLocal'])
         router.post('/:local?', [PostController, 'store'])
 
 
