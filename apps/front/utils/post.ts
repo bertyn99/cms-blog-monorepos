@@ -28,7 +28,15 @@ type PostList = {
 }
 export const postRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => ({
 
-    async getAllPostBylocal(locale: string) {
-        return fetch<PostList>('/posts/' + locale);
+    async getAllPostBylocal(options?: any) {
+        console.log('fetching posts', fetch<PostList>('/posts/', options));
+        return fetch<PostList>('/posts/', options);
+    },
+
+    async deletePost(id: number) { },
+    async createPost(post: Post) { },
+
+    async geTPostContentByLocale(id: number, locale: string) {
+        return fetch<Post>(`/posts/${id}/${locale}`);
     }
 })
