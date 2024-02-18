@@ -3,6 +3,7 @@ import type { $Fetch, NitroFetchRequest } from 'nitropack';
 type Post = {
     id: number;
     title: string;
+    postId?: number;
     content: string;
     published: boolean;
     locale: string;
