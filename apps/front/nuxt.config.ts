@@ -12,7 +12,10 @@ export default defineNuxtConfig({
       api: process.env.NUXT_PUBLIC_API_URL
     }
   },
-  modules: ['@nuxt/ui'],
+  modules: ["nuxt-tiptap-editor",'@nuxt/ui'],
+  tiptap: {
+    prefix: "Tiptap", //prefix for Tiptap imports, composables not included
+  },
   ui: {
 
     icons: {},

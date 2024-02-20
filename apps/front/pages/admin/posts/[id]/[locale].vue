@@ -10,14 +10,27 @@
     </div>
 
     <div class="flex gap-4">
-      <div class="shadow-md rounded-sm bg-slate-50/25 flex-grow-2 basis-3/4">
+      <div
+        class="shadow-md rounded-sm bg-slate-50/25 flex-grow-2 basis-3/4 p-7"
+      >
         <UForm :state="post" @submit="onSubmit">
-          <UFormGroup label="Title" name="title">
-            <UInput v-model="post.title" />
-          </UFormGroup>
-          <UFormGroup label="Description" name="title">
-            <UInput v-model="post.description" />
-          </UFormGroup>
+          <div class="flex gap-4">
+            <UFormGroup label="Title" name="title" class="w-full">
+              <UInput v-model="post.title" />
+            </UFormGroup>
+            <UFormGroup label="Description" name="title" class="w-full">
+              <UInput v-model="post.description" />
+            </UFormGroup>
+          </div>
+          <div class="flex gap-4">
+            <UFormGroup label="Title" name="title" class="w-full">
+              <UInput v-model="post.title" />
+            </UFormGroup>
+            <UFormGroup label="Description" name="title" class="w-full">
+              <UInput v-model="post.description" />
+            </UFormGroup>
+          </div>
+          <Editor v-model="post.content" />
         </UForm>
       </div>
       <div class="shadow-md rounded-sm bg-slate-50/25 basis-1/4">dd</div>
