@@ -1,6 +1,6 @@
 import type { Role } from '@yggdra/shared';
 import type { $Fetch, NitroFetchRequest } from 'nitropack';
-type Post = {
+export type Post = {
     id: number;
     title: string;
     postId?: number;
@@ -8,8 +8,8 @@ type Post = {
     published: boolean;
     locale: string;
     status: Role;
-    created_at: Date;
-    updated_at: Date;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 type PostList = {
