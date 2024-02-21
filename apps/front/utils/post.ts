@@ -12,7 +12,7 @@ export const postRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => ({
     async deletePost(id: number) { },
     async createPost(post: Post) { },
 
-    async geTPostContentByLocale(id: number, locale: string) {
+    async getPostContentByLocale(id: number, locale: string) {
         return fetch<Post>(`/posts/${id}/${locale}`);
     }
 })
