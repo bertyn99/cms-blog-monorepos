@@ -16,8 +16,15 @@
     "vue-router": "^4.2.5"
   },
   "dependencies": {
+    "@iconify-json/heroicons": "^1.1.20",
+    "@iconify-json/material-symbols": "^1.1.73",
+    "@iconify-json/mdi": "^1.1.64",
+    "@iconify-json/streamline": "^1.1.8",
+    "@iconify-json/tabler": "^1.1.105",
     "@nuxt/ui": "^2.13.0",
     "@vinejs/vine": "^1.7.1",
-    "@yggdra/shared": "workspace:*"
+    "@yggdra/shared": "workspace:*",
+    "i": "^0.3.7",
+    "{collection_name}": "link:@iconify-json/{collection_name}"
   }
 }
