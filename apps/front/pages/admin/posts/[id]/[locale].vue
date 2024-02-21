@@ -23,8 +23,8 @@
             </UFormGroup>
           </div>
           <div class="flex gap-4">
-            <UFormGroup label="Title" name="title" class="w-full">
-              <UInput v-model="post.title" />
+            <UFormGroup label="Slug" name="slug" class="w-full">
+              <UInput v-model="post.slug" />
             </UFormGroup>
             <UFormGroup label="Description" name="title" class="w-full">
               <UInput v-model="post.description" />
@@ -52,7 +52,7 @@ const postRepo = postRepository($api);
 const { data, error } = await useAsyncData(
   "list",
   () =>
-    postRepo.geTPostContentByLocale(
+    postRepo.getPostContentByLocale(
       Number(idPost.value),
       String(localePost.value)
     ),
@@ -61,11 +61,10 @@ const { data, error } = await useAsyncData(
   }
 );
 console.log(data.value);
-const post: Post = reactive({} as Post);
+let post: Post = reactive({} as Post);
 if (data.value) {
   const { createdAt, updatedAt, ...postData } = data.value;
-
-  const post = reactive(postData);
+  post = { post, ...postData };
 }
 
 const publishPost = async () => {
