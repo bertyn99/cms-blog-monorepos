@@ -1,13 +1,16 @@
 <template>
   <div class="my-4">
-    <div v-if="editor" class="flex shadow-sm">
+    <div v-if="editor" class="flex shadow-sm bg-blue-50 dark:bg-blue-950">
       <USelectMenu
         :options="items"
-        :selected="selected"
-        :ui="{ background: 'bg-blue-50 dark:bg-{color}-950' }"
-        class="basis-1/8"
+        selected-icon="i-heroicons-hand-thumb-up-solid"
+        v-model="selected"
+        :ui="{ background: 'bg-blue-50 dark:bg-blue-950' }"
+        class="grow-1"
       >
-        <template #label> </template>
+        <template #option="{ option: type }">
+          <UIcon :name="type.icon" dynamic />
+        </template>
       </USelectMenu>
 
       <UButton
@@ -87,20 +90,7 @@
       >
         <span class="sr-only">blockquote</span>
       </UButton>
-      <UButton
-        @click="editor.chain().focus().setHorizontalRule().run()"
-        variant="soft"
-        icon="i-heroicons"
-      >
-        <span class="sr-only">horizontal rule</span>
-      </UButton>
-      <UButton
-        @click="editor.chain().focus().setHardBreak().run()"
-        variant="soft"
-        icon="i-heroicons"
-      >
-        <span class="sr-only">hard break</span>
-      </UButton>
+
       <UButton
         @click="editor.chain().focus().undo().run()"
         :disabled="!editor.can().chain().focus().undo().run()"
@@ -120,7 +110,7 @@
     </div>
     <TiptapEditorContent
       :editor="editor"
-      class="border-2 bg-white dark:bg-gray-900 text-gray-900 dark:text-white min-h-[300px] p-4 w-full h-full"
+      class="border-2 bg-white dark:bg-gray-900 min-h-[300px] p-4 w-full h-full"
     />
   </div>
 
@@ -134,6 +124,12 @@ const { content } = defineProps({
 console.log(content);
 const editor = useEditor({
   content: content,
+  editorProps: {
+    attributes: {
+      class:
+        "w-full prose my-6 mx-auto focus:outline-none text-gray-900 dark:text-white ",
+    },
+  },
   extensions: [TiptapStarterKit],
 });
 
@@ -147,7 +143,7 @@ const items = [
     label: "p",
     icon: "i-material-symbols-light-format-paragraph",
     click: () => {
-      editor.chain().focus().setParagraph().run();
+      editor?.commands.setParagraph().run();
     },
   },
 
@@ -155,21 +151,21 @@ const items = [
     label: "h1",
     icon: "i-ci-heading-h1",
     click: () => {
-      editor.chain().focus().toggleHeading({ level: 1 }).run();
+      editor?.commands?.focus().toggleHeading({ level: 1 }).run();
     },
   },
 
   {
     icon: "i-ci-heading-h2",
     click: () => {
-      editor.chain().focus().toggleHeading({ level: 2 }).run();
+      editor?.chain().focus().toggleHeading({ level: 2 }).run();
     },
   },
 
   {
     icon: "i-ci-heading-h3",
     click: () => {
-      editor.chain().focus().toggleHeading({ level: 3 }).run();
+      editor?.chain().focus().toggleHeading({ level: 3 }).run();
     },
   },
 
@@ -191,6 +187,7 @@ const items = [
 const selected = ref(items[0]);
 
 watch(selected, (value) => {
+  console.log(value.label);
   value.click();
 });
 </script>

@@ -117,6 +117,9 @@ importers:
 
   apps/front:
     dependencies:
+      '@iconify-json/ci':
+        specifier: ^1.1.13
+        version: 1.1.13
       '@iconify-json/heroicons':
         specifier: ^1.1.20
         version: 1.1.20
@@ -1529,6 +1532,12 @@ packages:
   /@humanwhocodes/object-schema@2.0.2:
     resolution: {integrity: sha512-6EwiSjwWYP7pTckG6I5eyFANjPhmPjUX9JRLUSfNPC7FX7zK9gyZAfUEaECL6ALTpGX5AjnBq3C9XmVWPitNpw==}
     dev: true
+
+  /@iconify-json/ci@1.1.13:
+    resolution: {integrity: sha512-UXKTbxmWMUy4Iz6OL2GXzy2PtzKzT5WkM7IJ9OEdq7fe210yJ535hdNaJ6TeKHsxZ0TrVgTvR2gvctAMVobBeg==}
+    dependencies:
+      '@iconify/types': 2.0.0
+    dev: false
 
   /@iconify-json/heroicons@1.1.20:
     resolution: {integrity: sha512-puNt1al/rDw8Rb5x8sfk20UA8AQjMskLMh63nSUBj+8I0lQ7LtX+0Qn8wow2xTXTEsynJ9xXLD8Aat53e0qi8A==}

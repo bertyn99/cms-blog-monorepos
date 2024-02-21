@@ -16,6 +16,7 @@
     "vue-router": "^4.2.5"
   },
   "dependencies": {
+    "@iconify-json/ci": "^1.1.13",
     "@iconify-json/heroicons": "^1.1.20",
     "@iconify-json/material-symbols": "^1.1.73",
     "@iconify-json/mdi": "^1.1.64",

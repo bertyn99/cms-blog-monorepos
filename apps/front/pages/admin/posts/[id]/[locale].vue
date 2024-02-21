@@ -30,7 +30,9 @@
               <UInput v-model="post.description" />
             </UFormGroup>
           </div>
-          <Editor v-model="post.content" />
+          <ClientOnly fallback-tag="span" fallback="Loading Editor...">
+            <Editor v-model="post.content" />
+          </ClientOnly>
         </UForm>
       </div>
       <div class="shadow-md rounded-sm bg-slate-50/25 basis-1/4">dd</div>
