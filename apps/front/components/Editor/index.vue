@@ -6,13 +6,16 @@
         selected-icon="i-heroicons-hand-thumb-up-solid"
         v-model="selected"
         :ui="{ background: 'bg-blue-50 dark:bg-blue-950' }"
-        class="grow-1"
+
+      class="w-full lg:w-32"
+
       >
         <template #option="{ option: type }">
           <UIcon :name="type.icon" dynamic />
         </template>
       </USelectMenu>
 
+    
       <UButton
         @click="editor.chain().focus().toggleBold().run()"
         :disabled="!editor.can().chain().focus().toggleBold().run()"
@@ -20,6 +23,7 @@
         icon="i-heroicons-bold"
         :paddded="false"
         variant="soft"
+        class="flex-1"
       >
         <span class="sr-only">bold</span>
       </UButton>
@@ -28,7 +32,7 @@
         :disabled="!editor.can().chain().focus().toggleItalic().run()"
         :class="{ 'is-active': editor.isActive('italic') }"
         icon="i-heroicons-italic"
-        variant="soft"
+        variant="soft"       class="flex-1"
       >
         <span class="sr-only">italic</span>
       </UButton>
@@ -38,6 +42,7 @@
         :class="{ 'is-active': editor.isActive('strike') }"
         icon="i-mdi-format-strikethrough"
         variant="soft"
+        class="flex-1"
       >
         <span class="sr-only">strike</span>
       </UButton>
@@ -47,6 +52,7 @@
         :class="{ 'is-active': editor.isActive('code') }"
         icon="i-heroicons-code-bracket"
         variant="soft"
+        class="flex-1"
       >
         <span class="sr-only">code</span>
       </UButton>
@@ -54,6 +60,7 @@
         @click="editor.chain().focus().unsetAllMarks().run()"
         icon="i-material-symbols-format-clear"
         variant="soft"
+        class="flex-1"
       >
         <span class="sr-only">clear marks</span>
       </UButton>
@@ -63,6 +70,7 @@
         :class="{ 'is-active': editor.isActive('bulletList') }"
         icon="i-streamline-interface-text-formatting-list-bullets-points-bullet-unordered-list-lists-bullets"
         variant="soft"
+        class="flex-1"
       >
         <span class="sr-only">bullet list</span>
       </UButton>
@@ -71,6 +79,7 @@
         :class="{ 'is-active': editor.isActive('orderedList') }"
         icon="i-mdi-order-numeric-descending"
         variant="soft"
+        class="flex-1"
       >
         <span class="sr-only">ordered list</span>
       </UButton>
@@ -79,6 +88,7 @@
         :class="{ 'is-active': editor.isActive('codeBlock') }"
         variant="soft"
         icon="i-heroicons"
+        class="flex-1"
       >
         <span class="sr-only">code block</span>
       </UButton>
@@ -87,6 +97,7 @@
         :class="{ 'is-active': editor.isActive('blockquote') }"
         variant="soft"
         icon="i-tabler-blockquote"
+        class="flex-1"
       >
         <span class="sr-only">blockquote</span>
       </UButton>
@@ -96,6 +107,7 @@
         :disabled="!editor.can().chain().focus().undo().run()"
         variant="soft"
         icon="i-mdi-undo"
+        class="flex-1"
       >
         <span class="sr-only">undo</span>
       </UButton>
@@ -104,6 +116,7 @@
         :disabled="!editor.can().chain().focus().redo().run()"
         variant="soft"
         icon="i-mdi-redo"
+        class="flex-1"
       >
         <span class="sr-only">redo</span>
       </UButton>
@@ -127,7 +140,7 @@ const editor = useEditor({
   editorProps: {
     attributes: {
       class:
-        "w-full prose my-6 mx-auto focus:outline-none text-gray-900 dark:text-white ",
+        "w-full prose my-6 mx-2 focus:outline-none text-gray-900 dark:text-white ",
     },
   },
   extensions: [TiptapStarterKit],
@@ -137,13 +150,21 @@ onBeforeUnmount(() => {
   unref(editor).destroy();
 });
 
+console.log(editor);
+/* 
+
+const i=ref([]);
+
+onMounted(() => {
+  i.value = items;
+}); */
 //dropdown type of text
 const items = [
   {
     label: "p",
     icon: "i-material-symbols-light-format-paragraph",
     click: () => {
-      editor?.commands.setParagraph().run();
+      editor?.value.chain().focus().setParagraph().run();
     },
   },
 
@@ -151,35 +172,41 @@ const items = [
     label: "h1",
     icon: "i-ci-heading-h1",
     click: () => {
-      editor?.commands?.focus().toggleHeading({ level: 1 }).run();
+      console.log(editor)
+      editor?.value.chain().focus().toggleHeading({ level: 1 }).run();
     },
   },
 
   {
     icon: "i-ci-heading-h2",
     click: () => {
-      editor?.chain().focus().toggleHeading({ level: 2 }).run();
+      console.log(editor);
+      editor?.value.chain().focus().toggleHeading({ level: 2 }).run();
     },
   },
 
   {
     icon: "i-ci-heading-h3",
     click: () => {
-      editor?.chain().focus().toggleHeading({ level: 3 }).run();
+      console.log(editor);
+      editor?.value.chain().focus().toggleHeading({ level: 3 }).run();
     },
   },
 
   {
     icon: "i-ci-heading-h4",
     click: () => {
-      editor.chain().focus().toggleHeading({ level: 4 }).run();
+      console.log(editor);
+      editor?.value.chain().focus().toggleHeading({ level: 4 }).run();
     },
+    
   },
 
   {
     icon: "i-ci-heading-h5",
     click: () => {
-      editor.chain().focus().toggleHeading({ level: 5 }).run();
+      console.log(editor);
+      editor?.value.chain().focus().toggleHeading({ level: 5 }).run();
     },
   },
 ];
@@ -187,7 +214,7 @@ const items = [
 const selected = ref(items[0]);
 
 watch(selected, (value) => {
-  console.log(value.label);
+
   value.click();
 });
 </script>
