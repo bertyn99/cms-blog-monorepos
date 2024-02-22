@@ -130,41 +130,40 @@
   <!-- https://cdn.dribbble.com/userupload/8828109/file/original-e23e44b4fcfb0773f922bc34c8b6e03d.png?resize=1200x900 -->
 </template>
 
-<script setup>
-const { content } = defineProps({
-  content: String,
-});
-console.log(content);
+<script setup >
+const props = defineProps({
+  content: String
+})
+
+const emit = defineEmits(['update:content']);
 const editor = useEditor({
-  content: content,
+  content: props.content,
+  onUpdate: ({editor}) => {
+        // HTML
+        console.log(editor);
+        emit('update:content', editor.getHTML())
+
+  },
   editorProps: {
     attributes: {
       class:
         "w-full prose my-6 mx-2 focus:outline-none text-gray-900 dark:text-white ",
     },
   },
-  extensions: [TiptapStarterKit],
+  extensions: [TiptapStarterKit,TiptapImage, TiptapMarkdown ],
 });
 
 onBeforeUnmount(() => {
-  unref(editor).destroy();
+  unref(editor)?.destroy();
 });
 
-console.log(editor);
-/* 
-
-const i=ref([]);
-
-onMounted(() => {
-  i.value = items;
-}); */
 //dropdown type of text
 const items = [
   {
     label: "p",
     icon: "i-material-symbols-light-format-paragraph",
     click: () => {
-      editor?.value.chain().focus().setParagraph().run();
+      editor?.value?.chain().focus().setParagraph().run();
     },
   },
 
@@ -173,7 +172,7 @@ const items = [
     icon: "i-ci-heading-h1",
     click: () => {
       console.log(editor)
-      editor?.value.chain().focus().toggleHeading({ level: 1 }).run();
+      editor?.value?.chain().focus().toggleHeading({ level: 1 }).run();
     },
   },
 
@@ -181,7 +180,7 @@ const items = [
     icon: "i-ci-heading-h2",
     click: () => {
       console.log(editor);
-      editor?.value.chain().focus().toggleHeading({ level: 2 }).run();
+      editor?.value?.chain().focus().toggleHeading({ level: 2 }).run();
     },
   },
 
@@ -189,7 +188,7 @@ const items = [
     icon: "i-ci-heading-h3",
     click: () => {
       console.log(editor);
-      editor?.value.chain().focus().toggleHeading({ level: 3 }).run();
+      editor?.value?.chain().focus().toggleHeading({ level: 3 }).run();
     },
   },
 
@@ -197,7 +196,7 @@ const items = [
     icon: "i-ci-heading-h4",
     click: () => {
       console.log(editor);
-      editor?.value.chain().focus().toggleHeading({ level: 4 }).run();
+      editor?.value?.chain().focus().toggleHeading({ level: 4 }).run();
     },
     
   },
@@ -206,7 +205,7 @@ const items = [
     icon: "i-ci-heading-h5",
     click: () => {
       console.log(editor);
-      editor?.value.chain().focus().toggleHeading({ level: 5 }).run();
+      editor?.value?.chain().focus().toggleHeading({ level: 5 }).run();
     },
   },
 ];

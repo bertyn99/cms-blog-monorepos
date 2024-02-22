@@ -10,8 +10,10 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
+    "@tiptap/extension-image": "^2.2.3",
     "nuxt": "^3.10.1",
     "nuxt-tiptap-editor": "^1.1.0",
+    "tiptap-markdown": "^0.8.9",
     "vue": "^3.4.15",
     "vue-router": "^4.2.5"
   },

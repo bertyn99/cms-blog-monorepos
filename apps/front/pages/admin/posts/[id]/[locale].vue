@@ -1,19 +1,18 @@
 <template>
-  <UContainer class="mx-0">
+  <UContainer class="mx-0 ">
     <div class="w-full flex py-6">
-      <h1 class="flex-1">{{ data?.title }}</h1>
+      <h1 class="flex-1">{{ post?.title }}</h1>
 
       <div class="space-x-5">
         <UButton label="Publish" @click="publishPost" variant="soft" />
-        <UButton label="Save" @click="publishPost" disabled />
+        <UButton type="submit" label="Save" @click="onSubmit"  />
       </div>
     </div>
-
     <div class="flex gap-4">
       <div
         class="shadow-md rounded-sm bg-slate-50/25 flex-grow-2 basis-3/4 p-7"
       >
-        <UForm :state="post" @submit="onSubmit">
+        <UForm :state="post"  ref="form">
           <div class="flex gap-4">
             <UFormGroup label="Title" name="title" class="w-full">
               <UInput v-model="post.title" />
@@ -31,8 +30,9 @@
             </UFormGroup>
           </div>
           <ClientOnly fallback-tag="span" fallback="Loading Editor...">
-            <Editor v-model="post.content" />
+            <Editor v-model:content="post.content" />
           </ClientOnly>
+          <!-- <UButton type="submit" label="Save" /> -->
         </UForm>
       </div>
       <div class="shadow-md rounded-sm bg-slate-50/25 basis-1/4">dd</div>
@@ -41,9 +41,10 @@
 </template>
 
 <script setup lang="ts">
-import type { FormError, FormSubmitEvent } from "#ui/types";
+import type { FormError, FormSubmitEvent,Form } from "#ui/types";
 import type { Post } from "@yggdra/shared";
 
+const form = ref<Form<Post>>({} as Form<Post>);
 const route = useRoute();
 const idPost = computed(() => route.params.id);
 const localePost = computed(() => route.params.locale);
@@ -62,11 +63,10 @@ const { data, error } = await useAsyncData(
     watch: [idPost, localePost],
   }
 );
-console.log(data.value);
+
 let post: Post = reactive({} as Post);
 if (data.value) {
-  const { createdAt, updatedAt, ...postData } = data.value;
-  post = { post, ...postData };
+   post={...data.value}
 }
 
 const publishPost = async () => {
@@ -74,8 +74,12 @@ const publishPost = async () => {
     console.log(response) */
 };
 
-async function onSubmit(event: FormSubmitEvent<any>) {
+async function onSubmit() {
   // Do something with data
-  console.log(event.data);
+  const data=await form.value.validate()
+console.log(data);
 }
+
+
+
 </script>
