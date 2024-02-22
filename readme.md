@@ -39,3 +39,32 @@ Each application has its own package.json for managing dependencies, and there i
 
 ## Installation
 
+## To do
+
+### Multilinguisme
+- [X] Implémenter la gestion des langues pour les articles.
+- [ ] Mettre en place la planification de la publication par langue.
+
+### SEO Optimisé par Langue
+- [ ] Ajouter des métadonnées personnalisées pour chaque traduction.
+- [ ] Implémenter les données structurées pour le référencement.
+
+### Bibliothèque Média
+- [ ] Développer un système de gestion des ressources visuelles et multimédias.
+- [ ] Intégrer la possibilité d'ajouter facilement des médias aux articles.
+
+### États de Publication
+- [ ] Ajouter la possibilité de créer des brouillons d'articles.
+- [ ] Mettre en place la planification des publications futures.
+
+### Interface Administrateur
+- [ ] Développer une interface intuitive pour la gestion du contenu.
+- [ ] Intégrer des fonctionnalités de gestion d'articles, de langues, et de médias.
+
+### Éditeur de Texte en Format Block
+- [X] Intégrer un éditeur de texte en format block pour la rédaction flexible des articles.
+- [ ] Permettre la mise en forme avancée du contenu.
+
+### Images/Média Customizables
+- [ ] Utiliser Sharp pour le traitement d'images.
+- [ ] Intégrer IPX pour une optimisation dynamique des formats médias.
