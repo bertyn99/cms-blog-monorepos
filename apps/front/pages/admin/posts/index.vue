@@ -46,7 +46,7 @@ const selectedLocale = ref(lang[0])
 
 const { $api } = useNuxtApp();
 const config = useRuntimeConfig();
-const postRepo = postRepository($api)
+const postRepo = postRepository($api);
 
 
 const columns = [{
