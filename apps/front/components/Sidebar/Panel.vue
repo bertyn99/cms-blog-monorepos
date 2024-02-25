@@ -8,6 +8,22 @@ const { links } = defineProps({
   },
 });
 
+const settingsLink = [
+  {
+    label: "General",
+    to: "/admin/settings/general",
+  },
+  {
+    label: "Users",
+    to: "/admin/settings/users",
+  },
+
+]
+
+const parent = {
+  label: "Settings",
+  defaultOpen: false
+}
 
 </script>
 <template>
@@ -19,13 +35,15 @@ const { links } = defineProps({
       <slot name="top" />
     </div>
     <div class="px-4 py-4 pt-2 space-y-4">
+      <!-- <UDashboardSidebarLinks :links="links" /> -->
       <UVerticalNavigation :links="links">
         <template #default="{ link }">
-          <span class="group-hover:text-primary relative">{{
-            link.label
-          }}</span>
+
+          <span class="group-hover:text-primary relative">{{ link.label }}</span>
         </template>
+
       </UVerticalNavigation>
+      <SidebarAccordeonSubLink :items="settingsLink" :parent="parent" />
     </div>
   </div>
 </template>

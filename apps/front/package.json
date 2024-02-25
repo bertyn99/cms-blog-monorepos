@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
+    "@headlessui/vue": "^1.7.19",
     "@tiptap/extension-image": "^2.2.3",
     "nuxt": "^3.10.1",
     "nuxt-auth-utils": "^0.0.18",
@@ -20,12 +21,14 @@
   },
   "dependencies": {
     "@iconify-json/ci": "^1.1.13",
+    "@iconify-json/fluent": "^1.1.48",
     "@iconify-json/heroicons": "^1.1.20",
     "@iconify-json/material-symbols": "^1.1.73",
     "@iconify-json/mdi": "^1.1.64",
     "@iconify-json/streamline": "^1.1.8",
     "@iconify-json/tabler": "^1.1.105",
-    "@nuxt/ui": "^2.13.0",
+    "@nuxt/ui": "^2.14.0",
+    "@nuxt/ui-pro": "^1.0.1",
     "@vinejs/vine": "^1.7.1",
     "@yggdra/shared": "workspace:*",
     "i": "^0.3.7",

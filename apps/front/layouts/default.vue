@@ -2,14 +2,17 @@
 const { breadcrumbs } = useBreadcrumbs()
 const links = [
   {
+    icon: 'i-heroicons-home',
     label: "Home",
     to: "/admin",
   },
   {
+    icon: 'i-heroicons-cube',
     label: "Pages",
     to: "/admin/pages",
   },
   {
+    icon: 'i-fluent-content-view-24-regular',
     label: "Posts",
     to: "/admin/posts",
   },
