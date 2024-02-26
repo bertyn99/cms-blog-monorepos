@@ -13,20 +13,17 @@ console.log(data)
 </script>
 
 <template>
-  <main>
-    <NuxtLayout name="default">
-      <div v-if="loggedIn">
-        <h1>Welcome {{ user?.fullName }}!</h1>
-        <p>Logged in since {{ session?.user!.createdAt }}</p>
-        <button @click="clear">Logout</button>
-      </div>
+  <DashboardNavbar />
+  <div v-if="loggedIn">
+    <h1>Welcome {{ user?.fullName }}!</h1>
+    <p>Logged in since {{ session?.user!.createdAt }}</p>
+    <button @click="clear">Logout</button>
+  </div>
 
-      <div v-else>
-        <h1>Not logged in</h1>
+  <div v-else>
+    <h1>Not logged in</h1>
 
-      </div>
-    </NuxtLayout>
-  </main>
+  </div>
 </template>
 
 <style scoped></style>

@@ -1,9 +1,6 @@
 <template>
-    <main>
-        <NuxtLayout name="default">
-            pages
-        </NuxtLayout>
-    </main>
+    <DashboardNavbar />
+    pages
 </template>
 
 <script lang="ts" setup>

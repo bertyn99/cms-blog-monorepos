@@ -1,26 +1,26 @@
 <template>
-    <main>
-        <NuxtLayout name="default">
-            <div class="flex p-5">
-                <UInputMenu v-model="selectedLocale" :options="lang" />
+    <DashboardNavbar />
+
+
+    <div class="flex p-5">
+        <UInputMenu v-model="selectedLocale" :options="lang" />
+    </div>
+
+    <UTable :columns="columns" :rows="formatedDataArray" v-model="selectedPost" :loading="pending"
+        :loading-state="{ icon: 'i-heroicons-arrow-path-20-solid', label: 'Loading...' }">
+        <template #actions-data="{ row }">
+            <div class="flex">
+                <UButton :to="`/admin/posts/${row.id}/${selectedLocale?.locale}`" class="mr-1"
+                    icon="i-heroicons-pencil-square-20-solid">
+                    <span class="sr-only">Edit</span>
+                </UButton>
+
+                <UButton @click="deletePost(row.id)" class="bg-red-500" icon="i-heroicons-trash-20-solid"><span
+                        class="sr-only">Delete</span>
+                </UButton>
             </div>
-
-            <UTable :columns="columns" :rows="formatedDataArray" v-model="selectedPost">
-                <template #actions-data="{ row }">
-                    <div class="flex">
-                        <UButton :to="`/admin/posts/${row.id}/${selectedLocale?.locale}`" class="mr-1"
-                            icon="i-heroicons-pencil-square-20-solid">
-                            <span class="sr-only">Edit</span>
-                        </UButton>
-
-                        <UButton @click="deletePost(row.id)" class="bg-red-500" icon="i-heroicons-trash-20-solid"><span
-                                class="sr-only">Delete</span>
-                        </UButton>
-                    </div>
-                </template>
-            </UTable>
-        </NuxtLayout>
-    </main>
+        </template>
+    </UTable>
 </template>
 
 <script lang="ts" setup>
@@ -72,7 +72,7 @@ const columns = [{
 const selectedPost = ref([])
 
 
-const { data, error } = await useAsyncData('list', () => postRepo.getAllPostBylocal({
+const { data, error, pending } = await useAsyncData('list', () => postRepo.getAllPostBylocal({
     params: {
         locale: selectedLocale.value.locale
     }
