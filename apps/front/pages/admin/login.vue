@@ -48,15 +48,20 @@ const fields = [
 
 const { $api } = useNuxtApp();
 
+const config = useRuntimeConfig();
+const userRepo = userRepository($api);
 
 async function onSubmit(form: any) {
-  const data = await $fetch($api('/api/auth/login'), {
-    method: 'POST',
-    body: JSON.stringify(form),
-    credentials: 'include'
-  });
+  try {
+    const data = await userRepository($api).login(form.email, form.password);
 
-  console.log(data);
+    navigateTo("/admin");
+
+  } catch (error) {
+    console.log('error', error);
+  }
+
+
 }
 </script>
 
