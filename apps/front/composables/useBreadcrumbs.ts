@@ -1,47 +1,58 @@
+const isMathPatternPath = (pathA: string, pathB: string) => {
+  const partsA = pathA.split('/');
+  const partsB = pathB.split('/');
 
-export type Breadcrumb = {
-  label: string;
-  icon?: string;
-  to: string,
+  if (partsA.length !== partsB.length) return false;
+
+  const isMatch = partsA.every((part: string, i: number) => {
+    return part === partsB[i] || part.startsWith(':');
+  })
+
+  return isMatch;
 }
 
 export const useBreadcrumbs = () => {
-  const route = useRoute();
   const router = useRouter();
-  const breadcrumbs = ref<Breadcrumb[]>([]);
+  const route = useRoute()
+  const routes = router.getRoutes();
 
-  const getBreadcrumbs = () => {
-    const fullPath = route.path;
-    const requestPath = fullPath.startsWith("/")
-      ? fullPath.substring(1)
-      : fullPath;
-    const crumbs = requestPath.split("/");
-    const tmpBreadcrumb: Breadcrumb[] = [];
-    let path = "";
-    crumbs.forEach((crumb) => {
-      if (crumb) {
-        path = `${path}/${crumb}`;
-        const tmpCrumb = router.getRoutes().find((r) => r.path === path);
+  const HOMEPAGE = { label: 'Home', to: '/admin' };
+  const breadcrumbs: Ref<Array<{ label: string; to: string; }>> = ref([HOMEPAGE])
 
-        if (tmpCrumb) {
-          //get name of the route
-          //get the last part of the split string
-          const name = String(tmpCrumb?.name).split('-').pop() || '';
-          const breadcrumb: Breadcrumb = { label: tmpCrumb?.name == 'admin' ? 'Home' : name.toUpperCase(), to: path };
+  function getBreadcrumbs(currRoute: string): any[] {
+    if (currRoute === '/admin') return [HOMEPAGE];
 
-          tmpBreadcrumb.push(breadcrumb);
-        }
+
+    const paths = getBreadcrumbs(currRoute.slice(0, currRoute.lastIndexOf('/')));
+    console.log('currRoute', currRoute);
+    console.log('paths', paths);
+    const founds = routes.filter(r => isMathPatternPath(r.path, currRoute));
+
+    const matchRoute = founds.length > 1 ? founds.find(r => r.path === currRoute) : founds[0];
+
+    return [
+      ...paths,
+      {
+        to: currRoute,
+        label: matchRoute?.meta?.breadcrumb || matchRoute?.name || matchRoute?.path || currRoute,
       }
-    });
-    return tmpBreadcrumb;
-  };
+    ]
+  }
 
-  watch(route, value => {
-    breadcrumbs.value = [...getBreadcrumbs()];
-    console.log(breadcrumbs.value);
-  }, { deep: true, immediate: true });
+  watch(() => ({
+    path: route.path,
+    name: route.name,
+    meta: route.meta,
+    matched: route.matched,
+  }), (route) => {
+    if (route.path === '/admin') return;
+
+    breadcrumbs.value = getBreadcrumbs(route.path);
+  }, {
+    immediate: true,
+  })
 
   return {
-    breadcrumbs,
+    breadcrumbs
   }
 }

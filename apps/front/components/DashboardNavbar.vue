@@ -20,4 +20,7 @@
 <script setup>
 const { breadcrumbs } = useBreadcrumbs()
 
+watch(() => breadcrumbs, () => {
+    console.log(breadcrumbs)
+})
 </script>

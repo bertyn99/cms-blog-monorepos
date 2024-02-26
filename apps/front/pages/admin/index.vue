@@ -1,23 +1,22 @@
 <script lang="ts" setup>
-const { loggedIn, user, session, clear } = useUserSession()
+const { loggedIn, user, clearUser } = useUserSession()
 
 const { $api } = useNuxtApp();
 const config = useRuntimeConfig();
 const userRepo = userRepository($api);
 const headers = useRequestHeaders(['cookie'])
 console.log(headers)
-const { data, error } = await useAsyncData('user', () => userRepo.getProfile())
+/* const { data, error } = await useAsyncData('user', () => userRepo.fetchProfile())
 
 console.log(error)
-console.log(data)
+console.log(data) */
 </script>
 
 <template>
-  <DashboardNavbar />
   <div v-if="loggedIn">
     <h1>Welcome {{ user?.fullName }}!</h1>
-    <p>Logged in since {{ session?.user!.createdAt }}</p>
-    <button @click="clear">Logout</button>
+    <!--     <p>Logged in since {{ session?.user!.createdAt }}</p> -->
+    <button @click="clearUser">Logout</button>
   </div>
 
   <div v-else>

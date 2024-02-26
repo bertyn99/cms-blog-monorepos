@@ -1,3 +1,1 @@
-<template>
-    <DashboardNavbar />
-</template>
+<template></template>

@@ -1,7 +1,4 @@
 <template>
-    <DashboardNavbar />
-
-
     <div class="flex p-5">
         <UInputMenu v-model="selectedLocale" :options="lang" />
     </div>
@@ -24,6 +21,9 @@
 </template>
 
 <script lang="ts" setup>
+definePageMeta({
+    name: 'Posts'
+})
 const lang = [
     {
         label: 'French(FR)',

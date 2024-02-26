@@ -1,6 +1,4 @@
 <template>
-  <DashboardNavbar />
-
   <UContainer class="mx-0 ">
     <div class="w-full flex py-6">
       <h1 class="flex-1">{{ post?.title }}</h1>

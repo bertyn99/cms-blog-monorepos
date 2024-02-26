@@ -9,7 +9,9 @@
 </template>
 
 <script lang="ts" setup>
-
+definePageMeta({
+    name: 'Pa'
+})
 
 
 </script>
