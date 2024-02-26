@@ -13,7 +13,7 @@ export default defineNuxtConfig({
     }
   },
   extends: ['@nuxt/ui-pro'],
-  modules: ["nuxt-tiptap-editor", '@nuxt/ui'],
+  modules: ["nuxt-tiptap-editor", '@nuxt/ui', 'nuxt-auth-utils'],
   tiptap: {
     prefix: "Tiptap", //prefix for Tiptap imports, composables not included
   },

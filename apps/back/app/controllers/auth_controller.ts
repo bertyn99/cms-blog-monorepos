@@ -5,6 +5,7 @@ import {
   authValidator,
   loginValidator
 } from '#validators/user_validator'
+
 @inject()
 export default class AuthController {
   constructor(protected userService: UserService) { }
@@ -28,9 +29,10 @@ export default class AuthController {
    * login user
    */
 
-  async login({ auth, request }: HttpContext) {
+  async login({ logger, auth, request }: HttpContext) {
     const data = request.all()
     const payload = await loginValidator.validate(data)
+    logger.info('login user', payload)
     try {
       const user = await this.userService.login(payload, auth)
 
@@ -38,5 +40,10 @@ export default class AuthController {
     } catch (error) {
       return { error: error }
     }
+  }
+
+  async getMe({ auth }: HttpContext) {
+    console.log('auth')
+    return auth.user
   }
 }
