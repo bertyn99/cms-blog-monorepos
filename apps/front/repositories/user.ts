@@ -29,7 +29,7 @@ export const userRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => ({
             method: 'POST'
         });
     },
-    async getProfile() {
+    async fetchProfile() {
         return fetch('/users/me', {
             credentials: "include",
         });

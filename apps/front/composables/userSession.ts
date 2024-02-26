@@ -1,7 +1,8 @@
 // composables/useUserSession.js
 import { computed } from 'vue';
+import type { User } from '~/types/auth-form';
 
-import { User } from '~/types'; // Adjust the import path based on where you define your User type
+// Adjust the import path based on where you define your User type
 
 export const useUserSession = () => {
     // The state is initially null and will be a User object when logged in
@@ -17,7 +18,7 @@ export const useUserSession = () => {
 
     const fetchAndSetUser = async () => {
         try {
-            const userData = await userRepository.fetchUserData();
+            const userData = await userRepository.fetchProfile();
             setUser(userData);
         } catch (error) {
             console.error('Failed to fetch user data:', error);
