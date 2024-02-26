@@ -6,18 +6,22 @@ export type fieldType = {
     placeholder: string;
 }[];
 
-declare module '#auth-utils' {
-    interface User {
-        // Add your own fields
-        fullName: string | null
-        role: Role;
-        createdAt: Date;
-        updatedAt: Date;
-    }
-
-    interface UserSession {
-        // Add your own fields
-    }
+export interface User {
+    fullName: string | null
+    email: string;
+    role: Role;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
-export { }
+export interface UserSession {
+    user?: User
+}
+
+export interface UserSessionComposable {
+    loggedIn: ComputedRef<boolean>
+    user: ComputedRef<User | null>
+    session: Ref<UserSession>,
+    fetch: () => Promise<void>,
+    clear: () => Promise<void>
+}
