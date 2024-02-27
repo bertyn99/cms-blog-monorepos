@@ -1,4 +1,5 @@
 import router from '@adonisjs/core/services/router'
+import { middleware } from '#start/kernel'
 const PostController = () => import('#controllers/posts_controller')
 
 export default function postRoutes() {
@@ -19,5 +20,5 @@ export default function postRoutes() {
          router.put('/:id', PostController,'update')
          router.delete('/:id', PostController,'destroy') */
 
-    }).prefix('/posts')
+    }).use(middleware.auth()).prefix('/posts')
 }

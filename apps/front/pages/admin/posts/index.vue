@@ -36,9 +36,11 @@ const lang = [
     },
     {
         label: 'Spanish(SP)',
+        locale: 'es'
     },
     {
         label: 'Italian(IT)',
+        locale: 'it'
     },
 
 ]
@@ -46,7 +48,6 @@ const lang = [
 const selectedLocale = ref(lang[0])
 
 const { $api } = useNuxtApp();
-const config = useRuntimeConfig();
 const postRepo = postRepository($api);
 
 
@@ -72,15 +73,16 @@ const columns = [{
 
 const selectedPost = ref([])
 
-
-const { data, error, pending } = await useAsyncData('list', () => postRepo.getAllPostBylocal({
-    params: {
-        locale: selectedLocale.value.locale
-    }
-}), {
+const headers = useRequestHeaders(['cookie'])
+const { data, error, pending } = await useAsyncData(`list-${selectedLocale.value.locale
+    }`, () => postRepo.getAllPostBylocal({
+        headers,
+        params: {
+            locale: selectedLocale.value.locale
+        }
+    }), {
     watch: [selectedLocale]
 })
-
 
 const deletePost = async (id: string) => {
     await postRepo.deletePost(Number(id))

@@ -29,10 +29,10 @@ export default class AuthController {
    * login user
    */
 
-  async login({ logger, auth, request }: HttpContext) {
+  async login({ auth, request }: HttpContext) {
     const data = request.all()
     const payload = await loginValidator.validate(data)
-    logger.info('login user', payload)
+
     try {
       const user = await this.userService.login(payload, auth)
 
@@ -43,7 +43,6 @@ export default class AuthController {
   }
 
   async getMe({ auth }: HttpContext) {
-    console.log('auth')
     return auth.user
   }
 }

@@ -1,11 +1,14 @@
 import type { Role } from '@yggdra/shared';
-import type { $Fetch, NitroFetchRequest } from 'nitropack';
+import type { $Fetch, NitroFetchRequest, NitroFetchOptions } from 'nitropack';
 import type { Post, PostList } from '@yggdra/shared';
 
 export const postRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => ({
 
     async getAllPostBylocal(options?: any) {
-        return fetch<PostList>('/posts/', options);
+        const mergeOptions = {
+            credentials: "include", ...options
+        };
+        return fetch<PostList>('/posts/', mergeOptions);
     },
 
     async deletePost(id: number) { },
@@ -18,6 +21,11 @@ export const postRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => ({
     },
 
     async getPostContentByLocale(id: number, locale: string) {
-        return fetch<Post>(`/posts/${id}/${locale}`);
+        const mergeOptions: any = {
+            method: 'GET',
+            credentials: "include"
+        };
+        return fetch<Post>(`/posts/${id}/${locale}`,
+            mergeOptions);
     }
 })
