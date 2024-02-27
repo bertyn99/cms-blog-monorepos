@@ -3,6 +3,7 @@ import type { FormError } from '#ui/types'
 
 definePageMeta({
   layout: "auth",
+
 });
 
 useSeoMeta({
@@ -50,11 +51,22 @@ const { $api } = useNuxtApp();
 
 const config = useRuntimeConfig();
 const userRepo = userRepository($api);
+const { fetchAndSetUser, loggedIn } = useUserSession();
+
+await fetchAndSetUser();
+
+if (loggedIn.value) {
+  navigateTo("/admin");
+}
+
 
 async function onSubmit(form: any) {
   try {
     const data = await userRepository($api).login(form.email, form.password);
 
+    if (data) {
+      fetchAndSetUser();
+    }
     navigateTo("/admin");
 
   } catch (error) {

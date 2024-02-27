@@ -1,15 +1,12 @@
 <script lang="ts" setup>
+definePageMeta({
+  name: 'Dashboard',
+  middleware: ['auth-guard']
+})
 const { loggedIn, user, clearUser } = useUserSession()
 
-const { $api } = useNuxtApp();
-const config = useRuntimeConfig();
-const userRepo = userRepository($api);
-const headers = useRequestHeaders(['cookie'])
-console.log(headers)
-/* const { data, error } = await useAsyncData('user', () => userRepo.fetchProfile())
 
-console.log(error)
-console.log(data) */
+
 </script>
 
 <template>

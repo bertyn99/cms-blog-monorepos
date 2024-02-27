@@ -5,8 +5,16 @@ import type { User } from '~/types/auth-form';
 // Adjust the import path based on where you define your User type
 
 export const useUserSession = () => {
+    const { $api } = useNuxtApp();
+    const userRepo = userRepository($api);
     // The state is initially null and will be a User object when logged in
     const userState = useState<User | null>('user', () => null);
+
+    // Computed property to check if the user is logged in
+    const loggedIn = computed(() => userState.value !== null);
+
+    // Ensure user is a ComputedRef<User | null> for reactivity and type safety
+    const user = computed(() => userState.value);
 
     const setUser = (userData: User) => {
         userState.value = userData;
@@ -18,19 +26,21 @@ export const useUserSession = () => {
 
     const fetchAndSetUser = async () => {
         try {
-            const userData = await userRepository.fetchProfile();
+            const headers = useRequestHeaders(['cookie'])
+            const userData = await userRepo.fetchUserProfile(headers);
+            console.log('Fetched user data:', userData);
             setUser(userData);
+
+            console.log('User data:', user.value);
+            console.log('loggedIn:', loggedIn.value);
+
         } catch (error) {
             console.error('Failed to fetch user data:', error);
             clearUser();
         }
     };
 
-    // Computed property to check if the user is logged in
-    const loggedIn = computed(() => userState.value !== null);
 
-    // Ensure user is a ComputedRef<User | null> for reactivity and type safety
-    const user = computed(() => userState.value);
 
     return {
         loggedIn,

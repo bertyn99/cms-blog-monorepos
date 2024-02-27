@@ -1,6 +1,6 @@
 import type { Role } from '@yggdra/shared';
 import type { $Fetch, NitroFetchRequest } from 'nitropack';
-import type { } from '@yggdra/shared';
+import type { User } from '~/types/auth-form';
 
 export const userRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => ({
 
@@ -29,8 +29,9 @@ export const userRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => ({
             method: 'POST'
         });
     },
-    async fetchProfile() {
-        return fetch('/users/me', {
+    async fetchUserProfile(headers?: any) {
+        return fetch<User>('/users/me', {
+            headers,
             credentials: "include",
         });
     },

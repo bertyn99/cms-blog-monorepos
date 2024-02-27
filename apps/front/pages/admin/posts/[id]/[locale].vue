@@ -42,6 +42,10 @@
 import type { FormError, FormSubmitEvent, Form } from "#ui/types";
 import type { Post } from "@yggdra/shared";
 
+definePageMeta({
+  middleware: ['auth-guard']
+})
+
 const form = ref<Form<Post>>({} as Form<Post>);
 const route = useRoute();
 const idPost = computed(() => route.params.id);

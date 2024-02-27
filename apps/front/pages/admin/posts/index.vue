@@ -22,7 +22,8 @@
 
 <script lang="ts" setup>
 definePageMeta({
-    name: 'Posts'
+    name: 'Posts',
+    middleware: ['auth-guard']
 })
 const lang = [
     {

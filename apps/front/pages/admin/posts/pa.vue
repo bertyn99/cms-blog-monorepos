@@ -10,7 +10,8 @@
 
 <script lang="ts" setup>
 definePageMeta({
-    name: 'Pa'
+    name: 'Pa',
+    middleware: ['auth-guard']
 })
 
 
