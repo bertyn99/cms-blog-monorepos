@@ -4,7 +4,7 @@
 
             <template #right>
                 <UButton size="sm" icon="i-heroicons-plus-circle-16-solid" label="New Post" trailing variant="soft"
-                    @click="createPost" />
+                    to="/admin/posts/new" />
 
 
 
@@ -60,6 +60,7 @@ const lang = [
 
 ]
 
+const isOpen = ref(false)
 const selectedLocale = ref(lang[0])
 
 const { $api } = useNuxtApp();

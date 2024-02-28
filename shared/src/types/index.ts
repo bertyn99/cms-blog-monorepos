@@ -1,28 +1,30 @@
 export enum Role {
-    USER="User",
-    ADMIN="Admin",
-    EDITOR="Editor"
+    USER = "User",
+    ADMIN = "Admin",
+    EDITOR = "Editor"
 }
 
 export enum PostStatus {
-    DRAFT="Draft",
-    PUBLISHED="Published"
+    DRAFT = "Draft",
+    PUBLISHED = "Published"
 }
 
 export type Post = {
-    id: number;
+    id?: number;
     title: string;
     postId?: number;
     content: string;
     slug: string;
     published: boolean;
     description: string;
-    scheduledFor: Date;
+    scheduledFor?: Date;
     locale: string;
-    status: Role;
-    createdAt: Date;
-    updatedAt: Date;
+    status?: PostStatus;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
+
+export type NewPost = Omit<Post, 'id' | 'postId' | 'createdAt' | 'updatedAt'>;
 
 export type PostList = {
     meta: {
