@@ -1,23 +1,38 @@
 <template>
-    <div class="flex p-5">
-        <UInputMenu v-model="selectedLocale" :options="lang" />
-    </div>
+    <NuxtLayout name="default">
+        <DashboardNavbar>
 
-    <UTable :columns="columns" :rows="formatedDataArray" v-model="selectedPost" :loading="pending"
-        :loading-state="{ icon: 'i-heroicons-arrow-path-20-solid', label: 'Loading...' }">
-        <template #actions-data="{ row }">
-            <div class="flex">
-                <UButton :to="`/admin/posts/${row.id}/${selectedLocale?.locale}`" class="mr-1"
-                    icon="i-heroicons-pencil-square-20-solid">
-                    <span class="sr-only">Edit</span>
-                </UButton>
+            <template #right>
+                <UButton size="sm" icon="i-heroicons-plus-circle-16-solid" label="New Post" trailing variant="soft"
+                    @click="createPost" />
 
-                <UButton @click="deletePost(row.id)" class="bg-red-500" icon="i-heroicons-trash-20-solid"><span
-                        class="sr-only">Delete</span>
-                </UButton>
-            </div>
-        </template>
-    </UTable>
+
+
+            </template>
+
+        </DashboardNavbar>
+
+
+        <div class="flex p-5">
+            <UInputMenu v-model="selectedLocale" :options="lang" />
+        </div>
+
+        <UTable :columns="columns" :rows="formatedDataArray" v-model="selectedPost" :loading="pending"
+            :loading-state="{ icon: 'i-heroicons-arrow-path-20-solid', label: 'Loading...' }">
+            <template #actions-data="{ row }">
+                <div class="flex">
+                    <UButton :to="`/admin/posts/${row.id}/${selectedLocale?.locale}`" class="mr-1"
+                        icon="i-heroicons-pencil-square-20-solid">
+                        <span class="sr-only">Edit</span>
+                    </UButton>
+
+                    <UButton @click="deletePost(row.id)" class="bg-red-500" icon="i-heroicons-trash-20-solid"><span
+                            class="sr-only">Delete</span>
+                    </UButton>
+                </div>
+            </template>
+        </UTable>
+    </NuxtLayout>
 </template>
 
 <script lang="ts" setup>
@@ -107,5 +122,8 @@ const formatedDataArray = computed(() => {
 });
 
 
+const createPost = () => {
+    console.log('create post')
+}
 
 </script>

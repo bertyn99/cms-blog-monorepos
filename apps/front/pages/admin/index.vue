@@ -10,6 +10,10 @@ const { loggedIn, user, clearUser } = useUserSession()
 </script>
 
 <template>
+  <DashboardNavbar>
+
+
+  </DashboardNavbar>
   <div v-if="loggedIn">
     <h1>Welcome {{ user?.fullName }}!</h1>
     <!--     <p>Logged in since {{ session?.user!.createdAt }}</p> -->

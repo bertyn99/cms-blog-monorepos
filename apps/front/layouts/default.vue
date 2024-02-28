@@ -34,7 +34,8 @@ const links = [
       <div class="flex-col items-stretch relative w-full lg:w-[--width] flex-1 flex">
 
         <main>
-          <DashboardNavbar />
+
+
 
           <slot />
         </main>
