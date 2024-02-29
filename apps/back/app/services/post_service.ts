@@ -10,33 +10,92 @@ export default class PostService {
 
     }
 
-    async createPost(data: any, local: string) {
+    async createPost(data: any, seoMeta: any) {
         try {
             this.trx = await db.transaction();
 
             const post = new Post();
             post.fill(data.post);
+
             await post.useTransaction(this.trx).save();
 
             const postTranslation = new PostTranslation();
-            postTranslation.fill({ ...data.translation, postId: post.id, local });
+            postTranslation.fill({ ...data, postId: post.id });
             await postTranslation.useTransaction(this.trx).save();
 
-            if (data.seo) {
+            if (seoMeta) {
                 const postSeo = new PostSeo();
-                postSeo.fill({ ...data.seo, postTranslationId: postTranslation.id });
+                postSeo.fill({ ...seoMeta, postTranslationId: postTranslation.id });
                 await postSeo.useTransaction(this.trx).save();
             }
 
             await this.trx.commit();
 
-            return post;
+            return postTranslation.toJSON();
         } catch (error) {
-            return { error: error }
+            await this.trx.rollback();
+            return { error: error.message }
         }
     }
 
-    async updatePostById(id: number, data: any) { }
+    async createPostTranslation(data: any, seoMeta: any) {
+        this.trx = await db.transaction();
+
+        try {
+            //find the post by id
+            const existingPost = await Post.findOrFail(data.postId);
+
+            const postTranslation = new PostTranslation();
+            postTranslation.fill({ ...data, postId: existingPost?.id });
+            await postTranslation.useTransaction(this.trx).save();
+
+            if (seoMeta) {
+                const postSeo = new PostSeo();
+                postSeo.fill({ ...seoMeta, postTranslationId: postTranslation.id });
+                await postSeo.useTransaction(this.trx).save();
+            }
+
+            await this.trx.commit();
+
+            return postTranslation.toJSON();
+        } catch (error) {
+            await this.trx.rollback();
+            return { error: error.message }
+        }
+
+    }
+    async updatePostTranslationById(id: number, data: any, seoMeta: any) {
+        this.trx = await db.transaction();
+        try {
+            const postTranslation = await this.getPostTranslationByLocale(id, data.locale);
+
+            if (!postTranslation) {
+                return { error: 'Post Translation not found' }
+            }
+            //update post translation data
+            postTranslation.merge(data);
+            await postTranslation.useTransaction(this.trx).save();
+
+            if (seoMeta) {
+                //update seo meta
+                const postSeo = await postTranslation.related('seo').query().first();
+                console.log('postSeo', postSeo)
+                if (postSeo) {
+                    postSeo.merge(seoMeta);
+                    await postSeo.useTransaction(this.trx).save();
+                }
+            }
+            await this.trx.commit();
+            // Load the seo relation
+            await postTranslation.load('seo');
+
+            return postTranslation.toJSON();
+
+        } catch (error) {
+            await this.trx.rollback();
+            return { error: error.message }
+        }
+    }
     async deletePostById(id: number) { }
     async getPostById(id: number) {
         console.log('id', id)
@@ -48,7 +107,7 @@ export default class PostService {
 
     }
     async getContentPostById(id: number, local: string) {
-        const postTranslation = await PostTranslation.query().where('postId', id).where('locale', local).preload('seo').first();
+        const postTranslation = await this.getPostTranslationByLocale(id, local);
         return postTranslation?.toJSON();
 
     }
@@ -59,6 +118,15 @@ export default class PostService {
             })
             .first();
         return post;
+    }
+
+    async getPostTranslationByLocale(postId: number, locale: string) {
+        const postTranslation = await PostTranslation.query()
+            .where('postId', postId)
+            .where('locale', locale)
+            .preload('seo')
+            .first();
+        return postTranslation;
     }
 
     async getAllPosts(filters: any = {}, page: number = 1, limit: number = 10) {

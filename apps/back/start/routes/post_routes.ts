@@ -13,8 +13,9 @@ export default function postRoutes() {
             match: /^[0-9]+$/,
         })
 
-        router.post('/:local?', [PostController, 'store'])
+        router.post('/', [PostController, 'store'])
 
+        router.put('/:id', [PostController, 'update'])
 
         /*  router.get('/:id/edit', [PostController,'edit'])
          router.put('/:id', PostController,'update')
