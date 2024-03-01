@@ -5,6 +5,15 @@ const PostController = () => import('#controllers/posts_controller')
 export default function postRoutes() {
 
     router.group(() => {
+
+        router.group(() => {
+
+            router.post('/', [PostController, 'store'])
+
+            router.put('/:id', [PostController, 'update'])
+
+        }).use(middleware.auth())
+
         router.get('/', [PostController, 'index'])
         router.get('/:id', [PostController, 'showPost']).where('id', {
             match: /^[0-9]+$/,
@@ -13,13 +22,13 @@ export default function postRoutes() {
             match: /^[0-9]+$/,
         })
 
-        router.post('/', [PostController, 'store'])
 
-        router.put('/:id', [PostController, 'update'])
 
         /*  router.get('/:id/edit', [PostController,'edit'])
          router.put('/:id', PostController,'update')
          router.delete('/:id', PostController,'destroy') */
 
-    }).use(middleware.auth()).prefix('/posts')
+    }).prefix('/posts')
+
+
 }

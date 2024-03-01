@@ -79,7 +79,7 @@ export default class PostService {
             if (seoMeta) {
                 //update seo meta
                 const postSeo = await postTranslation.related('seo').query().first();
-                console.log('postSeo', postSeo)
+
                 if (postSeo) {
                     postSeo.merge(seoMeta);
                     await postSeo.useTransaction(this.trx).save();
