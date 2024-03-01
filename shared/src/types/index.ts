@@ -9,16 +9,24 @@ export enum PostStatus {
     PUBLISHED = "Published"
 }
 
+export type Seo = {
+    metaTitle: string,
+    metaDescription: string,
+    metaKeywords: string,
+    structuredData: any,
+}
+
 export type Post = {
     id?: number;
     title: string;
-    postId?: number;
+    postId?: number | null;
     content: string;
     slug: string;
     published: boolean;
     description: string;
     scheduledFor?: Date;
     locale: string;
+    seo?: Seo | null;
     status?: PostStatus;
     createdAt?: Date;
     updatedAt?: Date;

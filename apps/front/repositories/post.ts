@@ -12,19 +12,30 @@ export const postRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => ({
     },
 
     async deletePost(id: number) { },
-    async createPost(post: Post) { },
+    async createPost(post: Post, headers: any) {
+
+        return fetch<Post>('/posts/', {
+            method: 'POST',
+            credentials: "include",
+            body: JSON.stringify(post)
+        });
+    },
     async updatePost(id: number, post: Post) {
         return fetch<Post>(`/posts/${id}`, {
             method: 'PUT',
+            credentials: "include",
             body: JSON.stringify(post)
         });
     },
 
-    async getPostContentByLocale(id: number, locale: string) {
+    async getPostContentByLocale(id: number, locale: string, headers?: any) {
         const mergeOptions: any = {
             method: 'GET',
+            headers,
             credentials: "include"
         };
+
+        /*       console.log(mergeOptions); */
         return fetch<Post>(`/posts/${id}/${locale}`,
             mergeOptions);
     }

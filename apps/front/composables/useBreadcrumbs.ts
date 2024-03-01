@@ -24,8 +24,7 @@ export const useBreadcrumbs = () => {
 
 
     const paths = getBreadcrumbs(currRoute.slice(0, currRoute.lastIndexOf('/')));
-    console.log('currRoute', currRoute);
-    console.log('paths', paths);
+
     const founds = routes.filter(r => isMathPatternPath(r.path, currRoute));
 
     const matchRoute = founds.length > 1 ? founds.find(r => r.path === currRoute) : founds[0];

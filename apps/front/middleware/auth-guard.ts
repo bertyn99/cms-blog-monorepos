@@ -5,10 +5,6 @@ export default defineNuxtRouteMiddleware(async () => {
     if (user.value === null) {
         //try to fetch user data
         await fetchAndSetUser();
-
-        console.log('User data:', user.value);
-
-        console.log('loggedIn after:', loggedIn.value);
         // If user is still not loggedIn, redirect to login page
         if (!loggedIn.value)
             return navigateTo('/admin/login')

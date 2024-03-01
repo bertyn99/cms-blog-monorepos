@@ -28,11 +28,9 @@ export const useUserSession = () => {
         try {
             const headers = useRequestHeaders(['cookie'])
             const userData = await userRepo.fetchUserProfile(headers);
-            console.log('Fetched user data:', userData);
+
             setUser(userData);
 
-            console.log('User data:', user.value);
-            console.log('loggedIn:', loggedIn.value);
 
         } catch (error) {
             console.error('Failed to fetch user data:', error);
