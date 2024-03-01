@@ -1,11 +1,8 @@
 <template>
-    <main>
-        <NuxtLayout name="default">
-            <template #header>
-            </template>
-            post/pa
-        </NuxtLayout>
-    </main>
+
+
+    post/pa
+
 </template>
 
 <script lang="ts" setup>

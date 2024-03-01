@@ -1,4 +1,5 @@
 <template>
+
   <UContainer class="mx-0 ">
     <div class="w-full flex py-6">
       <h1 class="flex-1">{{ post?.title }}</h1>
@@ -23,9 +24,7 @@
             <UFormGroup label="Slug" name="slug" class="w-full">
               <UInput v-model="post.slug" />
             </UFormGroup>
-            <UFormGroup label="Description" name="title" class="w-full">
-              <UInput v-model="post.description" />
-            </UFormGroup>
+
           </div>
           <ClientOnly fallback-tag="span" fallback="Loading Editor...">
             <Editor v-model:content="post.content" />
@@ -36,11 +35,12 @@
       <div class="shadow-md rounded-sm bg-slate-50/25 basis-1/4">dd</div>
     </div>
   </UContainer>
+
 </template>
 
 <script setup lang="ts">
 import type { FormError, FormSubmitEvent, Form } from "#ui/types";
-import type { Post } from "@yggdra/shared";
+import type { Post, PostStatus } from "@yggdra/shared";
 
 definePageMeta({
   middleware: ['auth-guard']
@@ -51,24 +51,37 @@ const route = useRoute();
 const idPost = computed(() => route.params.id);
 const localePost = computed(() => route.params.locale);
 const { $api } = useNuxtApp();
-const config = useRuntimeConfig();
-const postRepo = postRepository($api);
+const post = ref<Post>({
+  id: 0,
+  title: '',
+  description: '',
+  slug: '',
+  content: '',
+  locale: '',
+  published: false,
+  status: "Draft" as PostStatus.DRAFT,
+  seo: null
+});
 
-const { data, error } = await useAsyncData(
-  "list",
+const postRepo = postRepository($api);
+const headers = useRequestHeaders(['cookie'])
+const { data, error, pending } = await useAsyncData(
+  `post-${idPost.value}-${localePost.value}`,
   () =>
     postRepo.getPostContentByLocale(
       Number(idPost.value),
-      String(localePost.value)
+      String(localePost.value),
+      headers
     ),
   {
     watch: [idPost, localePost],
   }
 );
 
-let post: Post = reactive({} as Post);
-if (data.value) {
-  post = { ...data.value }
+if (!pending.value && data?.value !== null) {
+
+  post.value = data.value
+
 }
 
 const publishPost = async () => {
@@ -78,8 +91,8 @@ const publishPost = async () => {
 
 async function onSubmit() {
   // Do something with data
-  const data = await form.value.validate()
-  console.log(data);
+  const dataForm = await form.value.validate()
+  console.log(dataForm);
 }
 
 

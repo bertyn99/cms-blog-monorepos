@@ -6,8 +6,8 @@
                 <UIcon name="i-material-symbols-settings-outline "
                     class="flex-shrink-0 w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-200" />
                 <span class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white "> {{
-                    parent.label
-                }}</span>
+        parent.label
+    }}</span>
 
                 <UIcon
                     :name="!open ? 'i-heroicons-chevron-up' : 'i-heroicons-chevron-down' ? 'i-heroicons-chevron-down' : 'i-heroicons-chevron-up'"
@@ -23,9 +23,9 @@
                 <UVerticalNavigation :links="items">
                     <template #icon="{ link }">
                         <UChip :ui="{
-                            base: 'mx-1.5',
-                            background: 'bg-gray-400 dark:bg-gray-500 group-hover:bg-gray-700 dark:group-hover:bg-gray-200',
-                        }">
+        base: 'mx-1.5',
+        background: 'bg-gray-400 dark:bg-gray-500 group-hover:bg-gray-700 dark:group-hover:bg-gray-200',
+    }">
                             <span
                                 class="w-2 h-full  bg-gray-100 dark:bg-gray-700 relative after:absolute after:z-[1] after:w-px after:h-full after:bg-gray-200 after:dark:bg-gray-700 after:transform after:translate-y-full after:inset-x-0">
 
@@ -44,6 +44,10 @@ import type { VerticalNavigationLink } from "#ui/types"
 import { Disclosure, DisclosureButton, DisclosurePanel, provideUseId } from '@headlessui/vue'
 import { useId } from '#imports'
 import type { _background } from '#tailwind-config/theme/accentColor';
+
+defineOptions({
+    inheritAttrs: true,
+})
 type AccordeonSubLinkParentProps = {
     label: string
     defaultOpen?: boolean

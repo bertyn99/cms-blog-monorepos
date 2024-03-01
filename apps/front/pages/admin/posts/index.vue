@@ -1,38 +1,39 @@
 <template>
-    <NuxtLayout name="default">
-        <DashboardNavbar>
 
-            <template #right>
-                <UButton size="sm" icon="i-heroicons-plus-circle-16-solid" label="New Post" trailing variant="soft"
-                    to="/admin/posts/new" />
+    <DashboardNavbar>
 
-
-
-            </template>
-
-        </DashboardNavbar>
+        <template #right>
+            <UButton size="sm" icon="i-heroicons-plus-circle-16-solid" label="New Post" trailing variant="soft"
+                to="/admin/posts/new" />
 
 
-        <div class="flex p-5">
-            <UInputMenu v-model="selectedLocale" :options="lang" />
-        </div>
 
-        <UTable :columns="columns" :rows="formatedDataArray" v-model="selectedPost" :loading="pending"
-            :loading-state="{ icon: 'i-heroicons-arrow-path-20-solid', label: 'Loading...' }">
-            <template #actions-data="{ row }">
-                <div class="flex">
-                    <UButton :to="`/admin/posts/${row.id}/${selectedLocale?.locale}`" class="mr-1"
-                        icon="i-heroicons-pencil-square-20-solid">
-                        <span class="sr-only">Edit</span>
-                    </UButton>
+        </template>
 
-                    <UButton @click="deletePost(row.id)" class="bg-red-500" icon="i-heroicons-trash-20-solid"><span
-                            class="sr-only">Delete</span>
-                    </UButton>
-                </div>
-            </template>
-        </UTable>
-    </NuxtLayout>
+    </DashboardNavbar>
+
+
+    <div class="flex p-5">
+        <UInputMenu v-model="selectedLocale" :options="lang" />
+    </div>
+
+    <UTable :columns="columns" :rows="formatedDataArray" v-model="selectedPost" :loading="pending"
+        :loading-state="{ icon: 'i-heroicons-arrow-path-20-solid', label: 'Loading...' }">
+
+        <template #actions-data="{ row }">
+            <div class="flex">
+                <UButton :to="`/admin/posts/${row.postId}/${selectedLocale?.locale}`" class="mr-1"
+                    icon="i-heroicons-pencil-square-20-solid" prefetch>
+                    <span class="sr-only">Edit</span>
+                </UButton>
+
+                <UButton @click="deletePost(row.id)" class="bg-red-500" icon="i-heroicons-trash-20-solid"><span
+                        class="sr-only">Delete</span>
+                </UButton>
+            </div>
+        </template>
+    </UTable>
+
 </template>
 
 <script lang="ts" setup>
@@ -102,20 +103,14 @@ const { data, error, pending } = await useAsyncData(`list-${selectedLocale.value
 
 const deletePost = async (id: string) => {
     await postRepo.deletePost(Number(id))
-    await useAsyncData('list', () => postRepo.getAllPostBylocal({
-        params: {
-            locale: selectedLocale.value.locale
-        }
-    }), {
-        watch: [selectedLocale]
-    })
+    console.log('delete post')
 }
 
 
 const formatedDataArray = computed(() => {
     if (data.value && data.value?.data.length > 0) {
         return data.value?.data.map(item => {
-            const { postId, locale, ...rest } = item;
+            const { locale, ...rest } = item;
             return rest
         })
     }
