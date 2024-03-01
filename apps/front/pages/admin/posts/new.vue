@@ -76,7 +76,7 @@ async function onSubmit() {
     const post = await postRepo.createPost(newPost, headers)
 
     if (post) {
-      navigateTo(`/admin/posts/${post.id}/${post.locale}`)
+      navigateTo(`/admin/posts/${post.postId}/${post.locale}`)
     }
   } catch (error) {
     console.error(error)
