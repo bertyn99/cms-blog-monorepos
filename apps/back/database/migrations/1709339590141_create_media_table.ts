@@ -9,6 +9,7 @@ export default class extends BaseSchema {
       table.string('file_path').notNullable()
       table.string('file_name').notNullable()
       table.string('mime_type').notNullable()
+      table.string('folder').notNullable()
       table.integer('size').unsigned().notNullable()
       table.timestamp('created_at')
       table.timestamp('updated_at')
