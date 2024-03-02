@@ -21,6 +21,7 @@ export const postRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => ({
         });
     },
     async updatePost(id: number, post: Post) {
+
         return fetch<Post>(`/posts/${id}`, {
             method: 'PUT',
             credentials: "include",

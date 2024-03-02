@@ -54,6 +54,7 @@ const { $api } = useNuxtApp();
 const post = ref<Post>({
   id: 0,
   title: '',
+  postId: 0,
   description: '',
   slug: '',
   content: '',
@@ -92,7 +93,11 @@ const publishPost = async () => {
 async function onSubmit() {
   // Do something with data
   const dataForm = await form.value.validate()
-  console.log(dataForm);
+
+  if (dataForm) {
+    const response = await postRepo.updatePost(Number(dataForm.postId), dataForm)
+
+  }
 }
 
 
