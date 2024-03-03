@@ -99,5 +99,19 @@ export default class MediaLibrairyService {
 
         await media.delete()
     }
+
+    public async deleteFolderMedia(folder: string): Promise<void> {
+        try {
+            const media = await Media.query().where('folder', folder)
+
+            if (media.length === 0) {
+                throw new Error('Folder not found')
+            }
+            await Media.query().where('folder', folder).delete()
+        } catch (error) {
+            throw error
+        }
+
+    }
 }
 

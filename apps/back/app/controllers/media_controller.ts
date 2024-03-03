@@ -81,4 +81,12 @@ export default class MediaController {
         return media
     }
 
+    async destroyFolder({ request }: HttpContext) {
+        const { folder } = request.qs();
+
+        const media = await this.mediaService.deleteFolderMedia(folder)
+
+        return media
+    }
+
 }
