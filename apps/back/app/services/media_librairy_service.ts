@@ -1,26 +1,40 @@
 import { inject } from "@adonisjs/core";
 import db from '@adonisjs/lucid/services/db'
 import Media from "#models/media";
-
+import app from '@adonisjs/core/services/app'
+import { MultipartFile } from "@adonisjs/core/bodyparser";
+import { cuid } from '@adonisjs/core/helpers'
 @inject()
 export default class MediaLibrairyService {
 
-    public async saveFile(file: any, folderPath: string): Promise<Media> {
+    public async saveFile(file: MultipartFile, folderPath: string): Promise<Media> {
+
+        try {
+
+        } catch (error) {
+
+        }
+        if (!file) {
+            throw new Error('File not found')
+        }
+
         const media = new Media()
         media.file_name = `${cuid()}_${file.clientName}`
-        media.mime_type = file.extname
+        media.mime_type = file.extname ?? 'default'
         media.size = file.size
 
         if (folderPath) {
             media.folder = folderPath
+
         }
 
-        await file.move(MediaServer.publicPath('uploads'), {
+        media.file_path = `uploads/${media.folder}/${media.file_name}`
+        await file.move(app.publicPath('uploads/' + media.folder), {
             name: media.file_name,
             overwrite: true,
         })
 
-        if (!file.moved()) {
+        if (file.state !== 'moved') {
             throw new Error('File move operation failed')
         }
 

@@ -42,12 +42,11 @@ const bodyParserConfig = defineConfig({
     autoProcess: true,
     convertEmptyStringsToNull: true,
     processManually: [],
-
     /**
      * Maximum limit of data to parse including all files
      * and fields
      */
-    limit: '20mb',
+    limit: '30mb',
     types: ['multipart/form-data'],
   },
 })
