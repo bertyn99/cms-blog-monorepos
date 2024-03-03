@@ -10,13 +10,19 @@ export default class MediaController {
         const folder = await request.input('folder')
 
         const medias = request.files('medias', {
-            size: '3mb',
+            size: '6mb',
             extnames: ['jpg', 'png', 'jpeg', 'webp', 'mp4', 'avif', 'pdf']
         })
 
+        if (!medias.length) {
+            return response.badRequest({
+                message: 'No file uploaded'
+            })
+        }
+
         /**
-         * Creating a collection of invalid documents
-        */
+        * Creating a collection of invalid documents
+       */
         let invalidMedias = medias.filter((document) => {
             return !document.isValid
         })
@@ -32,18 +38,26 @@ export default class MediaController {
                 })
             })
         }
+        try {
+            for (const media of medias) {
+                if (media.isValid) {
 
+                    const saveFile = await this.mediaService.saveFile(media, folder);
+                    console.log(saveFile)
+                }
 
-        for (const media of medias) {
-            if (media.isValid) {
-                await this.mediaService.saveFile(media, folder);
             }
-        }
 
-        //if all files state are moved
-        if (medias.every(media => media.state === 'moved')) {
-            return response.created({
-                message: 'Files uploaded successfully'
+            //if all files state are moved
+            if (medias.every(media => media.state === 'moved')) {
+                return response.created({
+                    message: 'Files uploaded successfully'
+                })
+            }
+        } catch (error) {
+
+            return response.badRequest({
+                message: error.message
             })
         }
 
@@ -51,10 +65,20 @@ export default class MediaController {
 
 
 
-    async index({ request }: HttpContext) { }
+    async index({ request }: HttpContext) {
+
+        const media = await this.mediaService.getAllMediaGroupedByFolder()
+
+        return media
+    }
 
     async show({ request, params }: HttpContext) { }
 
-    async destroy({ request, params }: HttpContext) { }
+    async destroy({ request, params }: HttpContext) {
+        const mediaId = params.id
+        const media = await this.mediaService.deleteMedia(mediaId)
+
+        return media
+    }
 
 }

@@ -7,40 +7,45 @@ import { cuid } from '@adonisjs/core/helpers'
 @inject()
 export default class MediaLibrairyService {
 
-    public async saveFile(file: MultipartFile, folderPath: string): Promise<Media> {
+    public async saveFile(file: MultipartFile, folderPath: string | null): Promise<Media | any> {
 
         try {
 
+            if (!file) {
+                throw new Error('File not found')
+            }
+
+            const media = new Media()
+            media.file_name = `${cuid()}_${file.clientName}`
+            media.mime_type = file.extname ?? 'default'
+            media.size = file.size
+            media.file_path = `uploads/`
+            console.log(media.file_path)
+            if (folderPath) {
+                media.folder = folderPath
+                media.file_path += `${media.folder}/`
+            }
+            else {
+                media.folder = 'default'
+            }
+
+
+            await file.move(app.publicPath(media.file_path), {
+                name: media.file_name,
+                overwrite: true,
+            })
+            media.file_path += media.file_name
+
+            if (file.state !== 'moved') {
+                throw new Error('File move operation failed')
+            }
+
+            await media.save()
+
+            return media
         } catch (error) {
-
+            return { error: error.message }
         }
-        if (!file) {
-            throw new Error('File not found')
-        }
-
-        const media = new Media()
-        media.file_name = `${cuid()}_${file.clientName}`
-        media.mime_type = file.extname ?? 'default'
-        media.size = file.size
-
-        if (folderPath) {
-            media.folder = folderPath
-
-        }
-
-        media.file_path = `uploads/${media.folder}/${media.file_name}`
-        await file.move(app.publicPath('uploads/' + media.folder), {
-            name: media.file_name,
-            overwrite: true,
-        })
-
-        if (file.state !== 'moved') {
-            throw new Error('File move operation failed')
-        }
-
-        await media.save()
-
-        return media
     }
     public async getAllMediaGroupedByFolder(): Promise<Record<string, string[]>> {
         const allMedia = await Media.query().select('folder', 'file_name')
