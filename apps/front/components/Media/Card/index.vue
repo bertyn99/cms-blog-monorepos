@@ -6,7 +6,7 @@
 
         <template #footer>
             <div class="h-8">
-
+                {{ name }}
             </div>
         </template>
     </UCard>
@@ -32,7 +32,7 @@ const customStyle = {
 
     },
     footer: {
-        base: "h-8"
+        base: "h-12"
     }
 }
 </script>

@@ -35,12 +35,25 @@ const file = ref([
         }]
     }
 ])
-const FileInPagesFolder = computed(() => file.value.filter(f => f.folder === "pages"))
+const FileInPagesFolder = computed(() => file.value.filter(f => f.folder !== "default"))
 const FileInDefaultFolder = computed(() => file.value.filter(f => f.folder === "default"))
 </script>
 
 <template>
-    <div class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8">
-        <MediaCard v-for="f in file" :name="f.folder" :image="f.media[0].link" :link="f.media[0].link" />
-    </div>
+    <UContainer class="space-y-8">
+        <div class="mt-8">
+            <h2 class="text-3xl font-bold">Folder</h2>
+            <div class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8">
+                <MediaCard v-for="f in FileInPagesFolder" :name="f.folder" :image="f.media[0].link"
+                    :link="f.media[0].link" />
+            </div>
+        </div>
+        <UDivider />
+        <div class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8">
+            <MediaCard v-for="f in FileInDefaultFolder" :name="f.folder" :image="f.media[0].link"
+                :link="f.media[0].link" />
+        </div>
+    </UContainer>
+
+
 </template>
