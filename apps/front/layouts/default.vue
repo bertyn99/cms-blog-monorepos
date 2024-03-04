@@ -16,6 +16,12 @@ const links = [
     label: "Posts",
     to: "/admin/posts",
   },
+
+  {
+    icon: 'i-heroicons-cube',
+    label: "Media",
+    to: "/admin/media",
+  },
 ];
 
 </script>
