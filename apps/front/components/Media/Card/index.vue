@@ -1,9 +1,7 @@
 <template>
     <UCard :ui="customStyle">
-        <div class="h-32 w-36 bg-green-400 ">
 
-        </div>
-
+        <slot name="content" />
         <template #footer>
             <div class="h-8">
                 {{ name }}
@@ -24,11 +22,13 @@ defineProps({
 
 const customStyle = {
     body: {
-        padding: "p-0",
-        background: "bg-red-300",
+
+        padding: "p-0 sm:p-0",
     },
     header: {
         base: "h-32 w-36 bg-red-800",
+        background: "bg-transparent",
+        padding: "p-0 sm:p-0"
 
     },
     footer: {

@@ -141,6 +141,9 @@ importers:
       '@iconify-json/tabler':
         specifier: ^1.1.105
         version: 1.1.105
+      '@iconify-json/twemoji':
+        specifier: ^1.1.15
+        version: 1.1.15
       '@nuxt/ui':
         specifier: ^2.14.0
         version: 2.14.1(nuxt@3.10.1)(vite@5.1.4)(vue@3.4.15)
@@ -1606,6 +1609,12 @@ packages:
 
   /@iconify-json/tabler@1.1.105:
     resolution: {integrity: sha512-USJbNfa0fAHBLilxTKn70wkvFnopmfcomfpqD0ul/69uyZnonztHhyrbM8MI9Ua4eYXaPymoB7tuZ+Ionx6xfg==}
+    dependencies:
+      '@iconify/types': 2.0.0
+    dev: false
+
+  /@iconify-json/twemoji@1.1.15:
+    resolution: {integrity: sha512-ze2CAOwIWBKIP6ih6qMDItasVjRicktl2Qr3/ohZSMToAHm9z3Q6HCwE48eT0+D+uFpGBlNRQ22HHyE5izyhDg==}
     dependencies:
       '@iconify/types': 2.0.0
     dev: false

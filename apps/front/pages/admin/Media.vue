@@ -44,7 +44,7 @@ const FileInDefaultFolder = computed(() => file.value.filter(f => f.folder === "
         <div class="mt-8">
             <h2 class="text-3xl font-bold">Folder</h2>
             <div class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8">
-                <MediaCard v-for="f in FileInPagesFolder" :name="f.folder" :image="f.media[0].link"
+                <MediaCardFolder v-for="f in FileInPagesFolder" :name="f.folder" :image="f.media[0].link"
                     :link="f.media[0].link" />
             </div>
         </div>
