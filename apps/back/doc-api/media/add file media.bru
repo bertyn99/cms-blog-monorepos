@@ -1,0 +1,16 @@
+meta {
+  name: add file media
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/media
+  body: multipartForm
+  auth: none
+}
+
+body:multipart-form {
+  folder: 
+  medias: @file(C:\Users\berty\Downloads\692c5e3ebbf4daf7f6105e63a075f198bbd8c16a.webp)
+}
