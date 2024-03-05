@@ -1,5 +1,5 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import { inject } from '@adonisjs/fold'
+import { inject } from "@adonisjs/core";
 import MediaLibrairyService from '#services/media_librairy_service';
 
 @inject()

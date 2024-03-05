@@ -1,122 +1,110 @@
-import { inject } from "@adonisjs/core";
+import { inject } from '@adonisjs/core'
 import db from '@adonisjs/lucid/services/db'
-import Media from "#models/media";
+import Media from '#models/media'
 import app from '@adonisjs/core/services/app'
-import { MultipartFile } from "@adonisjs/core/bodyparser";
+import { MultipartFile } from '@adonisjs/core/bodyparser'
 import { cuid } from '@adonisjs/core/helpers'
 @inject()
 export default class MediaLibrairyService {
+  async saveFile(file: MultipartFile, folderPath: string | null): Promise<Media | any> {
+    try {
+      if (!file) {
+        throw new Error('File not found')
+      }
 
-    public async saveFile(file: MultipartFile, folderPath: string | null): Promise<Media | any> {
+      const media = new Media()
+      media.file_name = `${cuid()}_${file.clientName}`
+      media.mime_type = file.extname ?? 'default'
+      media.size = file.size
+      media.file_path = `uploads/`
+      console.log(media.file_path)
+      if (folderPath) {
+        media.folder = folderPath
+        media.file_path += `${media.folder}/`
+      } else {
+        media.folder = 'default'
+      }
 
-        try {
+      await file.move(app.publicPath(media.file_path), {
+        name: media.file_name,
+        overwrite: true,
+      })
+      media.file_path += media.file_name
 
-            if (!file) {
-                throw new Error('File not found')
-            }
+      if (file.state !== 'moved') {
+        throw new Error('File move operation failed')
+      }
 
-            const media = new Media()
-            media.file_name = `${cuid()}_${file.clientName}`
-            media.mime_type = file.extname ?? 'default'
-            media.size = file.size
-            media.file_path = `uploads/`
-            console.log(media.file_path)
-            if (folderPath) {
-                media.folder = folderPath
-                media.file_path += `${media.folder}/`
-            }
-            else {
-                media.folder = 'default'
-            }
+      await media.save()
 
-
-            await file.move(app.publicPath(media.file_path), {
-                name: media.file_name,
-                overwrite: true,
-            })
-            media.file_path += media.file_name
-
-            if (file.state !== 'moved') {
-                throw new Error('File move operation failed')
-            }
-
-            await media.save()
-
-            return media
-        } catch (error) {
-            return { error: error.message }
-        }
+      return media
+    } catch (error) {
+      return { error: error.message }
     }
-    public async getAllMediaGroupedByFolder(): Promise<Record<string, string[]>> {
-        const allMedia = await Media.query().select('folder', 'file_name')
+  }
+  async getAllMediaGroupedByFolder(): Promise<Record<string, string[]>> {
+    const allMedia = await Media.query().select('folder', 'file_name')
 
-        // Organize media into folders
-        const mediaByFolder = allMedia.reduce((result: any, media) => {
-            const folderPath = media.folder || 'default' // Use 'default' if folder is null or empty
-            const folders = folderPath.split('/') // Split nested folders
+    // Organize media into folders
+    const mediaByFolder = allMedia.reduce((result, media) => {
+      const folderPath = media.folder || 'default' // Use 'default' if folder is null or empty
+      const folders = folderPath.split('/') // Split nested folders
 
-            // Create nested structure
-            let currentFolder = result
-            folders.forEach(folder => {
-                currentFolder[folder] = currentFolder[folder] || {}
-                currentFolder = currentFolder[folder]
-            })
+      // Create nested structure
+      let currentFolder = result
+      folders.forEach((folder: any) => {
+        currentFolder[folder] = currentFolder[folder] || {}
+        currentFolder = currentFolder[folder]
+      })
 
-            // Add file information to current folder
-            currentFolder.files = currentFolder.files || []
-            currentFolder.files.push({
-                id: media.id,
-                name: media.file_name,
-                ext: media.file_name.split('.').pop(),
-                link: `/uploads/${media.folder || ''}/${media.file_name}`,
-            })
+      // Add file to current folder
+      currentFolder.files = currentFolder.files || []
+      currentFolder.files.push(media.file_name)
 
-            return result
-        }, {})
+      return result
+    }, {})
 
-        return mediaByFolder
+    return mediaByFolder
+  }
+  async getAllMedia(): Promise<Media[]> {
+    return Media.all()
+  }
+
+  async getMediaById(id: number): Promise<Media | null> {
+    return Media.find(id)
+  }
+
+  async updateMedia(id: number, data: HttpContextContract['request']): Promise<Media | null> {
+    const media = await Media.findOrFail(id)
+
+    media.merge({
+      file_name: data.input('file_name'),
+      mime_type: data.input('mime_type'),
+      size: data.input('size'),
+      folder: data.input('folder'),
+    })
+
+    await media.save()
+
+    return media
+  }
+
+  async deleteMedia(id: number): Promise<void> {
+    const media = await Media.findOrFail(id)
+
+    await media.delete()
+  }
+
+  async deleteFolderMedia(folder: string): Promise<void> {
+    try {
+      const media = await Media.query().where('folder', folder)
+
+      if (media.length === 0) {
+        throw new Error('Folder not found')
+      }
+      await Media.query().where('folder', folder).delete()
+    } catch (error) {
+      throw error
     }
-    public async getAllMedia(): Promise<Media[]> {
-        return Media.all()
-    }
-
-    public async getMediaById(id: number): Promise<Media | null> {
-        return Media.find(id)
-    }
-
-    public async updateMedia(id: number, data: HttpContextContract['request']): Promise<Media | null> {
-        const media = await Media.findOrFail(id)
-
-        media.merge({
-            file_name: data.input('file_name'),
-            mime_type: data.input('mime_type'),
-            size: data.input('size'),
-            folder: data.input('folder'),
-        })
-
-        await media.save()
-
-        return media
-    }
-
-    public async deleteMedia(id: number): Promise<void> {
-        const media = await Media.findOrFail(id)
-
-        await media.delete()
-    }
-
-    public async deleteFolderMedia(folder: string): Promise<void> {
-        try {
-            const media = await Media.query().where('folder', folder)
-
-            if (media.length === 0) {
-                throw new Error('Folder not found')
-            }
-            await Media.query().where('folder', folder).delete()
-        } catch (error) {
-            throw error
-        }
-
-    }
+  }
 }
-
