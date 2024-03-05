@@ -62,9 +62,14 @@ export default class MediaLibrairyService {
                 currentFolder = currentFolder[folder]
             })
 
-            // Add file to current folder
+            // Add file information to current folder
             currentFolder.files = currentFolder.files || []
-            currentFolder.files.push(media.file_name)
+            currentFolder.files.push({
+                id: media.id,
+                name: media.file_name,
+                ext: media.file_name.split('.').pop(),
+                link: `/uploads/${media.folder || ''}/${media.file_name}`,
+            })
 
             return result
         }, {})
