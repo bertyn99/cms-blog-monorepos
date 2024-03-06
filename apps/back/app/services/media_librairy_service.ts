@@ -46,28 +46,39 @@ export default class MediaLibrairyService {
     const allMedia = await Media.query().select('folder', 'file_name')
 
     // Organize media into folders
-    const mediaByFolder = allMedia.reduce((result, media) => {
+    const mediaByFolder: { folder: string; files: string[] }[] = []
+
+    allMedia.forEach((media) => {
       const folderPath = media.folder || 'default' // Use 'default' if folder is null or empty
-      const folders = folderPath.split('/') // Split nested folders
+      const folderKey = folderPath.split('/')[0] || 'default' // Use 'default' if no folder is specified
 
-      // Create nested structure
-      let currentFolder = result
-      folders.forEach((folder: any) => {
-        currentFolder[folder] = currentFolder[folder] || {}
-        currentFolder = currentFolder[folder]
-      })
-
-      // Add file to current folder
-      currentFolder.files = currentFolder.files || []
-      currentFolder.files.push(media.file_name)
-
-      return result
-    }, {})
+      // Check if the folder is already in the result array
+      const folderIndex = mediaByFolder.findIndex((item) => item.folder === folderKey)
+      if (folderIndex !== -1) {
+        // Add the file to the existing folder
+        mediaByFolder[folderIndex].files.push(media.file_name)
+      } else {
+        // Create a new folder object
+        mediaByFolder.push({ folder: folderKey, files: [media.file_name] })
+      }
+    })
 
     return mediaByFolder
   }
-  async getAllMedia(): Promise<Media[]> {
-    return Media.all()
+
+  async getAllMedia(queryParams: { folder?: string; orderBy?: string }): Promise<Media[]> {
+    let query = Media.query()
+
+    if (queryParams.folder) {
+      query = query.where('folder', queryParams.folder)
+    }
+
+    if (queryParams.orderBy) {
+      const [column, direction] = queryParams.orderBy.split(':')
+      query = query.orderBy(column, direction as 'asc' | 'desc')
+    }
+
+    return query
   }
 
   async getMediaById(id: number): Promise<Media | null> {
