@@ -1,0 +1,15 @@
+meta {
+  name: list of media
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/media?folder=default
+  body: none
+  auth: none
+}
+
+query {
+  folder: default
+}
