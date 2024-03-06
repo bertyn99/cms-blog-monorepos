@@ -4,7 +4,7 @@
         <UIcon name="i-twemoji-file-folder" class="w-56 h-56 mb-6" />
         <template #footer>
 
-            {{ name }}
+            {{ name }}- {{ numberOfFiles }}files
         </template>
     </UCard>
 
@@ -13,13 +13,12 @@
 <script setup>
 defineProps({
     name: String,
-    image: String,
-    link: String,
+    numberOfFiles: Number,
 })
 
 
 const customStyle = ref({
-    base: 'relative overflow-hidden max-w-56',
+    base: 'relative overflow-hidden col-span-2 sm:col-span-1',
     body: {
         base: "h-48  overflow-hidden",
         padding: "p-0 sm:p-0",

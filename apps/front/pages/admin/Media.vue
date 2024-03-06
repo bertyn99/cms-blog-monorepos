@@ -3,40 +3,23 @@ definePageMeta({
     name: "Media Librairy",
 });
 
-const file = ref([
-    {
-        folder: "pages",
-        media: [{
-            name: "toto.png",
-            type: "file",
-            size: "1.2kb",
-            date: "2021-10-10",
-            link: "/media/pages/toto.png"
-        }]
-    },
-    {
-        folder: "articles",
-        media: [{
-            name: "tata.png",
-            type: "file",
-            size: "1.2kb",
-            date: "2021-10-10",
-            link: "/media/articles/toto.png"
-        }]
-    },
-    {
-        folder: "default",
-        media: [{
-            name: "titi.png",
-            type: "file",
-            size: "1.2kb",
-            date: "2021-10-10",
-            link: "/media/default/toto.png"
-        }]
-    }
-])
-const FileInPagesFolder = computed(() => file.value.filter(f => f.folder !== "default"))
-const FileInDefaultFolder = computed(() => file.value.filter(f => f.folder === "default"))
+
+const { $api } = useNuxtApp();
+const mediaRepo = mediaRepository($api);
+const headers = useRequestHeaders(['cookie'])
+const { data: folders } = await useAsyncData('list-folder', () => mediaRepo.getAllFolder(headers)
+)
+
+
+
+
+const FileInPagesFolder = computed(() => folders.value ? folders.value.filter(f => f.folder !== "default") : [])
+
+
+const { data: files } = await useAsyncData('list-files', () => mediaRepo.getAllFile(headers)
+)
+
+const fileInDefaultFolder = computed(() => files.value ? files.value : [])
 </script>
 
 <template>
@@ -44,14 +27,12 @@ const FileInDefaultFolder = computed(() => file.value.filter(f => f.folder === "
         <div class="mt-8">
             <h2 class="text-3xl font-bold">Folder</h2>
             <div class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8">
-                <MediaCardFolder v-for="f in FileInPagesFolder" :name="f.folder" :image="f.media[0].link"
-                    :link="f.media[0].link" />
+                <MediaCardFolder v-for="f in FileInPagesFolder" :name="f.folder" />
             </div>
         </div>
         <UDivider />
         <div class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8">
-            <MediaCard v-for="f in FileInDefaultFolder" :name="f.folder" :image="f.media[0].link"
-                :link="f.media[0].link" />
+            <MediaCardFile v-for="f in fileInDefaultFolder" :file="f" />
         </div>
     </UContainer>
 
