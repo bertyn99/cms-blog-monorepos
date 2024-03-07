@@ -1,11 +1,28 @@
 meta {
-  name: add new translation to a post
+  name: add new post
   type: http
   seq: 1
 }
 
 post {
-  url: {{baseUrl}}/posts/1
-  body: none
+  url: {{baseUrl}}/posts
+  body: json
   auth: none
+}
+
+body:json {
+  {
+    "locale": "us",
+    "title": "Test Title",
+    "content": "This is a test content",
+    "description": "This is a test description",
+    "slug": "test-title",
+    "seo": {
+      "metaTitle": "meta SEO Title",
+      "metaDescription": "meta SEO Description",
+      "metaKeywords": "meta, SEO",
+      "structuredData":null
+     
+    }
+  }
 }

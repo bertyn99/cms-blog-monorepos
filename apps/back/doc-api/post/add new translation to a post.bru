@@ -6,6 +6,24 @@ meta {
 
 post {
   url: {{baseUrl}}/posts/1
-  body: none
+  body: json
   auth: none
+}
+
+body:json {
+  {
+    "postId":"6",
+    "locale": "fr",
+    "title": "Test Title",
+    "content": "This is a test content",
+    "description": "This is a test description",
+    "slug": "test-titre",
+    "seo": {
+      "metaTitle": "meta SEO Title",
+      "metaDescription": "meta SEO Description",
+      "metaKeywords": "meta, SEO",
+      "structuredData":null
+     
+    }
+  }
 }
