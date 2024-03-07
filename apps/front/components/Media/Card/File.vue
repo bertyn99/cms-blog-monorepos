@@ -1,16 +1,28 @@
 <template>
     <UCard :ui="customStyle">
+        <template #header>
+            <div class="flex justify-between">
+                <UCheckbox name="selection" />
+
+                <UButton @click="isOpen = true" icon="i-heroicons-pencil-square" variant="soft"
+                    class="hidden group-hover:block" />
+            </div>
+        </template>
         <div class="h-48  overflow-hidden">
             <img :src="getUrlImg" :alt="getNameParsed" class="w-full h-full object-cover" />
         </div>
 
         <template #footer>
 
-            <span> {{ getNameParsed }}</span> <span class="bg-gray-600 p-1"> {{ mediaType }}</span>
+            <div class="flex flex-col"><span> {{ getNameParsed }}</span>
+                <span class="text-gray-700 text-xs"> {{ convertSize(file.size) }}</span>
+            </div> <span class="bg-gray-600 px-2  inline-flex items-center rounded-lg h-6"> {{ mediaType }}</span>
 
 
         </template>
     </UCard>
+
+    <MediaModalFile v-model="isOpen" :file="file" />
 </template>
 
 <script setup lang="ts">
@@ -27,16 +39,23 @@ const { file } = defineProps<{
     }
 }>()
 
+const isOpen = ref(false)
 const customStyle = ref({
-    base: ' overflow-hidden col-span-2 sm:col-span-1',
+    base: 'relative overflow-hidden col-span-2 sm:col-span-1 group',
     body: {
-        base: "h-48  overflow-hidden",
+        base: "h-48  overflow-hidden z-1",
         padding: "p-0 sm:p-0",
+    },
+    header: {
+        base: 'absolute inset-x-0 top-0 z-90',
+        background: "bg-transparent",
+        padding: "p-1 sm:p-2"
     },
 
     footer: {
-        base: "flex",
+        base: "flex justify-between items-center",
         background: "bg-slate-800/50",
+        padding: 'py-2'
     }
 })
 
@@ -68,4 +87,11 @@ const getUrlImg = computed(() => {
     const config = useRuntimeConfig();
     return config.public.api + '/' + file.filePath
 })
+
+const convertSize = (size) => {
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
+    if (size === 0) return '0 Byte'
+    const i = parseInt(Math.floor(Math.log(size) / Math.log(1024)).toString());
+    return Math.round(size / Math.pow(1024, i), 2) + ' ' + sizes[i]
+}
 </script>
