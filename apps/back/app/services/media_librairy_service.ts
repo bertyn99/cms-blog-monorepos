@@ -42,18 +42,28 @@ export default class MediaLibrairyService {
       return { error: error.message }
     }
   }
-  async getAllMediaGroupedByFolder(): Promise<Record<string, string[]>> {
-    const allMedia = await Media.query().select('folder', 'file_name')
-
+  async getAllMediaGroupedByFolder(filter:any): Promise<Record<string, string[]>> {
+    const allMedia = await Media.query().select('folder', 'file_name').if(filter.folder,
+      (query) => {
+        query.where('folder', 'LIKE', `${filter.folder}/%`).andWhere('folder', '!=', filter.folder)// if condition met
+      } 
+    )
+  
     // Organize media into folders
     const mediaByFolder: { folder: string; files: string[] }[] = []
 
     allMedia.forEach((media) => {
       const folderPath = media.folder || 'default' // Use 'default' if folder is null or empty
-      const folderKey = folderPath.split('/')[0] || 'default' // Use 'default' if no folder is specified
+
+       // Check if the folder is the specified parent folder
+       if (folderPath === filter.folder) {
+        return; // Skip the parent folder
+      }
+      const relativeFolder = filter.folder ? folderPath.substring(filter.folder.length + 1) : folderPath
+      const folderKey = relativeFolder.split('/')[0] || 'default' // Use 'default' if no folder is specified
 
       // Check if the folder is already in the result array
-      const folderIndex = mediaByFolder.findIndex((item) => item.folder === folderKey)
+      const folderIndex = mediaByFolder.findIndex(item => item.folder === folderKey)
       if (folderIndex !== -1) {
         // Add the file to the existing folder
         mediaByFolder[folderIndex].files.push(media.file_name)

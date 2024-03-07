@@ -5,7 +5,11 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/media/folder
+  url: {{baseUrl}}/media/folder?folder=pages
   body: none
   auth: none
+}
+
+query {
+  folder: pages
 }

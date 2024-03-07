@@ -59,7 +59,8 @@ export default class MediaController {
   }
 
   async listFolder({ request }: HttpContext) {
-    const media = await this.mediaService.getAllMediaGroupedByFolder()
+    const query = request.qs()
+    const media = await this.mediaService.getAllMediaGroupedByFolder(query)
 
     return media
   }
