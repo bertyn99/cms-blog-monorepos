@@ -12,6 +12,9 @@ export default defineNuxtConfig({
       api: process.env.NUXT_PUBLIC_API_URL
     }
   },
+  vue: {
+    propsDestructure: true
+  },
   extends: ['@nuxt/ui-pro'],
   modules: ["nuxt-tiptap-editor", '@nuxt/ui'],
   tiptap: {

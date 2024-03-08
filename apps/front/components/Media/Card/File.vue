@@ -2,7 +2,7 @@
     <UCard :ui="customStyle">
         <template #header>
             <div class="flex justify-between">
-                <UCheckbox name="selection" />
+                <UCheckbox name="selection" v-model="file.isSelected" />
 
                 <UButton @click="isOpen = true" icon="i-heroicons-pencil-square" variant="soft"
                     class="hidden group-hover:block" />
@@ -26,18 +26,33 @@
 </template>
 
 <script setup lang="ts">
-const { file } = defineProps<{
+import type { PropType } from 'vue'
+
+
+export type File = {
+    id: number,
+    filePath: string,
+    fileName: string,
+    mimeType: string,
+    folder: string,
+    size: number,
+    isSelected: boolean,
+    createdAt: string,
+    updatedAt: string
+}
+const { file } = defineProps({
     file: {
-        id: number,
-        filePath: string,
-        fileName: string,
-        mimeType: string,
-        folder: string,
-        size: number,
-        createdAt: string,
-        updatedAt: string
+        type: Object as PropType<File>,
+        required: true
     }
-}>()
+
+})
+
+const emit = defineEmits(['selected:file']);
+watch(file, (newFile) => {
+    emit('selected:file', newFile);
+});
+
 
 const isOpen = ref(false)
 const customStyle = ref({
@@ -76,7 +91,7 @@ const mediaType = computed(() => {
 
 
 const getNameParsed = computed(() => {
-    const nameWithoutCUID = file.fileName.split('_')[1]
+    const nameWithoutCUID = file?.fileName?.split('_')[1] ?? 'fileName'
 
     //remove the extension
     return nameWithoutCUID.split('.')[0]

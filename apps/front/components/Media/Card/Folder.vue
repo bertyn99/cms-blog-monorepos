@@ -2,9 +2,14 @@
     <UCard :ui="customStyle">
         <template #header>
             <div class="flex justify-between">
-                <UCheckbox name="selection" />
+                <UCheckbox name="selection" v-model="selected" />
 
-                <UButton @click="" icon="i-heroicons-eye" variant="soft" class="hidden group-hover:block" />
+                <UButton :to="{
+        name: 'Media Librairy',
+        query: {
+            folder: parent + '/' + name,
+        }
+    }" icon="i-heroicons-eye" variant="soft" class="hidden group-hover:block" />
             </div>
         </template>
         <UIcon name="i-twemoji-file-folder" class="w-56 h-56 mb-6" />
@@ -22,7 +27,12 @@
 defineProps({
     name: String,
     numberOfFiles: Number,
+    parent: String
+
 })
+
+const selected = defineModel('selected')
+
 
 const isOpen = ref(false)
 const customStyle = ref({
