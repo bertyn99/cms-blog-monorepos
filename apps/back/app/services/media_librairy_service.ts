@@ -4,6 +4,9 @@ import Media from '#models/media'
 import app from '@adonisjs/core/services/app'
 import { MultipartFile } from '@adonisjs/core/bodyparser'
 import { cuid } from '@adonisjs/core/helpers'
+import * as fs from 'fs';
+import { promisify } from 'util';
+
 @inject()
 export default class MediaLibrairyService {
   async saveFile(file: MultipartFile, folderPath: string | null): Promise<Media | any> {
@@ -45,7 +48,7 @@ export default class MediaLibrairyService {
   async getAllMediaGroupedByFolder(filter:any): Promise<Record<string, string[]>> {
     const allMedia = await Media.query().select('folder', 'file_name').if(filter.folder,
       (query) => {
-        query.where('folder', 'LIKE', `${filter.folder}/%`).andWhere('folder', '!=', filter.folder)// if condition met
+        query.where('folder', 'LIKE', `%${filter.folder}/%`).andWhere('folder', '!=', filter.folder)// if condition met
       } 
     )
   
@@ -110,10 +113,29 @@ export default class MediaLibrairyService {
     return media
   }
 
-  async deleteMedia(id: number): Promise<void> {
-    const media = await Media.findOrFail(id)
+  async deleteMedia(arrId: number[]): Promise<void> {
+    try {
+      //remove the file from the disk
+      arrId.forEach(async (id) => {
+        const media = await Media.find(id)
+        if (media) {
+          const formatPath=media.file_path=='default'?'':media.file_path
+          const path=app.publicPath(formatPath)
+          console.log(path)
+          console.log(await this.fileExists(path))
+          //check if the file exists
+         if(await this.fileExists(path)){
+          await this.removeFile(path)
+          await media.delete()
+         }
+        }
+      })
+    } catch (error) {
+      
+    }
+    
 
-    await media.delete()
+
   }
 
   async deleteFolderMedia(folder: string): Promise<void> {
@@ -126,6 +148,29 @@ export default class MediaLibrairyService {
       await Media.query().where('folder', folder).delete()
     } catch (error) {
       throw error
+    }
+  }
+
+  async removeFile(filePath: string): Promise<void> {
+    const unlinkAsync = promisify(fs.unlink);
+
+    try {
+      await unlinkAsync(filePath);
+      console.log('File was deleted');
+    } catch (err) {
+      console.error('Error deleting file:', err);
+    }
+  }
+
+  
+  async fileExists(filePath: string): Promise<boolean> {
+    const accessAsync = promisify(fs.access);
+
+    try {
+      await accessAsync(filePath, fs.constants.F_OK);
+      return true;
+    } catch (err) {
+      return false;
     }
   }
 }

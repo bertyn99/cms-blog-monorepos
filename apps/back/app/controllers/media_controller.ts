@@ -75,10 +75,11 @@ export default class MediaController {
   async show({ request, params }: HttpContext) {}
 
   async destroy({ request, params }: HttpContext) {
-    const mediaId = params.id
-    const media = await this.mediaService.deleteMedia(mediaId)
+    const mediaIds = await request.input('fileIds')
 
-    return media
+    const media = await this.mediaService.deleteMedia(mediaIds) 
+
+   return []
   }
 
   async destroyFolder({ request }: HttpContext) {

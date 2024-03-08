@@ -13,8 +13,8 @@ export default function authRoutes() {
       router
         .group(() => {
           router.post('/', [MediaController, 'store'])
-          router.delete('/:id', [MediaController, 'destroy'])
-          router.delete('/', [MediaController, 'destroyFolder'])
+          router.delete('/', [MediaController, 'destroy'])
+      /*     router.delete('/', [MediaController, 'destroyFolder']) */
         })
         .use(middleware.auth())
     })
