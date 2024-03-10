@@ -98,7 +98,6 @@ export default class PostService {
     }
     async deletePostById(id: number) { }
     async getPostById(id: number) {
-        console.log('id', id)
         const post = await Post.query()
             .where('id', id)
             .preload('translations')

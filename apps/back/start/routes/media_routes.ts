@@ -31,7 +31,7 @@ export default function authRoutes() {
     }
 
     const absolutePath = app.makePath('public/uploads', normalizedPath)
-    console.log(absolutePath, 'absolutePath')
+   
     return response.download(absolutePath)
   })
 }

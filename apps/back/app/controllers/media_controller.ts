@@ -16,7 +16,7 @@ export default class MediaController {
 
     if (!medias.length) {
       return response.badRequest({
-        message: 'No file uploaded',
+        msg: 'No file uploaded',
       })
     }
 
@@ -41,19 +41,18 @@ export default class MediaController {
       for (const media of medias) {
         if (media.isValid) {
           const saveFile = await this.mediaService.saveFile(media, folder)
-          console.log(saveFile)
         }
       }
 
       //if all files state are moved
       if (medias.every((media) => media.state === 'moved')) {
         return response.created({
-          message: 'Files uploaded successfully',
+          msg: 'Files uploaded successfully',
         })
       }
     } catch (error) {
       return response.badRequest({
-        message: error.message,
+        msg: error.message,
       })
     }
   }
@@ -88,12 +87,12 @@ export default class MediaController {
         const folderMedia = await this.mediaService.deleteAListofFolderMedia(folders)
       }
 
-     
+      return response.status(200).send({ msg: 'Media deleted successfully' });
     } catch (error) {
       response.status(500).send({ error: 'An error occurred while deleting media' });
     }
   
-    return response.status(200).send({ message: 'Media deleted successfully' });
+  
   
   }
 

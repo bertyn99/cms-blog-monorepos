@@ -20,7 +20,7 @@ export default class MediaLibrairyService {
       media.mime_type = file.extname ?? 'default'
       media.size = file.size
       media.file_path = `uploads/`
-      console.log(media.file_path)
+   
       if (folderPath) {
         media.folder = folderPath
         media.file_path += `${media.folder}/`
@@ -121,8 +121,7 @@ export default class MediaLibrairyService {
         if (media) {
           const formatPath=media.file_path=='default'?'':media.file_path
           const path=app.publicPath(formatPath)
-          console.log(path)
-          console.log(await this.fileExists(path))
+       
           //check if the file exists
          if(await this.fileExists(path)){
           await this.removeFile(path)
