@@ -1,0 +1,16 @@
+meta {
+  name: add file media
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/media
+  body: multipartForm
+  auth: none
+}
+
+body:multipart-form {
+  folder: 
+  medias: @file(C:\Users\berty\Downloads\Hello summer.png|C:\Users\berty\Downloads\WhatsApp Image 2023-11-05 à 16.29.34_b57248e9.jpg)
+}

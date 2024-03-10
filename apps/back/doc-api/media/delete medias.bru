@@ -1,0 +1,18 @@
+meta {
+  name: delete medias
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}/media
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "fileIds":[],
+    "folders":["pop"]
+  }
+}

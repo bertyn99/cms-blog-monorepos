@@ -1,0 +1,30 @@
+meta {
+  name: update post Translation
+  type: http
+  seq: 1
+}
+
+put {
+  url: {{baseUrl}}/posts/1
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "postId": "6",
+    "locale": "fr",
+    "title": "Titre",
+    "content": "Ceci est un contenu",
+    "description": "Ceci est une description",
+    "slug": "test-titre",
+    "seo": {
+      "metaTitle": "meta SEO hhhhe",
+      "metaDescription": "meta SEO Dcription",
+      "metaKeywords": "meta, SEO",
+      "structuredData": {
+       
+      }
+    }
+  }
+}

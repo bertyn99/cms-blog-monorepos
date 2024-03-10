@@ -9,8 +9,9 @@ tmp
 .env.production.local
 .env.development.local
 
-# Frontend assets compiled code
-public/assets
+# Frontend uploads files
+public/uploads
+
 
 # Build tools specific
 npm-debug.log
