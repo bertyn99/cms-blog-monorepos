@@ -137,15 +137,45 @@ export default class MediaLibrairyService {
 
 
   }
+  async deleteAListofFolderMedia(arrFolder: string[]): Promise<void> {
+     try {
+       arrFolder.forEach(async (folder) => {
+          await this.deleteFolderMedia(folder)
+       })
+     } catch (error) {
+        throw error
+     }
+  }
+
 
   async deleteFolderMedia(folder: string): Promise<void> {
     try {
-      const media = await Media.query().where('folder', folder)
+      //get all the media in the folder
+      const medias = await Media.query().where('folder', folder)
 
-      if (media.length === 0) {
+      //check if the folder exists or if it has any media
+      if (medias.length === 0) {
         throw new Error('Folder not found')
       }
-      await Media.query().where('folder', folder).delete()
+      medias.forEach(async (media) => {
+        //create the path to the file
+        const formatPath=media.file_path=='default'?'':media.file_path
+        const path=app.publicPath(formatPath)
+
+        //check if the file exists
+       if(await this.fileExists(path)){
+        await this.removeFile(path)
+        await media.delete()
+       }
+      })
+
+
+      //remove the folder from the disk
+      const folderPath = app.publicPath(`uploads/${folder}`)
+      if(await this.fileExists(folderPath)){
+        await this.removeAFolder(folderPath)
+      }
+
     } catch (error) {
       throw error
     }
@@ -159,6 +189,16 @@ export default class MediaLibrairyService {
       console.log('File was deleted');
     } catch (err) {
       console.error('Error deleting file:', err);
+    }
+  }
+  async removeAFolder(folderPath: string): Promise<void> {
+    const rmdirAsync = promisify(fs.rmdir);
+
+    try {
+      await rmdirAsync(folderPath, { recursive: true });
+      console.log('Folder was deleted');
+    } catch (err) {
+      console.error('Error deleting folder:', err);
     }
   }
 

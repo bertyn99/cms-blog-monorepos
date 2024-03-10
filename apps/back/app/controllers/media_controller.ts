@@ -72,14 +72,29 @@ export default class MediaController {
     return media
   }
 
-  async show({ request, params }: HttpContext) {}
+  async show({ request, params,response }: HttpContext) {}
 
-  async destroy({ request, params }: HttpContext) {
+  async destroy({ request, params,response }: HttpContext) {
     const mediaIds = await request.input('fileIds')
+    const folders = await request.input('folders')
 
-    const media = await this.mediaService.deleteMedia(mediaIds) 
+    try {
+          if (mediaIds.length > 0) {
+        //delete media
+        const media = await this.mediaService.deleteMedia(mediaIds) 
+      }
+      if (folders.length > 0) {
+        //delete folder
+        const folderMedia = await this.mediaService.deleteAListofFolderMedia(folders)
+      }
 
-   return []
+     
+    } catch (error) {
+      response.status(500).send({ error: 'An error occurred while deleting media' });
+    }
+  
+    return response.status(200).send({ message: 'Media deleted successfully' });
+  
   }
 
   async destroyFolder({ request }: HttpContext) {
