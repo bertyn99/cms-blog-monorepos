@@ -18,18 +18,18 @@
 
             <div>
                 <UButton size="sm" icon="i-heroicons-trash-solid" color="red" label="Delete" variant="soft"
-                    @click="deleteMedia" />
+                    @click="deleteMedia" :loading="loading" />
             </div>
         </div>
 
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const selected = defineModel('selected', { type: Boolean, default: false })
 const orderBy = defineModel('orderBy', { type: String, default: 'date:asc' })
 
-const { selectedFolder, selectedFile } = defineProps({
+const { selectedFolder, selectedFile, refresh } = defineProps({
     selectedFolder: {
         type: Array,
         default: []
@@ -37,6 +37,10 @@ const { selectedFolder, selectedFile } = defineProps({
     selectedFile: {
         type: Array,
         default: []
+    },
+    refresh: {
+        type: Function,
+        default: () => { }
     }
 })
 const orderByOptions = [
@@ -52,18 +56,39 @@ const orderByOptions = [
 const { $api } = useNuxtApp();
 const mediaRepo = mediaRepository($api);
 const headers = useRequestHeaders(['cookie'])
-
+const loading = ref(false)
 const displaySelectText = computed(() => selectedFolder.length > 0 || selectedFile.length > 0)
 
 
-const deleteMedia = () => {
-    if (selectedFolder.length > 0) {
-        console.log('delete folder')
+const deleteMedia = async () => {
+    if (selectedFolder.length > 0 || selectedFile.length > 0) {
+        const data: { fileIds: [], folders: [] } = {
+            fileIds: selectedFile.map(f => f.id),
+            folders: selectedFolder.map(f => f.folder)
+        }
+
+        try {
+            loading.value = true
+            const res = await mediaRepo.deleteFileAndFolder(data, headers)
+
+            if (res.msg) {
+                loading.value = false
+                //TODO fix bug invalidation cache
+                /*      clearNuxtData('list-folder-') */
+                refresh()
+
+            }
+        } catch (error) {
+            loading.value = false
+            console.log('error', error)
+            //throw notification error
+        }
+
+
+
     }
 
-    if (selectedFile.length > 0) {
 
-    }
 }
 
 

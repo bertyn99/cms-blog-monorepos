@@ -13,7 +13,7 @@ const headers = useRequestHeaders(['cookie'])
 watch(folderName, (folderName, previous) => {
 
 })
-const { data: folders } = await useAsyncData(`list-folder-${folderName.value !== '' ? folderName.value : 'default'}`, () => mediaRepo.getAllFolder(folderName.value, headers)
+const { data: folders, refresh: refreshFolder } = await useAsyncData(`list-folder-${folderName.value !== '' ? folderName.value : 'default'}`, () => mediaRepo.getAllFolder(folderName.value, headers)
     , { watch: [folderName] })
 
 
@@ -21,7 +21,7 @@ const { data: folders } = await useAsyncData(`list-folder-${folderName.value !==
 
 
 
-const { data: files } = await useAsyncData(`list-files-${folderName.value !== '' ? folderName.value : 'default'}`, () => mediaRepo.getAllFile(folderName.value, headers)
+const { data: files, refresh: refreshFile } = await useAsyncData(`list-files-${folderName.value !== '' ? folderName.value : 'default'}`, () => mediaRepo.getAllFile(folderName.value, headers)
     , { watch: [folderName] }
 )
 
@@ -36,6 +36,10 @@ const { dataArrWithSelector: fileArrWithSelector, selectedElement: selectedFile 
 
 
 
+const refresfData = () => {
+    refreshFolder()
+    refreshFile()
+}
 const orderBy = ref('date:asc')
 const searchQuery = ref('')
 
@@ -71,7 +75,8 @@ const updateSelectedFile = (value) => {
     </DashboardNavbar>
 
     <UContainer class="space-y-8">
-        <MediaFilter v-model:orderBy="orderBy" :selectedFolder="selectedFolder" :selectedFile="selectedFile" />
+        <MediaFilter v-model:orderBy="orderBy" :selectedFolder="selectedFolder" :selectedFile="selectedFile"
+            :refresh="refresfData" />
 
 
         <div class="mt-8">

@@ -49,7 +49,7 @@ const { file } = defineProps({
 })
 
 const emit = defineEmits(['selected:file']);
-watch(file, (newFile) => {
+watch(() => file, (newFile) => {
     emit('selected:file', newFile);
 });
 

@@ -22,4 +22,25 @@ export const mediaRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => ({
     };
     return fetch("/media/folder", mergeOptions);
   },
+
+  async uploadFile(data: FormData, options?: any) {
+    const mergeOptions = {
+      credentials: "include",
+      method:"POST",
+      ...options,
+    };
+    return fetch("/media", mergeOptions);
+  },
+
+  async deleteFileAndFolder(data: FormData, options?: any) {
+    console.log(options);
+    const mergeOptions = {
+      method:"DELETE", 
+      credentials: "include",
+      ...options,
+      body: JSON.stringify(data),
+      
+    };
+    return fetch("/media", mergeOptions);
+  },
 });
