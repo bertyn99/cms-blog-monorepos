@@ -11,6 +11,8 @@ export default function postRoutes() {
             router.post('/', [PostController, 'store'])
 
             router.put('/:id', [PostController, 'update'])
+            router.delete('/:id', [PostController,'destroy'])
+            router.delete('/:id/locale/:locale', [PostController,'destroyTranslation'])
 
         }).use(middleware.auth())
 
