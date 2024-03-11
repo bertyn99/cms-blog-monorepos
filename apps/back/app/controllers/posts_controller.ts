@@ -31,7 +31,7 @@ export default class PostsController {
   /**
    * Handle form submission for the create action
    */
-  async store({ params, request }: HttpContext) {
+  async store({ params, request, response }: HttpContext) {
 
     const data = request.all()
     try {
@@ -49,7 +49,7 @@ export default class PostsController {
 
     }
     catch (error) {
-      return { error: error }
+      return response.status(error.status).send({ error: error.message })
     }
 
 
@@ -68,7 +68,7 @@ export default class PostsController {
       const postContent = await this.postService.getContentPostById(id, local);
       return postContent;
     } catch (error) {
-      return response.notFound({ error: error })
+      return response.status(error.status).send({ error: error.message })
     }
   }
 
@@ -83,7 +83,7 @@ export default class PostsController {
       return post;
     } catch (error) {
 
-      return response.notFound({ error: error.message })
+      return response.status(error.status).send({ error: error.message })
     }
   }
 
@@ -91,7 +91,7 @@ export default class PostsController {
   /**
    * Update individual record of postTranslation
    */
-  async update({ params, request }: HttpContext) {
+  async update({ params, request, response }: HttpContext) {
     const data = request.all();
     try {
       const { id } = params;
@@ -100,7 +100,7 @@ export default class PostsController {
       const post = await this.postService.updatePostTranslationById(id, updatedPostData, seo);
       return post;
     } catch (error) {
-      return { error: error }
+      return response.status(error.status).send({ error: error.message })
     }
   }
 
@@ -113,7 +113,7 @@ export default class PostsController {
       const post = await this.postService.deletePostById(id);
       return response.ok({ message: 'Post deleted' });
     } catch (error) {
-      return response.internalServerError({ error: error })
+      return response.status(error.status).send({ error: error.message })
     }
   }
 
@@ -123,7 +123,7 @@ export default class PostsController {
       const post = await this.postService.deletePostTranslationById(id, locale);
       return response.ok({ message: `Post ${id} Translation ${locale} deleted` });
     } catch (error) {
-      return response.internalServerError({ error: error })
+      return response.status(error.status).send({ error: error.message })
     }
   }
 

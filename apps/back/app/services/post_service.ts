@@ -3,6 +3,7 @@ import db from '@adonisjs/lucid/services/db'
 import Post from "#models/post";
 import PostTranslation from '#models/post_translation';
 import PostSeo from '#models/post_seo';
+import { Exception } from "@adonisjs/core/exceptions";
 @inject()
 export default class PostService {
     protected trx: any;
@@ -162,7 +163,10 @@ export default class PostService {
             .first();
 
         if (!postTranslation) {
-            throw new Error('Post Translation not found');
+            throw new Exception('Post Translation not found', {
+                code: 'POST_TRANSLATION_NOT_FOUND',
+                status: 404
+            });
         }
 
         return postTranslation;
