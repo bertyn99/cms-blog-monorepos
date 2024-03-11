@@ -19,6 +19,9 @@ adonisrc.ts: The configuration file for AdonisJS.
 - `database/`: Contains files related to database setup and migrations.
 - `start/`: Contains files that are run at the start of the application.
 - `tests/`: Contains test files.
+- `doc-api/`: Contains api endpoint test files in .bru (use bruno => oss equivalent to postman)
+
+Each file and directory has a specific role in the application. For example, the `app/services/media_librairy_service.ts` file appears to define a service for handling media library operations.
 
 ### Frontend (apps/front)
 The frontend application is a Nuxt.js application. It includes:
@@ -39,6 +42,29 @@ Each application has its own package.json for managing dependencies, and there i
 
 ## Installation
 
+### Setting Environment Variables
+You need to set up environment variables for your application. These are usually stored in a .env file in the root of your backend application directory. If a .env.example file exists, you can copy it to create your .env file:
+
+```bash cp .env.example .env```
+
+Then, open the .env file and fill in the appropriate values for each variable.
+
+### Running Migrations
+Before running the server, you need to run database migrations. This sets up your database schema according to the definitions in your migration files. In an AdonisJS application, you can run migrations using the following command:
+
+```bash cp .env.example .env```
+
+### Launching the Server
+Finally, you can start the server. If you're in a development environment, you can use the following command:
+
+```pnpm  dev```
+
+Or, if you're in a production environment, you can use:
+
+```pnpm  dev```
+
+Remember to run these commands in the root directory of your backend application.
+
 ## To do
 
 ### Multilinguisme
@@ -50,11 +76,11 @@ Each application has its own package.json for managing dependencies, and there i
 - [ ] Implémenter les données structurées pour le référencement.
 
 ### Bibliothèque Média
-- [ ] Développer un système de gestion des ressources visuelles et multimédias.
+- [X] Développer un système de gestion des ressources visuelles et multimédias.
 - [ ] Intégrer la possibilité d'ajouter facilement des médias aux articles.
 
 ### États de Publication
-- [ ] Ajouter la possibilité de créer des brouillons d'articles.
+- [X] Ajouter la possibilité de créer des brouillons d'articles.
 - [ ] Mettre en place la planification des publications futures.
 
 ### Interface Administrateur
