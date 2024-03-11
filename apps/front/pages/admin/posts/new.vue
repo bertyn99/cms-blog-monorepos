@@ -87,9 +87,17 @@ async function onSubmit() {
         title: 'Post created',
       })
     }
-  } catch (error) {
+  } catch (error: any) {
     loading.value = false
     console.error(error)
+    toast.add({
+      id: `post-created-error`,
+      icon: 'i-heroicons-x-circle',
+      title: 'Error creating post',
+      color: 'red',
+      description: error.message,
+
+    })
   }
 }
 

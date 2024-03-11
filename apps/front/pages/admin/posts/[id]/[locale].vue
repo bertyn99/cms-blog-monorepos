@@ -5,8 +5,8 @@
       <h1 class="flex-1">{{ post?.title }}</h1>
 
       <div class="space-x-5">
-        <UButton label="Publish" @click="publishPost" variant="soft" />
-        <UButton type="submit" label="Save" @click="onSubmit" />
+        <UButton label="Publish" @click="publishPost" variant="soft" :loading="pending || loading" />
+        <UButton type="submit" label="Save" @click="onSubmit" :loading="pending || loading" />
       </div>
     </div>
     <div class="flex gap-4">
@@ -50,6 +50,10 @@ const form = ref<Form<Post>>({} as Form<Post>);
 const route = useRoute();
 const idPost = computed(() => route.params.id);
 const localePost = computed(() => route.params.locale);
+
+
+const toast = useToast()
+const loading = ref(false)
 const { $api } = useNuxtApp();
 const post = ref<Post>({
   id: 0,
@@ -95,7 +99,30 @@ async function onSubmit() {
   const dataForm = await form.value.validate()
 
   if (dataForm) {
-    const response = await postRepo.updatePost(Number(dataForm.postId), dataForm)
+    try {
+      loading.value = true
+      const response = await postRepo.updatePost(Number(dataForm.postId), dataForm)
+
+      if (response) {
+        loading.value = false
+        toast.add({
+          id: `post-updated-${response.postId}`,
+          icon: 'i-heroicons-check-circle',
+          color: 'green',
+          title: 'Post updated',
+        })
+      }
+    } catch (error: any) {
+      loading.value = false
+      toast.add({
+        id: `post-updated-error`,
+        icon: 'i-heroicons-x-circle',
+        title: 'Error updating the post',
+        color: 'red',
+        description: error.message,
+
+      })
+    }
 
   }
 }
