@@ -65,8 +65,9 @@ const isOpen = ref(false)
 const selectedLocale = ref(lang[0])
 
 const { $api } = useNuxtApp();
+const toast = useToast()
 const postRepo = postRepository($api);
-
+const loading = ref(false)
 
 const columns = [{
     key: 'id',
@@ -91,7 +92,7 @@ const columns = [{
 const selectedPost = ref([])
 
 const headers = useRequestHeaders(['cookie'])
-const { data, error, pending } = await useAsyncData(`list-${selectedLocale.value.locale
+const { data, error, pending, refresh } = await useAsyncData(`list-${selectedLocale.value.locale
     }`, () => postRepo.getAllPostBylocal({
         headers,
         params: {
@@ -102,8 +103,31 @@ const { data, error, pending } = await useAsyncData(`list-${selectedLocale.value
 })
 
 const deletePost = async (id: string) => {
-    await postRepo.deletePost(Number(id))
-    console.log('delete post')
+    try {
+        loading.value = true
+        const res = await postRepo.deletePost(Number(id))
+        if (res) {
+            loading.value = false
+            toast.add({
+                id: `post-deleted-${id}`,
+                color: 'green',
+                icon: 'i-heroicons-check-circle',
+                title: 'Post deleted',
+            })
+            await refresh()
+
+        }
+    } catch (error: any) {
+        loading.value = false
+        toast.add({
+            id: `post-deleted-error`,
+            color: 'red',
+            icon: 'i-heroicons-x-circle',
+            title: 'Error deleting post',
+            description: error.message,
+        })
+    }
+
 }
 
 
@@ -118,8 +142,5 @@ const formatedDataArray = computed(() => {
 });
 
 
-const createPost = () => {
-    console.log('create post')
-}
 
 </script>
