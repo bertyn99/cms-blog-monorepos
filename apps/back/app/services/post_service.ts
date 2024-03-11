@@ -107,7 +107,7 @@ export default class PostService {
             await this.trx.rollback();
             return { error: error.message }
         }
-     }
+    }
 
     async deletePostTranslationById(id: number, locale: string) {
         this.trx = await db.transaction();
@@ -127,10 +127,16 @@ export default class PostService {
         }
     }
     async getPostById(id: number) {
+
         const post = await Post.query()
             .where('id', id)
             .preload('translations')
             .first();
+
+        if (!post) {
+            throw new Error('Post not found');
+        }
+
         return post;
 
     }
@@ -154,6 +160,11 @@ export default class PostService {
             .where('locale', locale)
             .preload('seo')
             .first();
+
+        if (!postTranslation) {
+            throw new Error('Post Translation not found');
+        }
+
         return postTranslation;
     }
 
