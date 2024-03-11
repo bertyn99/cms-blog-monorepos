@@ -5,7 +5,7 @@
 
       <div class="space-x-5">
         <UButton label="Publish" @click="publishPost" variant="soft" disabled />
-        <UButton type="submit" label="Save" @click="onSubmit" />
+        <UButton type="submit" label="Save" @click="onSubmit" :loading="loading" />
       </div>
     </div>
     <div class="flex gap-4">
@@ -59,6 +59,8 @@ const newPost = reactive<NewPost>({
 })
 const { $api } = useNuxtApp();
 
+const toast = useToast()
+const loading = ref(false)
 const postRepo = postRepository($api);
 
 const publishPost = async () => {
@@ -71,15 +73,31 @@ async function onSubmit() {
   const data = await form.value.validate()
   const headers = useRequestHeaders(['cookie'])
   console.log(data);
-
+  loading.value = true
   try {
     const post = await postRepo.createPost(newPost, headers)
 
+
     if (post) {
+      loading.value = false
       navigateTo(`/admin/posts/${post.postId}/${post.locale}`)
+      toast.add({
+        id: `post-created-${post.id}`,
+        icon: 'i-heroicons-check-circle',
+        title: 'Post created',
+      })
     }
-  } catch (error) {
+  } catch (error: any) {
+    loading.value = false
     console.error(error)
+    toast.add({
+      id: `post-created-error`,
+      icon: 'i-heroicons-x-circle',
+      title: 'Error creating post',
+      color: 'red',
+      description: error.message,
+
+    })
   }
 }
 
