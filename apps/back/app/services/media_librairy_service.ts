@@ -190,7 +190,7 @@ export default class MediaLibrairyService {
       console.error('Error deleting file:', err);
     }
   }
-  async removeAFolder(folderPath: string): Promise<void> {
+  private async removeAFolder(folderPath: string): Promise<void> {
     const rmdirAsync = promisify(fs.rmdir);
 
     try {
@@ -202,7 +202,7 @@ export default class MediaLibrairyService {
   }
 
   
-  async fileExists(filePath: string): Promise<boolean> {
+  private async fileExists(filePath: string): Promise<boolean> {
     const accessAsync = promisify(fs.access);
 
     try {
@@ -210,6 +210,32 @@ export default class MediaLibrairyService {
       return true;
     } catch (err) {
       return false;
+    }
+  }
+
+  private async moveDiskFolder(oldFolderPath: string, newFolderPath: string): Promise<void> {
+    // Ensure the old folder exists on disk
+    const oldFolderExists = await this.fileExists(oldFolderPath);
+
+    if (oldFolderExists) {
+      // Rename the old folder to the new path
+      await fs.promises.rename(oldFolderPath, newFolderPath);
+    }
+  }
+
+  private async moveFile(oldFilePath: string, newFilePath: string): Promise<void> {
+    // Ensure the old file exists on disk
+    const oldFileExists = await this.fileExists(oldFilePath);
+
+    if (oldFileExists) {
+      // Move the old file to the new path
+      const newFolder =app.publicPath(newFilePath)
+
+      // Ensure the new folder exists, create it if not
+      await fs.promises.mkdir(newFolder, { recursive: true });
+
+      // Move the file
+      await fs.promises.rename(oldFilePath, newFilePath);
     }
   }
 }
