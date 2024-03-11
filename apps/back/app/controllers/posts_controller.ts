@@ -97,5 +97,25 @@ export default class PostsController {
   /**
    * Delete record
    */
-  async destroy({ params }: HttpContext) { }
+  async destroy({ params,response }: HttpContext) {
+      try {
+          const { id } = params;
+          const post = await this.postService.deletePostById(id);
+          return response.ok({message: 'Post deleted'});
+      } catch (error) {
+        return response.internalServerError({error: error})
+      }
+   }
+
+  async destroyTranslation({ params,response }: HttpContext) {
+    try {
+      const { id, locale } = params;
+      console.log(id, locale);
+      const post = await this.postService.deletePostTranslationById(id, locale);
+      return response.ok({message: `Post ${id} Translation ${locale} deleted`});
+    } catch (error) {
+      
+    }
+  }
+
 }

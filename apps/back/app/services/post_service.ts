@@ -96,7 +96,36 @@ export default class PostService {
             return { error: error.message }
         }
     }
-    async deletePostById(id: number) { }
+    async deletePostById(id: number) {
+        this.trx = await db.transaction();
+        try {
+            const post = await Post.findOrFail(id);
+            await post.useTransaction(this.trx).delete();
+            await this.trx.commit();
+            return { message: 'Post deleted' };
+        } catch (error) {
+            await this.trx.rollback();
+            return { error: error.message }
+        }
+     }
+
+    async deletePostTranslationById(id: number, locale: string) {
+        this.trx = await db.transaction();
+        try {
+            //find the postTranslation with a post id and locale
+            const postTranslation = await this.getPostTranslationByLocale(id, locale);
+            if (!postTranslation) {
+                return { error: 'Post Translation not found' }
+            }
+            //delete the post translation
+            await postTranslation.useTransaction(this.trx).delete();
+            await this.trx.commit();
+            return { message: 'Post Translation deleted' };
+        } catch (error) {
+            await this.trx.rollback();
+            return { error: error.message }
+        }
+    }
     async getPostById(id: number) {
         const post = await Post.query()
             .where('id', id)
