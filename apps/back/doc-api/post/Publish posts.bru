@@ -1,0 +1,17 @@
+meta {
+  name: Publish posts
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{baseUrl}}/posts/publish
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "postIds":[19]
+  }
+}

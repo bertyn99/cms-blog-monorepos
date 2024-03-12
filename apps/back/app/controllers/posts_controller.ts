@@ -60,6 +60,19 @@ export default class PostsController {
   }
 
   /**
+   * Publish one or multiple post
+   */
+  async publish({ request, response }: HttpContext) {
+    const postIds = request.input('postIds');
+    if (!postIds) return response.status(400).send({ error: 'postIds is required' });
+    try {
+      const post = await this.postService.publishPost(postIds);
+      return response.ok({ message: `Post ${postIds.join(', ')} Published` });
+    } catch (error) {
+      return response.status(error.status).send({ error: error.message })
+    }
+  }
+  /**
    * Return Post ConTent
    */
   async showPostContent({ params, response }: HttpContext) {
