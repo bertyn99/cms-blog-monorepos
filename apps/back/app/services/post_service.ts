@@ -6,6 +6,7 @@ import PostSeo from '#models/post_seo';
 import { Exception } from "@adonisjs/core/exceptions";
 @inject()
 export default class PostService {
+
     protected trx: any;
     constructor() {
 
@@ -97,6 +98,21 @@ export default class PostService {
             return { error: error.message }
         }
     }
+
+    async publishPost(postIds: []) {
+        try {
+            return await Post.query().whereIn('id', postIds).update({ status: 'Published' });
+
+        } catch (error) {
+            console.log(error);
+            throw new Exception('Error publishing post', {
+                code: 'PUBLISH_ERROR',
+                status: 500
+            })
+        }
+    }
+
+
     async deletePostById(id: number) {
         this.trx = await db.transaction();
         try {
