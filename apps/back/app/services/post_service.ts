@@ -204,7 +204,9 @@ export default class PostService {
 
     async getAllPosts(filters: any = {}, page: number = 1, limit: number = 10) {
 
-        const postTranslations = await PostTranslation.query().paginate(page, limit);
+
+
+        const postTranslations = await PostTranslation.query().if(filters.locale, (query) => query.where('locale', filters.locale), () => { }).paginate(page, limit);
 
         return postTranslations.toJSON();
 
