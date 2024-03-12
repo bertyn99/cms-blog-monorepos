@@ -48,7 +48,7 @@ const fields = [
 ]; */
 
 const { $api } = useNuxtApp();
-
+const loading = ref(false);
 const config = useRuntimeConfig();
 const userRepo = userRepository($api);
 const { fetchAndSetUser, loggedIn } = useUserSession();
@@ -62,14 +62,18 @@ if (loggedIn.value) {
 
 async function onSubmit(form: any) {
   try {
+    loading.value = true;
     const data = await userRepository($api).login(form.email, form.password);
 
     if (data) {
+      loading.value = false;
       fetchAndSetUser();
+
     }
     navigateTo("/admin");
 
   } catch (error) {
+    loading.value = false;
     console.log('error', error);
   }
 

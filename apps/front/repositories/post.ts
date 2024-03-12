@@ -11,10 +11,11 @@ export const postRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => ({
     return fetch<PostList>("/posts/", mergeOptions);
   },
 
-  async deletePost(id: number) {
-    return fetch<Post>(`/posts/${id}`, {
+  async deletePost(id: number, locale: string, headers?: any) {
+    return fetch<{ message: string }>(`/posts/${id}/locale/${locale}`, {
       method: "DELETE",
       credentials: "include",
+      ...headers,
     });
   },
   async createPost(post: Post, headers: any) {
