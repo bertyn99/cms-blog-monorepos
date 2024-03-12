@@ -13,8 +13,11 @@
     </DashboardNavbar>
 
 
-    <div class="flex p-5">
+    <div class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700 gap-4">
         <UInputMenu v-model="selectedLocale" :options="lang" />
+
+        <UButton @click="deleteSelectedPosts" color="red" icon="i-heroicons-trash-20-solid"
+            v-if="selectedPost.length > 0" />
     </div>
 
     <UTable :columns="columns" :rows="formatedDataArray" v-model="selectedPost" :loading="pending"
@@ -27,7 +30,7 @@
                     <span class="sr-only">Edit</span>
                 </UButton>
 
-                <UButton @click="deletePost(row.postId)" class="bg-red-500" icon="i-heroicons-trash-20-solid"><span
+                <UButton @click="deletePost(row.postId)" color="red" icon="i-heroicons-trash-20-solid"><span
                         class="sr-only">Delete</span>
                 </UButton>
             </div>
@@ -91,6 +94,7 @@ const columns = [{
 
 const selectedPost = ref([])
 
+
 const headers = useRequestHeaders(['cookie'])
 const { data, error, pending, refresh } = await useAsyncData(`list-${selectedLocale.value.locale
     }`, () => postRepo.getAllPostBylocal({
@@ -131,6 +135,34 @@ const deletePost = async (id: string) => {
 
 }
 
+const deleteSelectedPosts = async () => {
+    try {
+        loading.value = true
+        const res = await postRepo.deletePost(selectedPost.value, selectedLocale.value.locale)
+        console.log(res)
+        if (res) {
+            loading.value = false
+            toast.add({
+                id: `post-deleted-${selectedPost.value}`,
+                color: 'green',
+                icon: 'i-heroicons-check-circle',
+                title: res.message,
+            })
+            await refresh()
+
+        }
+    } catch (error: any) {
+        loading.value = false
+        toast.add({
+            id: `post-deleted-error`,
+            color: 'red',
+            icon: 'i-heroicons-x-circle',
+            title: 'Error deleting post',
+            description: error.message,
+        })
+    }
+
+}
 
 const formatedDataArray = computed(() => {
     if (data.value && data.value?.data.length > 0) {

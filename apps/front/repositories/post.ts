@@ -18,6 +18,14 @@ export const postRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => ({
       ...headers,
     });
   },
+  async deleteListOfPost(arrIds: number, locale: string, headers?: any) {
+    return fetch<{ message: string }>(`/posts/locale/${locale}`, {
+      method: "DELETE",
+      credentials: "include",
+      ...headers,
+      body: JSON.stringify({ postIds: arrIds }),
+    });
+  },
   async createPost(post: Post, headers: any) {
     return fetch<Post>("/posts/", {
       method: "POST",
