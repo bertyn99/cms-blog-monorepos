@@ -27,7 +27,7 @@
                     <span class="sr-only">Edit</span>
                 </UButton>
 
-                <UButton @click="deletePost(row.id)" class="bg-red-500" icon="i-heroicons-trash-20-solid"><span
+                <UButton @click="deletePost(row.postId)" class="bg-red-500" icon="i-heroicons-trash-20-solid"><span
                         class="sr-only">Delete</span>
                 </UButton>
             </div>
@@ -105,14 +105,15 @@ const { data, error, pending, refresh } = await useAsyncData(`list-${selectedLoc
 const deletePost = async (id: string) => {
     try {
         loading.value = true
-        const res = await postRepo.deletePost(Number(id))
+        const res = await postRepo.deletePost(Number(id), selectedLocale.value.locale)
+        console.log(res)
         if (res) {
             loading.value = false
             toast.add({
                 id: `post-deleted-${id}`,
                 color: 'green',
                 icon: 'i-heroicons-check-circle',
-                title: 'Post deleted',
+                title: res.message,
             })
             await refresh()
 
