@@ -127,6 +127,36 @@ export default class PostService {
             return { error: error.message }
         }
     }
+
+    async deleteListOfPostTranslation(postIds: number[], locale: string) {
+        this.trx = await db.transaction();
+
+        try {
+            //find the postTranslation with a post id and locale
+            const postTranslation = await PostTranslation.query({ client: this.trx })
+                .whereIn('id', postIds)
+                .where('locale', locale)
+                .delete();
+
+            console.log(postTranslation);
+            if (postTranslation.length === 0 || postTranslation[0] == 0) {
+
+                throw new Exception('Post Translation not found', {
+                    code: 'POST_TRANSLATION_NOT_FOUND',
+                    status: 404
+
+                })
+            }
+            //delete the post translation
+
+            await this.trx.commit();
+            return { message: 'Post Translation deleted' };
+        } catch (error) {
+            await this.trx.rollback();
+            throw error
+        }
+    }
+
     async getPostById(id: number) {
 
         const post = await Post.query()
@@ -173,22 +203,10 @@ export default class PostService {
     }
 
     async getAllPosts(filters: any = {}, page: number = 1, limit: number = 10) {
-        const postsPagination = await Post.query()
-            .preload('translations', (translationQuery) => {
-                translationQuery.if(filters.locale, (query) => query.where('locale', filters.locale), () => { })
-            })
-            .paginate(page, limit);
 
+        const postTranslations = await PostTranslation.query().paginate(page, limit);
 
-        const tmp = postsPagination.toJSON()
-        const transformedData = tmp.data.map(post => post.translations.map(translation => ({
-            ...translation.toJSON(),
-            status: post.status
-        })));
-        return {
-            ...tmp,
-            data: transformedData.flat()
-        };
+        return postTranslations.toJSON();
 
     }
 }

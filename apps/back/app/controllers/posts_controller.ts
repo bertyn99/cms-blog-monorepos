@@ -17,8 +17,8 @@ export default class PostsController {
  */
   async index({ params, request }: HttpContext) {
     //get the local from the request
-    const filter = request.qs();
-    const posts = await this.postService.getAllPosts(filter);
+    const { page, limit, ...filter } = request.qs();
+    const posts = await this.postService.getAllPosts(filter, page, limit);
     return posts;
 
   }
@@ -125,6 +125,20 @@ export default class PostsController {
     } catch (error) {
       return response.status(error.status).send({ error: error.message })
     }
+  }
+
+  async destroyListOfTranslations({ params, request, response }: HttpContext) {
+
+    const { postIds } = request.all();
+    const { locale } = params;
+    try {
+      const postDeleted = await this.postService.deleteListOfPostTranslation(postIds, locale);
+      return response.ok({ message: `Post ${postIds.join(',')} Translation ${locale} deleted` });
+    }
+    catch (error) {
+      return response.status(error.status).send({ error: error.message })
+    }
+
   }
 
 }
