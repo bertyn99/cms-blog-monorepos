@@ -1,0 +1,17 @@
+meta {
+  name: remove a list post Translation
+  type: http
+  seq: 7
+}
+
+delete {
+  url: {{baseUrl}}/posts/locale/fr
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "postIds":[22,21]
+  }
+}
