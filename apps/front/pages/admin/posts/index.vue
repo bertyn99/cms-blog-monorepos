@@ -136,9 +136,11 @@ const deletePost = async (id: string) => {
 }
 
 const deleteSelectedPosts = async () => {
+
+    const listOfSelectedPost: number[] = selectedPost.value.map(item => item.id)
     try {
         loading.value = true
-        const res = await postRepo.deletePost(selectedPost.value, selectedLocale.value.locale)
+        const res = await postRepo.deleteListOfPost(listOfSelectedPost, selectedLocale.value.locale)
         console.log(res)
         if (res) {
             loading.value = false
