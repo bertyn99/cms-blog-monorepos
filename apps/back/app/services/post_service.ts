@@ -99,9 +99,10 @@ export default class PostService {
         }
     }
 
-    async publishPost(postIds: []) {
+    async publishPost(postIds: number[]) {
         try {
-            return await Post.query().whereIn('id', postIds).update({ status: 'Published' });
+        
+            return await PostTranslation.query().whereIn('id', postIds).update({ status: 'Published' });
 
         } catch (error) {
             console.log(error);
@@ -112,6 +113,18 @@ export default class PostService {
         }
     }
 
+    async unpublishPost(postIds: []) {
+        try {
+            return await PostTranslation.query().whereIn('id', postIds).update({ status: 'Draft' });
+
+        } catch (error) {
+            console.log(error);
+            throw new Exception('Error unpublishing post', {
+                code: 'UNPUBLISH_ERROR',
+                status: 500
+            })
+        }
+    }
 
     async deletePostById(id: number) {
         this.trx = await db.transaction();
@@ -220,11 +233,12 @@ export default class PostService {
 
     async getAllPosts(filters: any = {}, page: number = 1, limit: number = 10) {
 
+        const postTranslations = await PostTranslation.query()
+            .if(filters.locale, (query) => query.where('locale', filters.locale), () => { })
+            .orderBy('id', 'asc')
+            .paginate(page, limit);
 
-
-        const postTranslations = await PostTranslation.query().if(filters.locale, (query) => query.where('locale', filters.locale), () => { }).paginate(page, limit);
-
-        return postTranslations.toJSON();
+            return postTranslations.toJSON();
 
     }
 }
