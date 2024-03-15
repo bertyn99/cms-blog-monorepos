@@ -5,7 +5,7 @@
       <h1 class="flex-1">{{ post?.title }}</h1>
 
       <div class="space-x-5">
-        <UButton label="Publish" @click="publishPost" variant="soft" :loading="pending || loading" />
+        <UButton :label="labelTogglePublish" @click="togglePublishing" variant="soft" :loading="pending || loading" />
         <UButton type="submit" label="Save" @click="onSubmit" :loading="pending || loading" />
       </div>
     </div>
@@ -51,7 +51,7 @@ const route = useRoute();
 const idPost = computed(() => route.params.id);
 const localePost = computed(() => route.params.locale);
 
-
+const labelTogglePublish = computed(() => post.value.status === "Published" as PostStatus.PUBLISHED ? 'Unpublish' : 'Publish')
 const toast = useToast()
 const loading = ref(false)
 const { $api } = useNuxtApp();
@@ -89,10 +89,61 @@ if (!pending.value && data?.value !== null) {
 
 }
 
+const togglePublishing = async () => {
+  console.log('togglePublishing', post.value.status)
+  if (post.value.status == "Published" as PostStatus.PUBLISHED) {
+    await unpublishPost()
+  } else {
+    await publishPost()
+  }
+
+}
+
 const publishPost = async () => {
-  /* const response = await postRepo.publishPost(Number(idPost.value), String(localePost.value))
-    console.log(response) */
-};
+  try {
+    loading.value = true
+    const response = await postRepo.publishPost([Number(post.value.id)], String(localePost.value))
+
+    if (response.message) {
+      loading.value = false
+      post.value.status = "Published" as PostStatus.PUBLISHED
+    }
+  } catch (error: any) {
+    loading.value = false
+    toast.add({
+      id: `post-publish-error`,
+      icon: 'i-heroicons-x-circle',
+      title: 'Error publishing the post',
+      color: 'red',
+      description: error.message,
+
+    })
+
+  }
+}
+
+
+const unpublishPost = async () => {
+  try {
+    loading.value = true
+    const response = await postRepo.unpublishPost([Number(post.value.id)])
+
+    if (response.message) {
+      loading.value = false
+      post.value.status = "Draft" as PostStatus.DRAFT
+    }
+  } catch (error: any) {
+    loading.value = false
+    toast.add({
+      id: `post-publish-error`,
+      icon: 'i-heroicons-x-circle',
+      title: 'Error publishing the post',
+      color: 'red',
+      description: error.message,
+
+    })
+  }
+}
 
 async function onSubmit() {
   // Do something with data

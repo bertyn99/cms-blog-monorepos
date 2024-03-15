@@ -11,20 +11,15 @@ export const postRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => ({
     return fetch<PostList>("/posts/", mergeOptions);
   },
 
-  async deletePost(id: number, locale: string, headers?: any) {
-    return fetch<{ message: string }>(`/posts/${id}/locale/${locale}`, {
-      method: "DELETE",
+  async getPostContentByLocale(id: number, locale: string, headers?: any) {
+    const mergeOptions: any = {
+      method: "GET",
+      headers,
       credentials: "include",
-      ...headers,
-    });
-  },
-  async deleteListOfPost(arrIds: number[], locale: string, headers?: any) {
-    return fetch<{ message: string }>(`/posts/locale/${locale}`, {
-      method: "DELETE",
-      credentials: "include",
-      ...headers,
-      body: JSON.stringify({ postIds: arrIds }),
-    });
+    };
+
+    /*       console.log(mergeOptions); */
+    return fetch<Post>(`/posts/${id}/${locale}`, mergeOptions);
   },
   async createPost(post: Post, headers: any) {
     return fetch<Post>("/posts/", {
@@ -40,15 +35,39 @@ export const postRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => ({
       body: JSON.stringify(post),
     });
   },
-
-  async getPostContentByLocale(id: number, locale: string, headers?: any) {
-    const mergeOptions: any = {
-      method: "GET",
-      headers,
+  async publishPost(arrIds: number[], headers?: any) {
+    return fetch<{ message: string }>(`/posts/publish`, {
+      method: "POST",
       credentials: "include",
-    };
-
-    /*       console.log(mergeOptions); */
-    return fetch<Post>(`/posts/${id}/${locale}`, mergeOptions);
+      ...headers,
+      body: JSON.stringify({ postIds: arrIds }),
+    });
   },
+  async unpublishPost(arrIds: number[], headers?: any) {
+    return fetch<{ message: string }>(`/posts/unpublish`, {
+      method: "POST",
+      credentials: "include",
+      ...headers,
+      body: JSON.stringify({ postIds: arrIds }),
+    });
+  
+  },
+
+  async deletePost(id: number, locale: string, headers?: any) {
+    return fetch<{ message: string }>(`/posts/${id}/locale/${locale}`, {
+      method: "DELETE",
+      credentials: "include",
+      ...headers,
+    });
+  },
+  async deleteListOfPost(arrIds: number[], locale: string, headers?: any) {
+    return fetch<{ message: string }>(`/posts/locale/${locale}`, {
+      method: "DELETE",
+      credentials: "include",
+      ...headers,
+      body: JSON.stringify({ postIds: arrIds }),
+    });
+  },
+  
+ 
 });
