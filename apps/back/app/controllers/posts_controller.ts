@@ -72,6 +72,22 @@ export default class PostsController {
       return response.status(error.status).send({ error: error.message })
     }
   }
+
+  /**
+   * Unpublish one or multiple post
+   */
+  async unpublish({ request, response }: HttpContext) {
+    const postIds = request.input('postIds');
+    if (!postIds) return response.status(400).send({ error: 'postIds is required' });
+    try {
+      const post = await this.postService.unpublishPost(postIds);
+      return response.ok({ message: `Post ${postIds.join(', ')} Unpublished` });
+    } catch (error) {
+      return response.status(error.status).send({ error: error.message })
+    }
+  }
+
+
   /**
    * Return Post ConTent
    */
