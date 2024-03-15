@@ -11,8 +11,14 @@ export default class extends BaseSchema {
       table.string('title').notNullable()
       table.string('slug').nullable().unique() // Optional, for translated slugs
       table.string('description').nullable()
+      table.enu('status', ['Draft', 'Scheduled', 'Published'], {
+        useNative: true,
+        enumName: 'post_translation_status',
+        existingType: false,
+      })
+      .defaultTo('Draft')
+      table.dateTime('published_at').nullable()
       table.text('content').notNullable()
-      table.timestamp('scheduled_for').nullable()
       table.timestamp('created_at')
       table.timestamp('updated_at')
     })
