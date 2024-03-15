@@ -15,6 +15,7 @@ export default function postRoutes() {
             router.delete('/:id/locale/:locale', [PostController, 'destroyTranslation'])
             router.delete('/locale/:locale', [PostController, 'destroyListOfTranslations'])
             router.post('/publish', [PostController, 'publish'])
+            router.post('/unpublish', [PostController, 'unpublish'])
         }).use(middleware.auth())
 
         router.get('/', [PostController, 'index'])
