@@ -8,7 +8,6 @@ import {
 @inject()
 export default class PostsController {
   constructor(private postService: PostService) {
-
   }
 
 
@@ -22,11 +21,6 @@ export default class PostsController {
     return posts;
 
   }
-
-  /**
-   * Display form to create a new record
-   */
-  async create({ }: HttpContext) { }
 
   /**
    * Handle form submission for the create action
@@ -51,8 +45,6 @@ export default class PostsController {
     catch (error) {
       return response.status(error.status).send({ error: error.message })
     }
-
-
 
     /* const post = await this.postService.createPost(data, data.local);
     return post; */
@@ -87,6 +79,19 @@ export default class PostsController {
     }
   }
 
+  /**
+   * Schedule Post Translation
+   */
+  async scheduleTranslation({  request, response }: HttpContext) {
+    const data = request.all();
+    try {
+      const { postIds, publishAt } = data;
+      const post = await this.postService.schedulePost(postIds,publishAt);
+      return post;
+    } catch (error) {
+      return response.status(error.status).send({ error: error.message })
+    }
+  }
 
   /**
    * Return Post ConTent
