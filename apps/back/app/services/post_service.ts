@@ -1,10 +1,11 @@
-import { inject } from "@adonisjs/core";
+
 import db from '@adonisjs/lucid/services/db'
 import Post from "#models/post";
 import PostTranslation from '#models/post_translation';
 import PostSeo from '#models/post_seo';
 import { Exception } from "@adonisjs/core/exceptions";
-@inject()
+import { DateTime } from "luxon";
+
 export default class PostService {
 
     protected trx: any;
@@ -125,7 +126,44 @@ export default class PostService {
             })
         }
     }
+    async schedulePost(postIds: number[], publishAt: string) {
+        try {
+            return await PostTranslation.query().whereIn('id', postIds).update({ status: 'Scheduled', publishedAt: publishAt });
 
+        } catch (error) {
+            console.log(error);
+            throw new Exception('Error scheduling post', {
+                code: 'SCHEDULE_ERROR',
+                status: 500
+            })
+        }
+    }
+    async updateScheduledPosts() {
+        try { 
+            // Get all scheduled posts
+            const scheduledPosts = await PostTranslation.query().where('status', 'Scheduled')
+            console.log(scheduledPosts.length);
+            // Iterate through scheduled posts
+            await Promise.all(scheduledPosts.map(async (postTranslation) => {
+                const publishAt = postTranslation.publishedAt;
+                const now = DateTime.now();
+
+                // Check if the publishAt time has passed
+                if (publishAt && publishAt <= now) {
+                    // Update status to 'Published'
+                    await postTranslation.merge({ status: 'Published' }).save();
+                }
+            }));
+
+            return scheduledPosts;
+        } catch (error) {
+            console.error(error);
+            throw new Exception('Error scheduling posts', {
+                code: 'SCHEDULE_ERROR',
+                status: 500
+            });
+        }
+    }
     async deletePostById(id: number) {
         this.trx = await db.transaction();
         try {
