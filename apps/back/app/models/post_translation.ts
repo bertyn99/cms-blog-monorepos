@@ -34,7 +34,11 @@ export default class PostTranslation extends BaseModel {
   @column()
   declare status: PostStatus
 
-  @column.dateTime({})
+  @column.dateTime({
+    serialize: (value: DateTime | null) => {
+      return value ? value.setZone('utc').toFormat("yyyy-MM-dd'T'HH:mm") : value
+    },
+  })
   declare publishedAt: DateTime | null
 
   @hasOne(() => PostSeo)
