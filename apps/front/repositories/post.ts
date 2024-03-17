@@ -11,6 +11,13 @@ export const postRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => ({
     return fetch<PostList>("/posts/", mergeOptions);
   },
 
+  async getPost(id: number, headers?: any) {
+    return fetch<{ id: Number, translations: Post[] }>(`/posts/${id}`, {
+      method: "GET",
+      headers,
+    });
+  },
+
   async getPostContentByLocale(id: number, locale: string, headers?: any) {
     const mergeOptions: any = {
       method: "GET",
@@ -50,7 +57,7 @@ export const postRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => ({
       ...headers,
       body: JSON.stringify({ postIds: arrIds }),
     });
-  
+
   },
 
   async deletePost(id: number, locale: string, headers?: any) {
@@ -68,6 +75,6 @@ export const postRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => ({
       body: JSON.stringify({ postIds: arrIds }),
     });
   },
-  
- 
+
+
 });
