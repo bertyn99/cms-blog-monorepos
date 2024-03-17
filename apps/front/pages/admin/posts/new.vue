@@ -30,7 +30,23 @@
           <!-- <UButton type="submit" label="Save" /> -->
         </UForm>
       </div>
-      <div class="shadow-md rounded-sm bg-slate-50/25 basis-1/4">dd</div>
+      <div class="shadow-md rounded-sm bg-slate-50/25 basis-1/4 flex flex-col px-2.5 py-4 gap-3">
+
+
+        <span id="additional-information"
+          class=" font-semibold uppercase align-baseline border-0 text-slate-500 text-[.65rem] ">Internationalization</span>
+        <UDivider />
+        <UFormGroup label="Locale">
+          <USelectMenu v-model="selectedLocale" :options="localTranslationState">
+            <template #option="{ option }">
+              <span
+                :class="[option.exist ? 'bg-green-400' : 'bg-gray-200', 'inline-block h-2 w-2 flex-shrink-0 rounded-full']"
+                aria-hidden="true" />
+              <span class="truncate">{{ option.label }}</span>
+            </template>
+          </USelectMenu>
+        </UFormGroup>
+      </div>
     </div>
   </UContainer>
 </template>
@@ -46,13 +62,15 @@ definePageMeta({
 const form = ref<Form<Post>>({} as Form<NewPost>);
 const route = useRoute();
 
-
+const { locale } = route.query
+const localePost = computed(() => (locale ?? 'fr') as string)
+const { selectedLocale, setSelectedLocale, localTranslationState } = await useLocale()
 const newPost = reactive<NewPost>({
   title: '',
   description: '',
   slug: '',
   content: '',
-  locale: 'fr',
+  locale: localePost.value,
   published: false,
   status: "Draft" as PostStatus.DRAFT,
   seo: null
