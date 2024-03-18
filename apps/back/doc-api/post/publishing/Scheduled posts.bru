@@ -1,0 +1,18 @@
+meta {
+  name: Scheduled posts
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/posts/schedule
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "postIds":[19],
+    "publishAt":""
+  }
+}

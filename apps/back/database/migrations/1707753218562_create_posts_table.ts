@@ -6,13 +6,6 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id').primary()
-      table
-        .enu('status', ['Draft', 'Scheduled', 'Published'], {
-          useNative: true,
-          enumName: 'post_status',
-          existingType: false,
-        })
-        .defaultTo('Draft')
       table.timestamp('created_at')
       table.timestamp('updated_at')
     })

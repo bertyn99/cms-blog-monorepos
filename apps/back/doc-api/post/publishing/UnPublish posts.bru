@@ -1,0 +1,17 @@
+meta {
+  name: Unpublish posts
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/posts/unpublish
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "postIds":[19]
+  }
+}

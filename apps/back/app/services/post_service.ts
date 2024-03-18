@@ -1,10 +1,13 @@
-import { inject } from "@adonisjs/core";
+
 import db from '@adonisjs/lucid/services/db'
 import Post from "#models/post";
 import PostTranslation from '#models/post_translation';
 import PostSeo from '#models/post_seo';
-@inject()
+import { Exception } from "@adonisjs/core/exceptions";
+import { DateTime } from "luxon";
+
 export default class PostService {
+
     protected trx: any;
     constructor() {
 
@@ -96,12 +99,142 @@ export default class PostService {
             return { error: error.message }
         }
     }
-    async deletePostById(id: number) { }
+
+    async publishPost(postIds: number[]) {
+        try {
+        
+            return await PostTranslation.query().whereIn('id', postIds).update({ status: 'Published' });
+
+        } catch (error) {
+            console.log(error);
+            throw new Exception('Error publishing post', {
+                code: 'PUBLISH_ERROR',
+                status: 500
+            })
+        }
+    }
+
+    async unpublishPost(postIds: []) {
+        try {
+            return await PostTranslation.query().whereIn('id', postIds).update({ status: 'Draft' });
+
+        } catch (error) {
+            console.log(error);
+            throw new Exception('Error unpublishing post', {
+                code: 'UNPUBLISH_ERROR',
+                status: 500
+            })
+        }
+    }
+    async schedulePost(postIds: number[], publishAt: string) {
+        try {
+            return await PostTranslation.query().whereIn('id', postIds).update({ status: 'Scheduled', publishedAt: publishAt });
+
+        } catch (error) {
+            console.log(error);
+            throw new Exception('Error scheduling post', {
+                code: 'SCHEDULE_ERROR',
+                status: 500
+            })
+        }
+    }
+    async updateScheduledPosts() {
+        try { 
+            // Get all scheduled posts
+            const scheduledPosts = await PostTranslation.query().where('status', 'Scheduled')
+            console.log(scheduledPosts.length);
+            // Iterate through scheduled posts
+            await Promise.all(scheduledPosts.map(async (postTranslation) => {
+                const publishAt = postTranslation.publishedAt;
+                const now = DateTime.now();
+
+                // Check if the publishAt time has passed
+                if (publishAt && publishAt <= now) {
+                    // Update status to 'Published'
+                    await postTranslation.merge({ status: 'Published' }).save();
+                }
+            }));
+
+            return scheduledPosts;
+        } catch (error) {
+            console.error(error);
+            throw new Exception('Error scheduling posts', {
+                code: 'SCHEDULE_ERROR',
+                status: 500
+            });
+        }
+    }
+    async deletePostById(id: number) {
+        this.trx = await db.transaction();
+        try {
+            const post = await Post.findOrFail(id);
+            await post.useTransaction(this.trx).delete();
+            await this.trx.commit();
+            return { message: 'Post deleted' };
+        } catch (error) {
+            await this.trx.rollback();
+            return { error: error.message }
+        }
+    }
+
+    async deletePostTranslationById(id: number, locale: string) {
+        this.trx = await db.transaction();
+        try {
+            //find the postTranslation with a post id and locale
+            const postTranslation = await this.getPostTranslationByLocale(id, locale);
+            if (!postTranslation) {
+                return { error: 'Post Translation not found' }
+            }
+            //delete the post translation
+            await postTranslation.useTransaction(this.trx).delete();
+            await this.trx.commit();
+            return { message: 'Post Translation deleted' };
+        } catch (error) {
+            await this.trx.rollback();
+            return { error: error.message }
+        }
+    }
+
+    async deleteListOfPostTranslation(postIds: number[], locale: string) {
+        this.trx = await db.transaction();
+
+        try {
+            //find the postTranslation with a post id and locale
+            const postTranslation = await PostTranslation.query({ client: this.trx })
+                .whereIn('id', postIds)
+                .where('locale', locale)
+                .delete();
+
+            console.log(postTranslation);
+            if (postTranslation.length === 0 || postTranslation[0] == 0) {
+
+                throw new Exception('Post Translation not found', {
+                    code: 'POST_TRANSLATION_NOT_FOUND',
+                    status: 404
+
+                })
+            }
+            //delete the post translation
+
+            await this.trx.commit();
+            return { message: 'Post Translation deleted' };
+        } catch (error) {
+            await this.trx.rollback();
+            throw error
+        }
+    }
+
     async getPostById(id: number) {
+
         const post = await Post.query()
             .where('id', id)
             .preload('translations')
             .first();
+
+        if (!post) {
+            throw new Error('Post not found');
+        }
+
         return post;
 
     }
@@ -125,26 +258,25 @@ export default class PostService {
             .where('locale', locale)
             .preload('seo')
             .first();
+
+        if (!postTranslation) {
+            throw new Exception('Post Translation not found', {
+                code: 'POST_TRANSLATION_NOT_FOUND',
+                status: 404
+            });
+        }
+
         return postTranslation;
     }
 
     async getAllPosts(filters: any = {}, page: number = 1, limit: number = 10) {
-        const postsPagination = await Post.query()
-            .preload('translations', (translationQuery) => {
-                translationQuery.if(filters.locale, (query) => query.where('locale', filters.locale), () => { })
-            })
+
+        const postTranslations = await PostTranslation.query()
+            .if(filters.locale, (query) => query.where('locale', filters.locale), () => { })
+            .orderBy('id', 'asc')
             .paginate(page, limit);
 
-
-        const tmp = postsPagination.toJSON()
-        const transformedData = tmp.data.map(post => post.translations.map(translation => ({
-            ...translation.toJSON(),
-            status: post.status
-        })));
-        return {
-            ...tmp,
-            data: transformedData.flat()
-        };
+            return postTranslations.toJSON();
 
     }
 }

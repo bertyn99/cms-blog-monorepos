@@ -3,7 +3,7 @@ import type { HasOne, BelongsTo } from '@adonisjs/lucid/types/relations'
 import { BaseModel, column, hasOne, belongsTo } from '@adonisjs/lucid/orm'
 import PostSeo from '#models/post_seo'
 import Post from '#models/post'
-import { cp } from 'node:fs'
+import type { PostStatus } from '@yggdra/shared'
 
 export default class PostTranslation extends BaseModel {
   @column({ isPrimary: true })
@@ -30,6 +30,16 @@ export default class PostTranslation extends BaseModel {
 
   @column()
   declare content: string
+
+  @column()
+  declare status: PostStatus
+
+  @column.dateTime({
+    serialize: (value: DateTime | null) => {
+      return value ? value.setZone('utc').toFormat("yyyy-MM-dd'T'HH:mm") : value
+    },
+  })
+  declare publishedAt: DateTime | null
 
   @hasOne(() => PostSeo)
   declare seo: HasOne<typeof PostSeo>

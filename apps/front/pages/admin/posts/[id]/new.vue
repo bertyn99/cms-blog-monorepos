@@ -1,7 +1,9 @@
 <template>
   <UContainer class="mx-0 ">
     <div class="w-full flex py-6">
-      <h1 class="flex-1">{{ newPost?.title == '' ? " Post Title" : newPost?.title }}</h1>
+      <h1 class="flex-1 capitalize font-bold text-lg">Create "{{ selectedLocale.label }}" Translation for Post n°{{
+        idPost }}
+      </h1>
 
       <div class="space-x-5">
         <UButton label="Publish" @click="publishPost" variant="soft" disabled />
@@ -30,23 +32,7 @@
           <!-- <UButton type="submit" label="Save" /> -->
         </UForm>
       </div>
-      <div class="shadow-md rounded-sm bg-slate-50/25 basis-1/4 flex flex-col px-2.5 py-4 gap-3">
-
-
-        <span id="additional-information"
-          class=" font-semibold uppercase align-baseline border-0 text-slate-500 text-[.65rem] ">Internationalization</span>
-        <UDivider />
-        <UFormGroup label="Locale">
-          <USelectMenu v-model="selectedLocale" :options="localTranslationState">
-            <template #option="{ option }">
-              <span
-                :class="[option.exist ? 'bg-green-400' : 'bg-gray-200', 'inline-block h-2 w-2 flex-shrink-0 rounded-full']"
-                aria-hidden="true" />
-              <span class="truncate">{{ option.label }}</span>
-            </template>
-          </USelectMenu>
-        </UFormGroup>
-      </div>
+      <div class="shadow-md rounded-sm bg-slate-50/25 basis-1/4">dd</div>
     </div>
   </UContainer>
 </template>
@@ -61,20 +47,24 @@ definePageMeta({
 
 const form = ref<Form<Post>>({} as Form<NewPost>);
 const route = useRoute();
-
-const { locale } = route.query
-const localePost = computed(() => (locale ?? 'fr') as string)
+const localePost = computed(() => route.query.locale);
+const idPost = computed(() => route.params.id);
 const { selectedLocale, setSelectedLocale, localTranslationState } = await useLocale()
-const newPost = reactive<NewPost>({
+
+
+setSelectedLocale(localePost.value)
+const newPost = reactive({
+  postId: idPost,
   title: '',
   description: '',
   slug: '',
   content: '',
-  locale: localePost.value,
+  locale: localePost.value as string,
   published: false,
   status: "Draft" as PostStatus.DRAFT,
   seo: null
-})
+});
+
 const { $api } = useNuxtApp();
 
 const toast = useToast()
