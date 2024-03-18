@@ -1,35 +1,41 @@
 import type { Post } from "@yggdra/shared";
 
+type Locale = {
+    label: string,
+    locale: string,
+    exist?: boolean
+}
 export const useLocale = async (idPost?: number) => {
     const { $api } = useNuxtApp();
     const postRepo = postRepository($api);
-    const lang = [
+    const localTranslationState: Locale[] = [
         {
             label: 'French(FR)',
-            locale: 'fr'
+            locale: 'fr',
+            exist: false
         },
         {
             label: 'English(EN)',
-            locale: 'en'
+            locale: 'en', exist: false
         },
         {
             label: 'Spanish(ES)',
-            locale: 'es '
+            locale: 'es ',
+            exist: false
         },
         {
             label: 'Italian(IT)',
-            locale: 'it'
+            locale: 'it',
+            exist: false
         },
 
     ]
-    //loop through the translations and get the one that matches the selected locale
-    const localTranslationState: any[] = lang.map((locale) => ({ ...locale, exist: false }));
 
     const selectedLocale = ref(localTranslationState[0])
-    console.log(localTranslationState)
+
 
     const setSelectedLocale = (locale: any) => {
-        const foundLocale = lang.find((lang) => lang.locale === locale);
+        const foundLocale = localTranslationState.find((lang) => lang.locale === locale);
         if (foundLocale) {
             selectedLocale.value = foundLocale;
         }
@@ -53,7 +59,7 @@ export const useLocale = async (idPost?: number) => {
                     //if it does, set the exist property to true on the localTranslationState array
                     l.exist = true
                 } else {
-                    l.exist = false
+                    if (l) l.exist = false
                 }
             })
         }
