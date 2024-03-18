@@ -59,19 +59,37 @@
           </dl>
         </div>
 
-        <span id="additional-information"
-          class=" font-semibold uppercase align-baseline border-0 text-slate-500 text-[.65rem] ">Internationalization</span>
-        <UDivider />
-        <UFormGroup label="Locale">
-          <USelectMenu v-model="selectedLocale" :options="localTranslationState">
-            <template #option="{ option }">
-              <span
-                :class="[option.exist ? 'bg-green-400' : 'bg-gray-200', 'inline-block h-2 w-2 flex-shrink-0 rounded-full']"
-                aria-hidden="true" />
-              <span class="truncate">{{ option.label }}</span>
+        <div class="my-4 space-y-2">
+          <span id="additional-information"
+            class=" font-semibold uppercase align-baseline border-0 text-slate-500 text-[.65rem] ">Internationalization</span>
+          <UDivider />
+          <UFormGroup label="Locale">
+            <USelectMenu v-model="selectedLocale" :options="localTranslationState">
+              <template #option="{ option }">
+                <span
+                  :class="[option.exist ? 'bg-green-400' : 'bg-gray-200', 'inline-block h-2 w-2 flex-shrink-0 rounded-full']"
+                  aria-hidden="true" />
+                <span class="truncate">{{ option.label }}</span>
+              </template>
+            </USelectMenu>
+          </UFormGroup>
+        </div>
+
+        <div class="my-4 space-y-2">
+          <span id="additional-information"
+            class=" font-semibold uppercase align-baseline border-0 text-slate-500 text-[.65rem] ">Internationalization</span>
+          <UDivider />
+          <UPopover :popper="{ placement: 'bottom-start' }">
+            <UButton icon="i-heroicons-calendar-days-20-solid" variant="soft"
+              :label="date ? format(date, 'd MMM, yyy - HH:MM') : 'No scheduled date'" block />
+
+            <template #panel="{ close }">
+              <DatePicker v-model="date" mode="dateTime" is24hr />
             </template>
-          </USelectMenu>
-        </UFormGroup>
+          </UPopover>
+          <UButton label="Schedule" @click="schedulePost" :loading="pending || loading" block
+            :disabled="date == null" />
+        </div>
       </div>
     </div>
   </UContainer>
@@ -81,7 +99,7 @@
 <script setup lang="ts">
 import type { FormError, FormSubmitEvent, Form } from "#ui/types";
 import type { Post, PostStatus } from "@yggdra/shared";
-
+import { format } from 'date-fns'
 definePageMeta({
   middleware: ['auth-guard']
 })
@@ -91,6 +109,9 @@ const route = useRoute();
 const idPost = computed(() => route.params.id);
 const localePost = computed(() => route.params.locale);
 
+
+
+const date = ref<Date | null>(null)
 const labelTogglePublish = computed(() => post.value.status === "Published" as PostStatus.PUBLISHED ? 'Unpublish' : 'Publish')
 const toast = useToast()
 const loading = ref(false)
@@ -126,9 +147,10 @@ const { data, error, pending } = await useAsyncData(
 );
 
 if (!pending.value && data?.value !== null) {
-
+  console.log(data.value)
   post.value = data.value
   setSelectedLocale(String(localePost.value))
+  date.value = data.value.publishedAt ? new Date(data.value.publishedAt) : null
 
 }
 
@@ -139,6 +161,33 @@ const togglePublishing = async () => {
     await publishPost()
   }
 
+}
+
+const schedulePost = async () => {
+  try {
+    loading.value = true
+    const response = await postRepo.schedulePost([Number(post.value.id)], format(date.value ?? new Date(), 'd MMM, yyy - HH:MM'), headers)
+
+    if (response) {
+      loading.value = false
+      toast.add({
+        id: `post-schedule-${post.value.id}`,
+        icon: 'i-heroicons-check-circle',
+        color: 'green',
+        title: 'Post scheduled',
+      })
+    }
+  } catch (error: any) {
+    loading.value = false
+    toast.add({
+      id: `post-schedule-error`,
+      icon: 'i-heroicons-x-circle',
+      title: 'Error scheduling the post',
+      color: 'red',
+      description: error.message,
+
+    })
+  }
 }
 
 const publishPost = async () => {
