@@ -6,6 +6,13 @@ meta {
 
 post {
   url: {{baseUrl}}/posts/schedule
-  body: none
+  body: json
   auth: none
+}
+
+body:json {
+  {
+    "postIds":[19],
+    "publishAt":""
+  }
 }
