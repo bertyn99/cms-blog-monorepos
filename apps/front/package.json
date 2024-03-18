@@ -32,7 +32,9 @@
     "@nuxt/ui-pro": "^1.0.1",
     "@vinejs/vine": "^1.7.1",
     "@yggdra/shared": "workspace:*",
+    "date-fns": "^3.6.0",
     "i": "^0.3.7",
+    "v-calendar": "^3.1.2",
     "{collection_name}": "link:@iconify-json/{collection_name}"
   }
 }
