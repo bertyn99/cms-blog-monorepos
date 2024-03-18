@@ -42,6 +42,15 @@ export const postRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => ({
       body: JSON.stringify(post),
     });
   },
+
+  async schedulePost(arrIds: number[], date: string, headers?: any) {
+    return fetch<{ message: string }>(`/posts/schedule`, {
+      method: "POST",
+      credentials: "include",
+      ...headers,
+      body: JSON.stringify({ postIds: arrIds, publishAt: date }),
+    });
+  },
   async publishPost(arrIds: number[], headers?: any) {
     return fetch<{ message: string }>(`/posts/publish`, {
       method: "POST",
