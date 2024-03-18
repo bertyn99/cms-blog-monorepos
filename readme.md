@@ -69,7 +69,7 @@ Remember to run these commands in the root directory of your backend application
 
 ### Multilinguisme
 - [X] Implémenter la gestion des langues pour les articles.
-- [ ] Mettre en place la planification de la publication par langue.
+- [X] Mettre en place la planification de la publication par langue.
 
 ### SEO Optimisé par Langue
 - [ ] Ajouter des métadonnées personnalisées pour chaque traduction.
@@ -84,7 +84,7 @@ Remember to run these commands in the root directory of your backend application
 - [ ] Mettre en place la planification des publications futures.
 
 ### Interface Administrateur
-- [ ] Développer une interface intuitive pour la gestion du contenu.
+- [X] Développer une interface intuitive pour la gestion du contenu.
 - [ ] Intégrer des fonctionnalités de gestion d'articles, de langues, et de médias.
 
 ### Éditeur de Texte en Format Block
