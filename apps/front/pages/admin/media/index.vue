@@ -5,26 +5,16 @@ definePageMeta({
 const route = useRoute()
 
 const folderName = computed(() => route.query.folder ? route.query.folder : '')
-const { $api } = useNuxtApp();
-const mediaRepo = mediaRepository($api);
-const headers = useRequestHeaders(['cookie'])
 
+const { fetchFolders } = useMediaLibrary()
 
+const Media = await fetchFolders(folderName)
+console.log('Media', Media.folders.value)
 watch(folderName, (folderName, previous) => {
 
 })
-const { data: folders, refresh: refreshFolder } = await useAsyncData(`list-folder-${folderName.value !== '' ? folderName.value : 'default'}`, () => mediaRepo.getAllFolder(folderName.value, headers)
-    , { watch: [folderName] })
 
-
-
-
-
-
-const { data: files, refresh: refreshFile } = await useAsyncData(`list-files-${folderName.value !== '' ? folderName.value : 'default'}`, () => mediaRepo.getAllFile(folderName.value, headers)
-    , { watch: [folderName] }
-)
-
+/* 
 const listOfFolder = computed(() => folders.value ? folders.value.filter(f => f.folder !== "default") : [])
 
 const fileInDefaultFolder = computed(() => files.value ? files.value : [])
@@ -54,7 +44,7 @@ const updateSelectedFile = (value) => {
     const index = fileArrWithSelector.value.findIndex(f => f.id === value.id)
     fileArrWithSelector.value[index].isSelected = value.isSelected
 
-}
+}*/
 </script>
 
 <template>
@@ -75,7 +65,7 @@ const updateSelectedFile = (value) => {
     </DashboardNavbar>
 
     <UContainer class="space-y-8">
-        <MediaFilter v-model:orderBy="orderBy" :selectedFolder="selectedFolder" :selectedFile="selectedFile"
+        <!--<MediaFilter v-model:orderBy="orderBy" :selectedFolder="selectedFolder" :selectedFile="selectedFile"
             :refresh="refresfData" />
 
 
@@ -94,7 +84,7 @@ const updateSelectedFile = (value) => {
                 <MediaCardFile v-for="f in fileArrWithSelector" :file="f" :key="f.id"
                     @selected:file="updateSelectedFile" />
             </div>
-        </div>
+        </div>-->
     </UContainer>
 
 
