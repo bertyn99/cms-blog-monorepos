@@ -7,7 +7,7 @@
                 <UButton :to="{
         name: 'Media Librairy',
         query: {
-            folder: parent + '/' + name,
+            folder: pathFolder,
         }
     }" icon="i-heroicons-eye" variant="soft" class="hidden group-hover:block" />
             </div>
@@ -24,7 +24,7 @@
 </template>
 
 <script setup>
-defineProps({
+const { name, parent } = defineProps({
     name: String,
     numberOfFiles: Number,
     parent: String
@@ -32,7 +32,7 @@ defineProps({
 })
 
 const selected = defineModel('selected')
-
+const pathFolder = computed(() => parent ? parent + '/' + name : name)
 
 const isOpen = ref(false)
 const customStyle = ref({

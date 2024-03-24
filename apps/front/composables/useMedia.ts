@@ -8,27 +8,11 @@ export const useMediaLibrary = () => {
     const orderBy = ref('date:asc');
     const searchQuery = ref('');
 
-    const fetchFolders = async (folderName?: Ref<string>) => {
-        if (folderName?.value) return 1;
-        const { data: folders, refresh: refreshFolder } = await useAsyncData(`list-folder-${folderName.value !== '' ? folderName.value : 'default'}`, () => mediaRepo.getAllFolder(folderName.value, headers)
-            ,)
+    const fetchMedia = async (name: MaybeRef<string>) => {
+        const folderName = toValue(name) ?? 'default';
+        console.log('folder api call', folderName);
+        return Promise.all([mediaRepo.getAllFolder(folderName == 'default' ? '' : folderName, headers), mediaRepo.getAllFile(folderName, headers)])
 
-
-
-
-
-
-        const { data: files, refresh: refreshFile } = await useAsyncData(`list-files-${folderName.value !== '' ? folderName.value : 'default'}`, () => mediaRepo.getAllFile(folderName.value, headers)
-            ,
-        )
-
-        console.log(folders, files)
-        return {
-            folders,
-            files,
-            refreshFolder,
-            refreshFile
-        }
     };
 
     const uploadMedia = async (formData: FormData, folderName: string) => {
@@ -38,7 +22,7 @@ export const useMediaLibrary = () => {
 
             if (res) {
                 loading.value = false;
-                fetchFolders();
+                fetchMedia('default');
             }
             return res;
         } catch (error: any) {
@@ -56,7 +40,7 @@ export const useMediaLibrary = () => {
     return {
         orderBy,
         searchQuery,
-        fetchFolders,
+        fetchMedia,
 
     };
 
