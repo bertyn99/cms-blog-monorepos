@@ -20,7 +20,7 @@ export default class MediaLibrairyService {
       media.mime_type = file.extname ?? 'default'
       media.size = file.size
       media.file_path = `uploads/`
-   
+
       if (folderPath) {
         media.folder = folderPath
         media.file_path += `${media.folder}/`
@@ -45,21 +45,21 @@ export default class MediaLibrairyService {
       return { error: error.message }
     }
   }
-  async getAllMediaGroupedByFolder(filter:any): Promise<Record<string, string[]>> {
+  async getAllMediaGroupedByFolder(filter: any): Promise<Record<string, string[]>> {
     const allMedia = await Media.query().select('folder', 'file_name').if(filter.folder,
       (query) => {
         query.where('folder', 'LIKE', `%${filter.folder}/%`).andWhere('folder', '!=', filter.folder)// if condition met
-      } 
+      }
     )
-  
+
     // Organize media into folders
     const mediaByFolder: { folder: string; files: string[] }[] = []
 
     allMedia.forEach((media) => {
       const folderPath = media.folder || 'default' // Use 'default' if folder is null or empty
 
-       // Check if the folder is the specified parent folder
-       if (folderPath === filter.folder) {
+      // Check if the folder is the specified parent folder
+      if (folderPath === filter.folder) {
         return; // Skip the parent folder
       }
       const relativeFolder = filter.folder ? folderPath.substring(filter.folder.length + 1) : folderPath
@@ -119,31 +119,31 @@ export default class MediaLibrairyService {
       arrId.forEach(async (id) => {
         const media = await Media.find(id)
         if (media) {
-          const formatPath=media.file_path=='default'?'':media.file_path
-          const path=app.publicPath(formatPath)
-       
+          const formatPath = media.file_path == 'default' ? '' : media.file_path
+          const path = app.publicPath(formatPath)
+
           //check if the file exists
-         if(await this.fileExists(path)){
-          await this.removeFile(path)
-          await media.delete()
-         }
+          if (await this.fileExists(path)) {
+            await this.removeFile(path)
+            await media.delete()
+          }
         }
       })
     } catch (error) {
-      
+
     }
-    
+
 
 
   }
   async deleteAListofFolderMedia(arrFolder: string[]): Promise<void> {
-     try {
-       arrFolder.forEach(async (folder) => {
-          await this.deleteFolderMedia(folder)
-       })
-     } catch (error) {
-        throw error
-     }
+    try {
+      arrFolder.forEach(async (folder) => {
+        await this.deleteFolderMedia(folder)
+      })
+    } catch (error) {
+      throw error
+    }
   }
 
 
@@ -158,20 +158,20 @@ export default class MediaLibrairyService {
       }
       medias.forEach(async (media) => {
         //create the path to the file
-        const formatPath=media.file_path=='default'?'':media.file_path
-        const path=app.publicPath(formatPath)
+        const formatPath = media.file_path == 'default' ? '' : media.file_path
+        const path = app.publicPath(formatPath)
 
         //check if the file exists
-       if(await this.fileExists(path)){
-        await this.removeFile(path)
-        await media.delete()
-       }
+        if (await this.fileExists(path)) {
+          await this.removeFile(path)
+          await media.delete()
+        }
       })
 
 
       //remove the folder from the disk
       const folderPath = app.publicPath(`uploads/${folder}`)
-      if(await this.fileExists(folderPath)){
+      if (await this.fileExists(folderPath)) {
         await this.removeAFolder(folderPath)
       }
 
@@ -201,7 +201,7 @@ export default class MediaLibrairyService {
     }
   }
 
-  
+
   private async fileExists(filePath: string): Promise<boolean> {
     const accessAsync = promisify(fs.access);
 
@@ -229,7 +229,7 @@ export default class MediaLibrairyService {
 
     if (oldFileExists) {
       // Move the old file to the new path
-      const newFolder =app.publicPath(newFilePath)
+      const newFolder = app.publicPath(newFilePath)
 
       // Ensure the new folder exists, create it if not
       await fs.promises.mkdir(newFolder, { recursive: true });
