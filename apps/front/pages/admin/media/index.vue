@@ -19,8 +19,8 @@ watch(folderName, async (folderName, previous) => {
 watch(Media, (media) => {
     console.log('media', media);
 })
-const folders = computed(() => Media.value[0])
-const files = computed(() => Media.value[1])
+const folders = computed(() => pending.value ? [] : Media.value[0])
+const files = computed(() => pending.value ? [] : Media.value[1])
 
 watch(folders, (folders) => {
     console.log('folders', folders);
@@ -45,9 +45,10 @@ const refresfData = () => {
 }
 const orderBy = ref('date:asc')
 const searchQuery = ref('')
+const isOpen = ref(false)
 
 const uploadAssets = () => {
-    console.log('upload assets')
+    isOpen.value = true
 }
 
 const updateSelectedFile = (value) => {
@@ -78,6 +79,7 @@ const updateSelectedFile = (value) => {
     </DashboardNavbar>
 
     <UContainer class="space-y-8">
+        <MediaModalNew v-model="isOpen" v-if="isOpen" :folderName="folderName" />
         <template v-if="pending">
             <USkeleton class="h-12 w-12" :ui="{ rounded: 'rounded-full' }" />
             <div class="space-y-2">
