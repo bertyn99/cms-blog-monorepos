@@ -8,6 +8,7 @@ export default class extends BaseSchema {
       table.increments('id').primary()
       table.integer('post_id').unsigned().references('posts.id').onDelete('CASCADE')
       table.string('locale', 2).notNullable().defaultTo('fr') // ISO 639-1 language codes (e.g., 'en', 'fr')
+      table.integer('cover_id').unsigned().references('medias.id').onDelete('CASCADE')
       table.string('title').notNullable()
       table.string('slug').nullable().unique() // Optional, for translated slugs
       table.string('description').nullable()
