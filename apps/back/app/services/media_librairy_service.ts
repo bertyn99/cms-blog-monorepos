@@ -45,7 +45,10 @@ export default class MediaLibrairyService {
       return { error: error.message }
     }
   }
-  async getAllMediaGroupedByFolder(filter: any): Promise<Record<string, string[]>> {
+  async getAllMediaGroupedByFolder(filter: any): Promise<{
+    folder: string;
+    files: string[];
+  }[]> {
     const allMedia = await Media.query().select('folder', 'file_name').if(filter.folder,
       (query) => {
         query.where('folder', 'LIKE', `%${filter.folder}/%`).andWhere('folder', '!=', filter.folder)// if condition met
@@ -75,8 +78,11 @@ export default class MediaLibrairyService {
         mediaByFolder.push({ folder: folderKey, files: [media.file_name] })
       }
     })
+    // Filter out the 'default' folder
+    const filteredMediaByFolder = mediaByFolder.filter(item => item.folder !== 'default')
 
-    return mediaByFolder
+
+    return filteredMediaByFolder
   }
 
   async getAllMedia(queryParams: { folder?: string; orderBy?: string }): Promise<Media[]> {

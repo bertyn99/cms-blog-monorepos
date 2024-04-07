@@ -4,7 +4,7 @@ import MediaLibrairyService from '#services/media_librairy_service'
 
 @inject()
 export default class MediaController {
-  constructor(protected mediaService: MediaLibrairyService) {}
+  constructor(protected mediaService: MediaLibrairyService) { }
 
   async store({ request, response }: HttpContext) {
     const folder = await request.input('folder')
@@ -13,7 +13,6 @@ export default class MediaController {
       size: '6mb',
       extnames: ['jpg', 'png', 'jpeg', 'webp', 'mp4', 'avif', 'pdf'],
     })
-
     if (!medias.length) {
       return response.badRequest({
         msg: 'No file uploaded',
@@ -71,16 +70,16 @@ export default class MediaController {
     return media
   }
 
-  async show({ request, params,response }: HttpContext) {}
+  async show({ request, params, response }: HttpContext) { }
 
-  async destroy({ request, params,response }: HttpContext) {
+  async destroy({ request, params, response }: HttpContext) {
     const mediaIds = await request.input('fileIds')
     const folders = await request.input('folders')
 
     try {
-          if (mediaIds.length > 0) {
+      if (mediaIds.length > 0) {
         //delete media
-        const media = await this.mediaService.deleteMedia(mediaIds) 
+        const media = await this.mediaService.deleteMedia(mediaIds)
       }
       if (folders.length > 0) {
         //delete folder
@@ -91,9 +90,9 @@ export default class MediaController {
     } catch (error) {
       response.status(500).send({ error: 'An error occurred while deleting media' });
     }
-  
-  
-  
+
+
+
   }
 
   async destroyFolder({ request }: HttpContext) {
