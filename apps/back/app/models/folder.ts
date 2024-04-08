@@ -10,6 +10,9 @@ export default class Folder extends BaseModel {
     @column()
     declare name: string
 
+    @column()
+    declare path: string
+
     @hasMany(() => Media)
     declare media: HasMany<typeof Media>
 
