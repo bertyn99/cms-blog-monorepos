@@ -1,11 +1,12 @@
 import { inject } from '@adonisjs/core'
 import db from '@adonisjs/lucid/services/db'
+import Folder from '#models/folder'
 import Media from '#models/media'
 import app from '@adonisjs/core/services/app'
 import { MultipartFile } from '@adonisjs/core/bodyparser'
 import { cuid } from '@adonisjs/core/helpers'
-import * as fs from 'fs';
-import { promisify } from 'util';
+import * as fs from 'fs'
+import { promisify } from 'util'
 
 @inject()
 export default class MediaLibrairyService {
@@ -15,45 +16,51 @@ export default class MediaLibrairyService {
         throw new Error('File not found')
       }
 
-      const media = new Media()
-      media.file_name = `${cuid()}_${file.clientName}`
-      media.mime_type = file.extname ?? 'default'
-      media.size = file.size
-      media.file_path = `uploads/`
-
+      // Set folderId based on folderPath
+      let folder: Folder | null = null
       if (folderPath) {
-        media.folder = folderPath
-        media.file_path += `${media.folder}/`
-      } else {
-        media.folder = 'default'
+        folder = await Folder.firstOrCreate({ path: folderPath }, { name: folderPath })
+        console.log('Folder:', folder)
       }
 
-      await file.move(app.publicPath(media.file_path), {
-        name: media.file_name,
+      const fileName = `${cuid()}_${file.clientName}`
+      // Save media details to the database
+      const media = new Media()
+      media.file_name = fileName
+      media.mime_type = file.extname ?? ''
+      media.size = file.size
+      media.file_path = `uploads/${fileName}`
+      if (folder !== null) await media.related('folder').associate(folder)
+      await media.save()
+
+      // Move the file to the uploads directory
+
+      await file.move(app.publicPath('uploads'), {
+        name: fileName,
         overwrite: true,
       })
-      media.file_path += media.file_name
 
       if (file.state !== 'moved') {
         throw new Error('File move operation failed')
       }
 
-      await media.save()
-
       return media
     } catch (error) {
+      console.error('Error saving file:', error)
       return { error: error.message }
     }
   }
-  async getAllMediaGroupedByFolder(filter: any): Promise<{
-    folder: string;
-    files: string[];
-  }[]> {
-    const allMedia = await Media.query().select('folder', 'file_name').if(filter.folder,
-      (query) => {
-        query.where('folder', 'LIKE', `%${filter.folder}/%`).andWhere('folder', '!=', filter.folder)// if condition met
-      }
-    )
+  async getAllMediaGroupedByFolder(filter: any): Promise<
+    {
+      folder: string
+      files: string[]
+    }[]
+  > {
+    const allMedia = await Media.query()
+      .select('folder', 'file_name')
+      .if(filter.folder, (query) => {
+        query.where('folder', 'LIKE', `%${filter.folder}/%`).andWhere('folder', '!=', filter.folder) // if condition met
+      })
 
     // Organize media into folders
     const mediaByFolder: { folder: string; files: string[] }[] = []
@@ -63,13 +70,15 @@ export default class MediaLibrairyService {
 
       // Check if the folder is the specified parent folder
       if (folderPath === filter.folder) {
-        return; // Skip the parent folder
+        return // Skip the parent folder
       }
-      const relativeFolder = filter.folder ? folderPath.substring(filter.folder.length + 1) : folderPath
+      const relativeFolder = filter.folder
+        ? folderPath.substring(filter.folder.length + 1)
+        : folderPath
       const folderKey = relativeFolder.split('/')[0] || 'default' // Use 'default' if no folder is specified
 
       // Check if the folder is already in the result array
-      const folderIndex = mediaByFolder.findIndex(item => item.folder === folderKey)
+      const folderIndex = mediaByFolder.findIndex((item) => item.folder === folderKey)
       if (folderIndex !== -1) {
         // Add the file to the existing folder
         mediaByFolder[folderIndex].files.push(media.file_name)
@@ -79,8 +88,7 @@ export default class MediaLibrairyService {
       }
     })
     // Filter out the 'default' folder
-    const filteredMediaByFolder = mediaByFolder.filter(item => item.folder !== 'default')
-
+    const filteredMediaByFolder = mediaByFolder.filter((item) => item.folder !== 'default')
 
     return filteredMediaByFolder
   }
@@ -135,12 +143,7 @@ export default class MediaLibrairyService {
           }
         }
       })
-    } catch (error) {
-
-    }
-
-
-
+    } catch (error) {}
   }
   async deleteAListofFolderMedia(arrFolder: string[]): Promise<void> {
     try {
@@ -151,7 +154,6 @@ export default class MediaLibrairyService {
       throw error
     }
   }
-
 
   async deleteFolderMedia(folder: string): Promise<void> {
     try {
@@ -174,74 +176,90 @@ export default class MediaLibrairyService {
         }
       })
 
-
       //remove the folder from the disk
       const folderPath = app.publicPath(`uploads/${folder}`)
       if (await this.fileExists(folderPath)) {
         await this.removeAFolder(folderPath)
       }
-
     } catch (error) {
       throw error
     }
   }
 
   async removeFile(filePath: string): Promise<void> {
-    const unlinkAsync = promisify(fs.unlink);
+    const unlinkAsync = promisify(fs.unlink)
 
     try {
-      await unlinkAsync(filePath);
-      console.log('File was deleted');
+      await unlinkAsync(filePath)
+      console.log('File was deleted')
     } catch (err) {
-      console.error('Error deleting file:', err);
+      console.error('Error deleting file:', err)
     }
   }
   private async removeAFolder(folderPath: string): Promise<void> {
-    const rmdirAsync = promisify(fs.rmdir);
+    const rmdirAsync = promisify(fs.rmdir)
 
     try {
-      await rmdirAsync(folderPath, { recursive: true });
-      console.log('Folder was deleted');
+      await rmdirAsync(folderPath, { recursive: true })
+      console.log('Folder was deleted')
     } catch (err) {
-      console.error('Error deleting folder:', err);
+      console.error('Error deleting folder:', err)
     }
   }
 
-
   private async fileExists(filePath: string): Promise<boolean> {
-    const accessAsync = promisify(fs.access);
+    const accessAsync = promisify(fs.access)
 
     try {
-      await accessAsync(filePath, fs.constants.F_OK);
-      return true;
+      await accessAsync(filePath, fs.constants.F_OK)
+      return true
     } catch (err) {
-      return false;
+      return false
     }
   }
 
   private async moveDiskFolder(oldFolderPath: string, newFolderPath: string): Promise<void> {
     // Ensure the old folder exists on disk
-    const oldFolderExists = await this.fileExists(oldFolderPath);
+    const oldFolderExists = await this.fileExists(oldFolderPath)
 
     if (oldFolderExists) {
       // Rename the old folder to the new path
-      await fs.promises.rename(oldFolderPath, newFolderPath);
+      await fs.promises.rename(oldFolderPath, newFolderPath)
     }
   }
 
   private async moveFile(oldFilePath: string, newFilePath: string): Promise<void> {
     // Ensure the old file exists on disk
-    const oldFileExists = await this.fileExists(oldFilePath);
+    const oldFileExists = await this.fileExists(oldFilePath)
 
     if (oldFileExists) {
       // Move the old file to the new path
       const newFolder = app.publicPath(newFilePath)
 
       // Ensure the new folder exists, create it if not
-      await fs.promises.mkdir(newFolder, { recursive: true });
+      await fs.promises.mkdir(newFolder, { recursive: true })
 
       // Move the file
-      await fs.promises.rename(oldFilePath, newFilePath);
+      await fs.promises.rename(oldFilePath, newFilePath)
+    }
+  }
+
+  // Function to create folder if it doesn't exist
+  private async createFolderIfNotExist(folderPath) {
+    try {
+      // Check if folder exists
+      const folderExists = await fs.promises.access(folderPath, fs.constants.F_OK)
+
+      // If folder exists, return
+      if (!folderExists) {
+        return
+      }
+
+      // If folder doesn't exist, create it
+      await fs.promises.mkdir(folderPath, { recursive: true })
+      console.log(`Folder created at ${folderPath}`)
+    } catch (error) {
+      console.error(`Error creating folder: ${error}`)
     }
   }
 }
