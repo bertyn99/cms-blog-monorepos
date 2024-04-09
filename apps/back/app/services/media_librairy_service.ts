@@ -9,6 +9,7 @@ import * as fs from 'fs'
 import { promisify } from 'util'
 
 import { ModelObject } from '@adonisjs/lucid/types/model'
+import { Exception } from '@adonisjs/core/exceptions'
 
 @inject()
 export default class MediaLibrairyService {
@@ -101,7 +102,15 @@ export default class MediaLibrairyService {
   }
 
   async getMediaById(id: number): Promise<Media | null> {
-    return Media.find(id)
+    try {
+      return await Media.findOrFail(id)
+    } catch (error) {
+      if (error.code === 'E_ROW_NOT_FOUND' || error.code === 'E_MISSING_DATABASE_ROW')
+        throw new Exception('Error this Media was not found', {
+          code: 'MEDIA_NOT_FOUND',
+          status: 404,
+        })
+    }
   }
 
   async updateMedia(id: number, data: HttpContextContract['request']): Promise<Media | null> {

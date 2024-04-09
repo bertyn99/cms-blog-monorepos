@@ -4,7 +4,7 @@ import MediaLibrairyService from '#services/media_librairy_service'
 
 @inject()
 export default class MediaController {
-  constructor(protected mediaService: MediaLibrairyService) { }
+  constructor(protected mediaService: MediaLibrairyService) {}
 
   async store({ request, response }: HttpContext) {
     const folder = await request.input('folder')
@@ -70,7 +70,15 @@ export default class MediaController {
     return media
   }
 
-  async show({ request, params, response }: HttpContext) { }
+  async show({ request, params, response }: HttpContext) {
+    try {
+      const media = await this.mediaService.getMediaById(params.id)
+
+      return media
+    } catch (error) {
+      return response.status(error.status).send({ error: error.message })
+    }
+  }
 
   async destroy({ request, params, response }: HttpContext) {
     const mediaIds = await request.input('fileIds')
@@ -86,13 +94,10 @@ export default class MediaController {
         const folderMedia = await this.mediaService.deleteAListofFolderMedia(folders)
       }
 
-      return response.status(200).send({ msg: 'Media deleted successfully' });
+      return response.status(200).send({ msg: 'Media deleted successfully' })
     } catch (error) {
-      response.status(500).send({ error: 'An error occurred while deleting media' });
+      response.status(500).send({ error: 'An error occurred while deleting media' })
     }
-
-
-
   }
 
   async destroyFolder({ request }: HttpContext) {
