@@ -8,6 +8,8 @@ import { cuid } from '@adonisjs/core/helpers'
 import * as fs from 'fs'
 import { promisify } from 'util'
 
+import { ModelObject } from '@adonisjs/lucid/types/model'
+
 @inject()
 export default class MediaLibrairyService {
   async saveFile(file: MultipartFile, folderPath: string | null): Promise<Media | any> {
@@ -50,62 +52,52 @@ export default class MediaLibrairyService {
       return { error: error.message }
     }
   }
-  async getAllMediaGroupedByFolder(filter: any): Promise<
-    {
-      folder: string
-      files: string[]
-    }[]
-  > {
-    const allMedia = await Media.query()
-      .select('folder', 'file_name')
+  async getAllMediaGroupedByFolder(filter: any): Promise<Folder[]> {
+    const folders = await Folder.query()
+      .select('id', 'name', 'path')
       .if(filter.folder, (query) => {
-        query.where('folder', 'LIKE', `%${filter.folder}/%`).andWhere('folder', '!=', filter.folder) // if condition met
+        query.where('path', 'LIKE', `%${filter.folder}%`)
+      })
+      .preload('media', (query) => {
+        query.select('id', 'file_name')
       })
 
-    // Organize media into folders
-    const mediaByFolder: { folder: string; files: string[] }[] = []
-
-    allMedia.forEach((media) => {
-      const folderPath = media.folder || 'default' // Use 'default' if folder is null or empty
-
-      // Check if the folder is the specified parent folder
-      if (folderPath === filter.folder) {
-        return // Skip the parent folder
-      }
-      const relativeFolder = filter.folder
-        ? folderPath.substring(filter.folder.length + 1)
-        : folderPath
-      const folderKey = relativeFolder.split('/')[0] || 'default' // Use 'default' if no folder is specified
-
-      // Check if the folder is already in the result array
-      const folderIndex = mediaByFolder.findIndex((item) => item.folder === folderKey)
-      if (folderIndex !== -1) {
-        // Add the file to the existing folder
-        mediaByFolder[folderIndex].files.push(media.file_name)
-      } else {
-        // Create a new folder object
-        mediaByFolder.push({ folder: folderKey, files: [media.file_name] })
-      }
-    })
-    // Filter out the 'default' folder
-    const filteredMediaByFolder = mediaByFolder.filter((item) => item.folder !== 'default')
-
-    return filteredMediaByFolder
+    return folders
   }
 
-  async getAllMedia(queryParams: { folder?: string; orderBy?: string }): Promise<Media[]> {
-    let query = Media.query()
-
-    if (queryParams.folder) {
-      query = query.where('folder', queryParams.folder)
+  async getAllMedia(
+    queryParams: {
+      folder: string | null
+      orderBy: string | null
+      page: number
+      limit: number
+    } = {
+      folder: null,
+      orderBy: null,
+      page: 1,
+      limit: 10,
     }
+  ): Promise<{
+    meta: any
+    data: ModelObject[]
+  }> {
+    const medias = await Media.query()
+      .if(queryParams.folder, (query) => {
+        if (queryParams.folder == 'default') {
+          return query.whereNull('folder_id')
+        } else {
+          query.whereHas('folder', (folderQuery) => {
+            return folderQuery.where('path', queryParams.folder ?? '')
+          })
+        }
+      })
+      .if(queryParams.orderBy, (query) => {
+        const [column, direction] = queryParams.orderBy?.split(':') ?? []
+        query.orderBy(column, direction as 'asc' | 'desc')
+      })
+      .paginate(queryParams.page ?? 1, queryParams.limit ?? 10)
 
-    if (queryParams.orderBy) {
-      const [column, direction] = queryParams.orderBy.split(':')
-      query = query.orderBy(column, direction as 'asc' | 'desc')
-    }
-
-    return query
+    return medias.toJSON()
   }
 
   async getMediaById(id: number): Promise<Media | null> {
