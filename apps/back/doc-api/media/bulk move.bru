@@ -1,0 +1,21 @@
+meta {
+  name: bulk move
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{baseUrl}}/media/bulk-move
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "destinationFolderId": 2,
+    "folderIds": [
+      9
+    ],
+    "mediaIds":[]
+  }
+}

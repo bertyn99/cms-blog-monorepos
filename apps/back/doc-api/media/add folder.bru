@@ -1,0 +1,18 @@
+meta {
+  name: add folder
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/media/folder
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name":"bc",
+    "parent":null
+  }
+}
