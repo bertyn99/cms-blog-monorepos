@@ -1,9 +1,15 @@
 import { DateTime } from 'luxon'
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
-import { BaseModel, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
+import { BaseModel, afterSave, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
 import Media from '#models/media'
 
 export default class Folder extends BaseModel {
+  serializeExtras() {
+    return {
+      mediaCount: Number(this.$extras.mediaCount),
+    }
+  }
+
   @column({ isPrimary: true })
   declare id: number
 
@@ -34,4 +40,19 @@ export default class Folder extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
+
+  @afterSave()
+  static async generateFolderPath(folder: Folder) {
+    if (folder.parentId) {
+      await folder.load('parent', (parentQuery) => {
+        parentQuery.select('id', 'path')
+      })
+    }
+    if (folder.parent) {
+      folder.path = `${folder.parent.path}/${folder.id}`
+    } else {
+      folder.path = `/${String(folder.id)}`
+    }
+    await folder.save()
+  }
 }

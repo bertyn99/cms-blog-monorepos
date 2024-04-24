@@ -10,6 +10,7 @@ import { promisify } from 'util'
 
 import { ModelObject } from '@adonisjs/lucid/types/model'
 import { Exception } from '@adonisjs/core/exceptions'
+import { IUpdateMediaValidator } from '#validators/media_validator'
 
 @inject()
 export default class MediaLibrairyService {
@@ -53,15 +54,22 @@ export default class MediaLibrairyService {
       return { error: error.message }
     }
   }
-  async getAllMediaGroupedByFolder(filter: any): Promise<Folder[]> {
+  async getAllFolder(filter: any): Promise<Folder[]> {
     const folders = await Folder.query()
       .select('id', 'name', 'path')
-      .if(filter.folder, (query) => {
-        query.where('path', 'LIKE', `%${filter.folder}%`)
+      .if(
+        filter.folder,
+        (query) => {
+          query.where('path', 'LIKE', `${filter.folder}/%`)
+        },
+        (query) => {
+          query.whereNull('parentId')
+        }
+      )
+      .withAggregate('media', (query) => {
+        query.count('*').as('mediaCount')
       })
-      .preload('media', (query) => {
-        query.select('id', 'file_name')
-      })
+      .paginate(filter.page ?? 1, filter.limit ?? 10)
 
     return folders
   }
@@ -84,7 +92,7 @@ export default class MediaLibrairyService {
   }> {
     const medias = await Media.query()
       .if(queryParams.folder, (query) => {
-        if (queryParams.folder == 'default') {
+        if (queryParams.folder == '/') {
           return query.whereNull('folder_id')
         } else {
           query.whereHas('folder', (folderQuery) => {
@@ -113,15 +121,50 @@ export default class MediaLibrairyService {
     }
   }
 
-  async updateMedia(id: number, data: HttpContextContract['request']): Promise<Media | null> {
-    const media = await Media.findOrFail(id)
+  async createFolder(folder: any, parentId: number) {
+    try {
+      // Check if folder exists
+      const folderExists = await Folder.query()
+        .where('name', folder)
+        .whereHas('parent', (query) => {
+          query.where('id', parentId)
+        })
+        .first()
 
-    media.merge({
-      file_name: data.input('file_name'),
-      mime_type: data.input('mime_type'),
-      size: data.input('size'),
-      folder: data.input('folder'),
-    })
+      if (folderExists) {
+        throw new Error('Folder already exists')
+      }
+
+      const newFolder = new Folder()
+      newFolder.name = folder
+      newFolder.path = ''
+      if (parentId !== null) {
+        const parentFolder = await Folder.find(parentId)
+        if (!parentFolder) throw new Error('Parent folder not found')
+
+        await newFolder.related('parent').associate(parentFolder)
+      }
+
+      await newFolder.save()
+      return newFolder
+    } catch (error) {
+      console.error('Error creating folder:', error)
+      throw new Error('Error creating folder')
+    }
+  }
+
+  async updateMedia(id: number, data: Partial<IUpdateMediaValidator>): Promise<Media | null> {
+    const media = await Media.findOrFail(id)
+    const { folderId, ...rest } = data
+    if (data.folderId !== undefined) {
+      media.merge(rest)
+    }
+
+    if (folderId && media.folderId !== folderId) {
+      console.log('Sans folder:', folderId !== null)
+      const folder = await Folder.findOrFail(folderId)
+      await media.related('folder').associate(folder)
+    }
 
     await media.save()
 
@@ -134,7 +177,7 @@ export default class MediaLibrairyService {
       arrId.forEach(async (id) => {
         const media = await Media.find(id)
         if (media) {
-          const formatPath = media.file_path == 'default' ? '' : media.file_path
+          const formatPath = media.file_path
           const path = app.publicPath(formatPath)
 
           //check if the file exists
@@ -146,7 +189,7 @@ export default class MediaLibrairyService {
       })
     } catch (error) {}
   }
-  async deleteAListofFolderMedia(arrFolder: string[]): Promise<void> {
+  async deleteAListofFolderMedia(arrFolder: number[]): Promise<void> {
     try {
       arrFolder.forEach(async (folder) => {
         await this.deleteFolderMedia(folder)
@@ -156,35 +199,76 @@ export default class MediaLibrairyService {
     }
   }
 
-  async deleteFolderMedia(folder: string): Promise<void> {
+  async deleteFolderMedia(folderId: number): Promise<void> {
     try {
       //get all the media in the folder
-      const medias = await Media.query().where('folder', folder)
+      const folder = await Folder.find(folderId)
 
       //check if the folder exists or if it has any media
-      if (medias.length === 0) {
+      if (folder === null) {
         throw new Error('Folder not found')
       }
-      medias.forEach(async (media) => {
-        //create the path to the file
-        const formatPath = media.file_path == 'default' ? '' : media.file_path
-        const path = app.publicPath(formatPath)
 
-        //check if the file exists
-        if (await this.fileExists(path)) {
-          await this.removeFile(path)
-          await media.delete()
-        }
-      })
+      //delete all the media in the folder
+      const medias = await folder.related('media').query().select('id')
+
+      console.log('Medias:', medias)
+
+      //extract the media ids
+      const mediaIds = medias.map((media) => media.id)
+
+      //delete the media
+      await this.deleteMedia(mediaIds)
+
+      //delete the folder
+      await folder.delete()
 
       //remove the folder from the disk
-      const folderPath = app.publicPath(`uploads/${folder}`)
+      /*   const folderPath = app.publicPath(`uploads/${folder}`)
       if (await this.fileExists(folderPath)) {
         await this.removeAFolder(folderPath)
-      }
+      } */
     } catch (error) {
       throw error
     }
+  }
+
+  async moveMedia(mediaIds: number[], folderId: number): Promise<void> {
+    const destinationFolder = await Folder.find(folderId)
+
+    //loop through the media ids
+    mediaIds.forEach(async (id) => {
+      const media = await Media.find(id)
+      if (media) {
+        if (destinationFolder) {
+          await media.related('folder').associate(destinationFolder)
+        }
+
+        await media.save()
+      }
+    })
+  }
+  async moveFolderMedia(folderIds: number[], destinationFolderId: any) {
+    const destinationFolder = await Folder.find(destinationFolderId)
+
+    //loop through the folder ids
+    folderIds.forEach(async (folderId) => {
+      //get the folder
+      const folder = await Folder.find(folderId)
+      if (folder) {
+        //get the destination folder
+
+        if (destinationFolder && folder.parentId !== destinationFolder.id) {
+          //associate the folder with the destination folder
+          await folder.related('parent').associate(destinationFolder)
+        }
+        if (destinationFolder === null) {
+          await folder.related('parent').dissociate()
+        }
+
+        await folder.save()
+      }
+    })
   }
 
   async removeFile(filePath: string): Promise<void> {
