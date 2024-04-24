@@ -63,16 +63,27 @@ const filesFormatted = computed(() => {
         }
     }) : []
 })
-const handleUploadAssets = () => {
+const handleUploadAssets = async () => {
     console.log('uploadAssets', files)
     console.log('uploadAssets', filesFormatted.value)
     const formData = new FormData()
     formData.append('folder', folderName);
     files.value.forEach((f) => {
-        formData.append('media', f)
+        formData.append('medias', f)
     })
 
-    uploadMedia(formData)
+    try {
+        const res = await uploadMedia(formData)
+        console.log(res)
+
+        if (res.msg) {
+            await refreshNuxtData(`list-media-${folderName}`)
+            isOpen.value = false
+        }
+    } catch (error) {
+        console.log(error)
+    }
+
 }
 
 watch(files, (files) => {

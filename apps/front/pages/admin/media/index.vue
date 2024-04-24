@@ -4,10 +4,10 @@ definePageMeta({
 });
 const route = useRoute()
 
-const folderName = computed(() => route.query.folder ?? null)
+const folderName = computed(() => route.query.folder ?? "/")
 
 const { fetchMedia } = useMediaLibrary()
-const { data: Media, refresh: refreshMedia, pending } = await useLazyAsyncData(`list-media-${folderName.value ? 'default' : folderName.value}`, () => fetchMedia(folderName), { watch: [folderName] })
+const { data: Media, refresh: refreshMedia, pending } = await useLazyAsyncData(`list-media-${folderName.value}`, () => fetchMedia(folderName), { watch: [folderName] })
 
 
 
@@ -27,11 +27,11 @@ watch(folders, (folders) => {
     console.log('files', files.value);
 })
 
-const listOfFolder = computed(() => folders.value ?? [])
+const listOfFolder = computed(() => folders.value.data ?? [])
 
-const fileInFolder = computed(() => files.value ?? [])
+const fileInFolder = computed(() => files.value.data ?? [])
 
-
+console.log('listOfFolder', fileInFolder.value);
 const { dataArrWithSelector: folderArrWithSelector, selectedElement: selectedFolder } = useSelector(listOfFolder)
 watch(folderArrWithSelector, (folderArrWithSelector) => {
     console.log('folderArrWithSelector', folderArrWithSelector);
@@ -78,8 +78,10 @@ const updateSelectedFile = (value) => {
 
     </DashboardNavbar>
 
-    <UContainer class="space-y-8">
-        <MediaModalNew v-model="isOpen" v-if="isOpen" :folderName="folderName" />
+    <UContainer class="space-y-8" :ui="{
+                constrained: 'max-w-[1480px]'
+            }">
+        <MediaModalNew v-model="isOpen" v-if="isOpen" :folderName="folderName ?? ''" />
         <template v-if="pending">
             <USkeleton class="h-12 w-12" :ui="{ rounded: 'rounded-full' }" />
             <div class="space-y-2">
@@ -92,19 +94,19 @@ const updateSelectedFile = (value) => {
                 :refresh="refresfData" />
 
 
-            <div class="mt-8">
+            <div class="mt-3">
 
                 <h2 class="text-3xl font-bold mb-3">Folder</h2>
                 <div class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8">
-                    <MediaCardFolder v-for="f in folderArrWithSelector" :name="f.folder" :parent="folderName"
-                        v-model:selected="f.isSelected" />
+                    <MediaCardFolder v-for=" f  in  folderArrWithSelector " :name="f.folder" :path="f.path"
+                        :numberOfFiles="f.mediaCount" v-model:selected="f.isSelected" />
                 </div>
             </div>
             <UDivider />
             <div class="mt-8">
                 <h2 class="text-3xl font-bold mb-3">Assets</h2>
                 <div class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8">
-                    <MediaCardFile v-for="f in fileArrWithSelector" :file="f" :key="f.id"
+                    <MediaCardFile v-for=" f  in  fileArrWithSelector " :file="f" :key="f.id"
                         @selected:file="updateSelectedFile" />
                 </div>
             </div>
