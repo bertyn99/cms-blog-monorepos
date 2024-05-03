@@ -1,7 +1,7 @@
 import { BaseSchema } from '@adonisjs/lucid/schema'
 
 export default class extends BaseSchema {
-  protected tableName = 'media'
+  protected tableName = 'medias'
 
   async up() {
     this.schema.createTable(this.tableName, (table) => {
@@ -9,8 +9,10 @@ export default class extends BaseSchema {
       table.string('file_path').notNullable()
       table.string('file_name').notNullable()
       table.string('mime_type').notNullable()
-      table.string('folder').notNullable()
+      table.integer('folder_id').unsigned().references('folders.id').onDelete('CASCADE')
       table.integer('size').unsigned().notNullable()
+      table.string('alt').nullable()
+      table.string('caption').nullable()
       table.timestamp('created_at')
       table.timestamp('updated_at')
     })

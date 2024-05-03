@@ -8,6 +8,7 @@ export default class extends BaseSchema {
       table.increments('id').primary()
       table.integer('post_id').unsigned().references('posts.id').onDelete('CASCADE')
       table.string('locale', 2).notNullable().defaultTo('fr') // ISO 639-1 language codes (e.g., 'en', 'fr')
+      table.integer('cover_id').unsigned().references('medias.id').onDelete('CASCADE')
       table.string('title').notNullable()
       table.string('slug').nullable().unique() // Optional, for translated slugs
       table.string('description').nullable()
@@ -17,6 +18,7 @@ export default class extends BaseSchema {
         existingType: false,
       })
       .defaultTo('Draft')
+
       table.dateTime('published_at').nullable()
       table.text('content').notNullable()
       table.timestamp('created_at')
@@ -26,5 +28,6 @@ export default class extends BaseSchema {
 
   async down() {
     this.schema.dropTable(this.tableName)
+    this.schema.raw('DROP TYPE IF EXISTS "post_translation_status"')
   }
 }

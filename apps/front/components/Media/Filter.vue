@@ -26,6 +26,8 @@
 </template>
 
 <script setup lang="ts">
+import type { IDeleteMediaAndFolder } from '~/types/media';
+
 const selected = defineModel('selected', { type: Boolean, default: false })
 const orderBy = defineModel('orderBy', { type: String, default: 'date:asc' })
 
@@ -62,9 +64,9 @@ const displaySelectText = computed(() => selectedFolder.length > 0 || selectedFi
 
 const deleteMedia = async () => {
     if (selectedFolder.length > 0 || selectedFile.length > 0) {
-        const data: { fileIds: [], folders: [] } = {
-            fileIds: selectedFile.map(f => f.id),
-            folders: selectedFolder.map(f => f.folder)
+        const data: IDeleteMediaAndFolder = {
+            fileIds: selectedFile.map((f: any) => f.id) as number[],
+            folders: selectedFolder.map((f: any) => f.id) as number[]
         }
 
         try {
@@ -83,8 +85,6 @@ const deleteMedia = async () => {
             console.log('error', error)
             //throw notification error
         }
-
-
 
     }
 

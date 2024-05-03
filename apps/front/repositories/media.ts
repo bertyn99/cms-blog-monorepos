@@ -1,22 +1,23 @@
 import type { $Fetch, NitroFetchRequest, NitroFetchOptions } from "nitropack";
+import type { File, IDeleteMediaAndFolder } from "~/types/media";
 
 export const mediaRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => ({
-  async getAllFile(folder:string='',options?: any) {
+  async getAllFile(folder: string = "", options?: any) {
     const mergeOptions = {
       credentials: "include",
-      params:{
-        folder:folder==''?'default':folder
+      params: {
+        folder: folder == "" ? "/" : folder,
       },
       ...options,
     };
     return fetch("/media?folder=default", mergeOptions);
   },
 
-  async getAllFolder(folder:string='',options?: any) {
+  async getAllFolder(folder: string = "", options?: any) {
     const mergeOptions = {
       credentials: "include",
-      params:{
-        folder:folder
+      params: {
+        folder: folder,
       },
       ...options,
     };
@@ -26,21 +27,31 @@ export const mediaRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => ({
   async uploadFile(data: FormData, options?: any) {
     const mergeOptions = {
       credentials: "include",
-      method:"POST",
+      method: "POST",
       ...options,
+      body: data,
     };
     return fetch("/media", mergeOptions);
   },
 
-  async deleteFileAndFolder(data: FormData, options?: any) {
+  async deleteFileAndFolder(data: IDeleteMediaAndFolder, options?: any) {
     console.log(options);
     const mergeOptions = {
-      method:"DELETE", 
+      method: "DELETE",
       credentials: "include",
       ...options,
       body: JSON.stringify(data),
-      
     };
     return fetch("/media", mergeOptions);
+  },
+
+  async updateFile(id: number, data: Partial<File>, options?: any) {
+    const mergeOptions = {
+      method: "PUT",
+      credentials: "include",
+      ...options,
+      body: JSON.stringify(data),
+    };
+    return fetch(`/media/${id}`, mergeOptions);
   },
 });

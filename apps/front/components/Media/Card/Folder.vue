@@ -5,19 +5,24 @@
                 <UCheckbox name="selection" v-model="selected" />
 
                 <UButton :to="{
-        name: 'Media Librairy',
-        query: {
-            folder: parent + '/' + name,
-        }
-    }" icon="i-heroicons-eye" variant="soft" class="hidden group-hover:block" />
+                    name: 'Media Librairy',
+                    query: {
+                        folder: path,
+                    }
+                }" icon="i-heroicons-eye" variant="soft" class="hidden group-hover:block" />
             </div>
         </template>
-        <UIcon name="i-twemoji-file-folder" class="w-56 h-56 mb-6" />
 
-        <template #footer>
+        <div class="bg-primary-200 w-20 rounded-md  py-2 inline-flex justify-center">
+            <UIcon name="i-twemoji-file-folder" class="w-12 h-12 mx-auto text-primary-500" />
+        </div>
+        <div>
+            <span class="flex items-center justify-center text-gray-800 font-semibold"> {{ name }} </span>
+            <span class="flex items-center justify-center text-gray-800 text-xs ">{{ numberOfFolders ?? 0 }} folder - {{
+                numberOfFiles
+            }} files</span>
+        </div>
 
-            {{ name }}- {{ numberOfFiles }}files
-        </template>
     </UCard>
 
     <!--     <MediaModalFolder v-model="isOpen" /> -->
@@ -27,18 +32,18 @@
 defineProps({
     name: String,
     numberOfFiles: Number,
-    parent: String
+    numberOfFolders: Number,
+    path: String
 
 })
 
 const selected = defineModel('selected')
 
 
-const isOpen = ref(false)
 const customStyle = ref({
-    base: 'relative overflow-hidden col-span-2 sm:col-span-1 group',
+    base: 'relative overflow-hidden col-span-2 sm:col-span-1 group px-5',
     body: {
-        base: "h-48  overflow-hidden",
+        base: "h-32  overflow-hidden flex items-center gap-2 ",
         padding: "p-0 sm:p-0",
     },
     header: {
@@ -46,9 +51,6 @@ const customStyle = ref({
         background: "bg-transparent",
         padding: "p-1 sm:p-2"
     },
-    footer: {
-        base: "absolute inset-x-0 bottom-0 h-6 flex items-center justify-center text-white bg-slate-800/50",
-        background: "bg-slate-800/50",
-    }
+
 })
 </script>

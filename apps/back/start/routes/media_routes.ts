@@ -12,9 +12,12 @@ export default function authRoutes() {
       router.get('/:id', [MediaController, 'show'])
       router
         .group(() => {
+          router.put('/:mediaId', [MediaController, 'update'])
+          router.post('/bulk-move', [MediaController, 'move'])
+          router.post('/folder', [MediaController, 'storeFolder'])
           router.post('/', [MediaController, 'store'])
           router.delete('/', [MediaController, 'destroy'])
-      /*     router.delete('/', [MediaController, 'destroyFolder']) */
+          /*     router.delete('/', [MediaController, 'destroyFolder']) */
         })
         .use(middleware.auth())
     })
@@ -31,7 +34,7 @@ export default function authRoutes() {
     }
 
     const absolutePath = app.makePath('public/uploads', normalizedPath)
-   
+
     return response.download(absolutePath)
   })
 }
