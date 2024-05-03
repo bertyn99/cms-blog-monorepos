@@ -17,7 +17,8 @@ export default class extends BaseSchema {
         enumName: 'post_translation_status',
         existingType: false,
       })
-        .defaultTo('Draft')
+      .defaultTo('Draft')
+
       table.dateTime('published_at').nullable()
       table.text('content').notNullable()
       table.timestamp('created_at')
