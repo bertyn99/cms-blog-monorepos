@@ -5,11 +5,11 @@
                 <UCheckbox name="selection" v-model="selected" />
 
                 <UButton :to="{
-        name: 'Media Librairy',
-        query: {
-            folder: path,
-        }
-    }" icon="i-heroicons-eye" variant="soft" class="hidden group-hover:block" />
+                    name: 'Media Librairy',
+                    query: {
+                        folder: path,
+                    }
+                }" icon="i-heroicons-eye" variant="soft" class="hidden group-hover:block" />
             </div>
         </template>
 
@@ -17,10 +17,10 @@
             <UIcon name="i-twemoji-file-folder" class="w-12 h-12 mx-auto text-primary-500" />
         </div>
         <div>
-            <span class="flex items-center justify-center text-gray-800 font-semibold"> {{ name }}ff </span>
+            <span class="flex items-center justify-center text-gray-800 font-semibold"> {{ name }} </span>
             <span class="flex items-center justify-center text-gray-800 text-xs ">{{ numberOfFolders ?? 0 }} folder - {{
-        numberOfFiles
-                }} files</span>
+                numberOfFiles
+            }} files</span>
         </div>
 
     </UCard>
@@ -29,7 +29,7 @@
 </template>
 
 <script setup>
-const { name, parent } = defineProps({
+defineProps({
     name: String,
     numberOfFiles: Number,
     numberOfFolders: Number,
@@ -39,7 +39,7 @@ const { name, parent } = defineProps({
 
 const selected = defineModel('selected')
 
-const isOpen = ref(false)
+
 const customStyle = ref({
     base: 'relative overflow-hidden col-span-2 sm:col-span-1 group px-5',
     body: {
