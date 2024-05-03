@@ -1,13 +1,13 @@
 <template>
     <UModal v-model="isOpen">
         <UCard :ui="{
-        base: 'h-full flex flex-col',
-        rounded: '',
-        divide: 'divide-y divide-gray-100 dark:divide-gray-800',
-        body: {
-            base: 'grow'
-        }
-    }">
+            base: 'h-full flex flex-col',
+            rounded: '',
+            divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+            body: {
+                base: 'grow'
+            }
+        }">
             <template #header>
                 <div class="flex items-center justify-between">
                     <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
@@ -42,32 +42,36 @@
 
 </template>
 
-<script setup>
+<script setup lang="ts">
+import type { File } from '~/types/media'
+
 const { folderName } = defineProps(['folderName'])
 const isOpen = defineModel()
 const files = ref(null)
 
 const { uploadMedia } = useMediaLibrary()
 
-console.log('New Media', isOpen.value)
+
 const filesFormatted = computed(() => {
     return files.value ? files.value.map((f, i) => {
+
         return {
             id: i,
             filePath: f.name,
             fileName: f.name,
             mimeType: f.name.substr(f.name.lastIndexOf(".") + 1),
-            folder: folderName,
+            folder: folderName == "/" ? null : folderName,
             size: f.size,
             isSelected: false,
         }
     }) : []
 })
+
 const handleUploadAssets = async () => {
     console.log('uploadAssets', files)
     console.log('uploadAssets', filesFormatted.value)
     const formData = new FormData()
-    formData.append('folder', folderName);
+    formData.append('folder', folderName == "/" ? '' : folderName);
     files.value.forEach((f) => {
         formData.append('medias', f)
     })
