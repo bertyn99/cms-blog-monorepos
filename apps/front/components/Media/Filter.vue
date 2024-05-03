@@ -66,7 +66,7 @@ const deleteMedia = async () => {
     if (selectedFolder.length > 0 || selectedFile.length > 0) {
         const data: IDeleteMediaAndFolder = {
             fileIds: selectedFile.map((f: any) => f.id) as number[],
-            folders: selectedFolder.map((f: any) => f.folder) as number[]
+            folders: selectedFolder.map((f: any) => f.id) as number[]
         }
 
         try {
