@@ -27,19 +27,9 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
+import type { File } from '~/types/media'
 
 
-export type File = {
-    id: number,
-    filePath: string,
-    fileName: string,
-    mimeType: string,
-    folder: string,
-    size: number,
-    isSelected: boolean,
-    createdAt: string,
-    updatedAt: string
-}
 const { file } = defineProps({
     file: {
         type: Object as PropType<File>,
