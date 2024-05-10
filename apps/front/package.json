@@ -12,6 +12,8 @@
   "devDependencies": {
     "@headlessui/vue": "^1.7.19",
     "@tiptap/extension-image": "^2.2.3",
+    "@vueuse/core": "^10.9.0",
+    "@vueuse/nuxt": "^10.9.0",
     "nuxt": "^3.10.1",
     "nuxt-auth-utils": "^0.0.18",
     "nuxt-tiptap-editor": "^1.1.2",
