@@ -14,7 +14,7 @@ const items = computed(() => [
     }], [{
         label: 'Settings',
         icon: 'i-heroicons-cog-8-tooth',
-        to: '/settings'
+        to: '/admin/settings'
     }, {
         label: 'Command menu',
         icon: 'i-heroicons-command-line',
