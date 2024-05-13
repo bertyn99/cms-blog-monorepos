@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 const { loggedIn, user, clearUser } = useUserSession()
-console.log(user.value)
+
 
 /* const { isDashboardSearchModalOpen } = useUIState() */
 const { metaSymbol } = useShortcuts()
@@ -35,7 +35,8 @@ const items = computed(() => [
     }] */,
     [{
         label: 'Sign out',
-        icon: 'i-heroicons-arrow-left-on-rectangle'
+        icon: 'i-heroicons-arrow-left-on-rectangle',
+        click: () => clearUser()
     }]
 ])
 </script>
@@ -47,7 +48,8 @@ const items = computed(() => [
             <UButton color="gray" variant="ghost" class="w-full" :label="user?.fullName ?? 'User'"
                 :class="[open && 'bg-gray-50 dark:bg-gray-800']">
                 <template #leading>
-                    <UAvatar src="https://avatars.githubusercontent.com/u/739984?v=4" size="2xs" />
+
+                    <UAvatar :src="user?.avatar" :alt="user?.fullName" size="2xs" />
                 </template>
 
                 <template #trailing>
