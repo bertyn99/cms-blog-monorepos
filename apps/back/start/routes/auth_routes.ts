@@ -5,8 +5,7 @@ export default function authRoutes() {
   router
     .group(() => {
       router.post('/login', [AuthController, 'login'])
-      router.get('/logout', [AuthController, 'login'])
-
+      router.post('/logout', [AuthController, 'logout'])
     })
     .prefix('/auth')
 }

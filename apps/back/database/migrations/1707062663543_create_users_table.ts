@@ -9,6 +9,8 @@ export default class extends BaseSchema {
       table.string('full_name').nullable()
       table.string('email', 254).notNullable().unique()
       table.string('password').notNullable()
+      table.string('avatar').nullable()
+      table.text('bio', 'mediumtext').nullable()
       table
         .enu('role', ['User', 'Admin', 'Editor'], {
           useNative: true,

@@ -16,3 +16,7 @@
   @apply antialiased font-sans text-foreground bg-background;
 } */
 </style>
+<script setup>
+
+const { mode } = useTheme()
+</script>

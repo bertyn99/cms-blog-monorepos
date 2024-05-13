@@ -1,6 +1,7 @@
 <script setup>
 definePageMeta({
     name: "Media Librairy",
+    middleware: ['auth-guard']
 });
 const route = useRoute()
 

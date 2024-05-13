@@ -20,6 +20,8 @@ const settingsLink = [
 
 ]
 
+const { metaSymbol } = useShortcuts()
+
 const parent = {
   label: "Settings",
   defaultOpen: false
@@ -34,16 +36,34 @@ const parent = {
       class="sticky top-0 z-40 h-[--header-height] flex-shrink-0 flex items-center border-b border-gray-200 dark:border-gray-800 px-4 gap-x-4 ">
       <slot name="top" />
     </div>
-    <div class="px-4 py-4 pt-2 space-y-4">
-      <!-- <UDashboardSidebarLinks :links="links" /> -->
-      <UVerticalNavigation :links="links">
-        <template #default="{ link }">
 
-          <span class="group-hover:text-primary relative">{{ link.label }}</span>
-        </template>
+    <div class="flex flex-col w-full flex-1 relative overflow-hidden">
+      <div class="flex-grow flex flex-col min-h-0 gap-y-2 py-2">
+        <div class="w-full flex flex-col px-4">
+          <UInput icon="i-heroicons-magnifying-glass-20-solid" size="sm" color="white" :trailing="false"
+            placeholder="Search...">
+            <template #trailing>
+              <div class="flex items-center gap-0.5">
+                <UKbd>{{ metaSymbol }}</UKbd>
+                <UKbd>K</UKbd>
+              </div>
+            </template>
+          </UInput>
+        </div>
+        <div class="flex-1 px-4 flex flex-col gap-y-2 overflow-y-auto">
+          <!-- <UDashboardSidebarLinks :links="links" /> -->
+          <UVerticalNavigation :links="links">
+            <template #default="{ link }">
+              <span class="group-hover:text-primary relative">{{ link.label }}</span>
+            </template>
+          </UVerticalNavigation>
+          <SidebarAccordeonSubLink :items="settingsLink" :parent="parent" />
 
-      </UVerticalNavigation>
-      <SidebarAccordeonSubLink :items="settingsLink" :parent="parent" />
+        </div>
+        <div class="flex items-center justify-between gap-x-1.5 flex-shrink-0 px-4">
+          <SidebarUserDropdown />
+        </div>
+      </div>
     </div>
   </div>
 </template>
