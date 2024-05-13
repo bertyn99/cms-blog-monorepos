@@ -3,7 +3,8 @@
 import type { FormError, FormSubmitEvent } from '#ui/types'
 
 definePageMeta({
-    name: 'Settings'
+    name: 'Settings',
+    middleware: ['auth-guard']
 })
 
 const fileRef = ref<HTMLInputElement>()

@@ -4,6 +4,7 @@
 <script setup lang="ts">
 definePageMeta({
     name: 'Members',
+    middleware: ['auth-guard']
 });
 
 import type { Member } from '~/types'
