@@ -8,8 +8,11 @@ definePageMeta({
 
 const fileRef = ref<HTMLInputElement>()
 const isDeleteAccountModalOpen = ref(false)
-const { loggedIn, user, updateUser } = useUserSession()
+const { loggedIn, user, updateUser, fetchAndSetUser } = useUserSession()
 
+if (!loggedIn.value) {
+    fetchAndSetUser()
+}
 const { selectedTheme, optionsTheme } = useTheme()
 
 const state = reactive({
@@ -56,7 +59,7 @@ function onFileClick() {
 
 async function onSubmit(event: FormSubmitEvent<any>) {
     // Do something with data
-    console.log(event.data)
+
     updateUser(event.data)
     toast.add({ title: 'Profile updated', icon: 'i-heroicons-check-circle' })
 }

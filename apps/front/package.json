@@ -37,6 +37,7 @@
     "@yggdra/shared": "workspace:*",
     "date-fns": "^3.6.0",
     "i": "^0.3.7",
+    "universal-cookie": "^6",
     "v-calendar": "^3.1.2",
     "{collection_name}": "link:@iconify-json/{collection_name}"
   }

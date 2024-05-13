@@ -1,0 +1,19 @@
+meta {
+  name: update user
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{baseUrl}}/users/me
+  body: multipartForm
+  auth: none
+}
+
+body:multipart-form {
+  fullName: ggg
+  email: admin@blog.com
+  bio: ttttt
+  password: secret
+  password_confirmation: secret
+}
