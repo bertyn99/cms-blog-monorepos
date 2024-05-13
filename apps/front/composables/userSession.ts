@@ -5,6 +5,7 @@ import type { Role } from "@yggdra/shared";
 
 export const useUserSession = () => {
   const { $api } = useNuxtApp();
+  const router = useRouter();
   const userRepo = userRepository($api);
   // The state is initially null and will be a User object when logged in
   const userState = useState<User | null>("user", () => null);
@@ -23,8 +24,20 @@ export const useUserSession = () => {
     userState.value = userData;
   };
 
-  const clearUser = () => {
+  const clearUser = async () => {
+    const headers = useRequestHeaders(["cookie"]);
+    // Clear the user data from the cookie
+    const userData = await userRepo.logout(headers);
+
     userState.value = null;
+
+    //redirect to login page
+    router.push("/admin/login");
+
+    /*  const cookie = useCookie("adonis-session");
+    console.log("Cookie before clear:", cookie.value);
+    cookie.value = null;
+    console.log("Cookie after clear:", cookie.value); */
   };
 
   const fetchAndSetUser = async () => {
@@ -46,14 +59,17 @@ export const useUserSession = () => {
         userData,
         headers
       );
-
-      setUser(updatedUserData);
+      if (!updatedUserData) {
+        throw new Error("Failed to update user data");
+      }
+      setUser(updatedUserData as User);
     } catch (error) {
       console.error("Failed to update user data:", error);
       /*       clearUser(); */
     }
   };
 
+  watch(user, (newUser) => {});
   return {
     loggedIn,
     user,

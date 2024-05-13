@@ -23,9 +23,11 @@ export const userRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => ({
       }),
     });
   },
-  async logout() {
+  async logout(headers?: any) {
     return fetch("/auth/logout", {
+      headers,
       method: "POST",
+      credentials: "include",
     });
   },
   async fetchUserProfile(headers?: any) {
@@ -35,9 +37,10 @@ export const userRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => ({
     });
   },
   async updateUserProfile(profile: any, headers?: any) {
-    return fetch("/auth/profile", {
+    return fetch<User>("/users/me", {
       method: "PUT",
       headers,
+      credentials: "include",
       body: JSON.stringify(profile),
     });
   },
@@ -52,6 +55,7 @@ export const userRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => ({
   async forgotPassword(email: string) {
     return fetch("/auth/forgot-password", {
       method: "POST",
+      credentials: "include",
       body: JSON.stringify({
         email,
       }),
@@ -60,6 +64,7 @@ export const userRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => ({
   async resetPassword(token: string, password: string) {
     return fetch("/auth/reset-password", {
       method: "POST",
+      credentials: "include",
       body: JSON.stringify({
         token,
         password,
