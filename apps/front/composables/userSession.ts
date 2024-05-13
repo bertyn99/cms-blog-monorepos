@@ -1,50 +1,65 @@
 // composables/useUserSession.js
-import { computed } from 'vue';
-import type { User } from '~/types/auth-form';
-
-// Adjust the import path based on where you define your User type
+import { computed } from "vue";
+import type { User } from "~/types/auth-form";
+import type { Role } from "@yggdra/shared";
 
 export const useUserSession = () => {
-    const { $api } = useNuxtApp();
-    const userRepo = userRepository($api);
-    // The state is initially null and will be a User object when logged in
-    const userState = useState<User | null>('user', () => null);
+  const { $api } = useNuxtApp();
+  const userRepo = userRepository($api);
+  // The state is initially null and will be a User object when logged in
+  const userState = useState<User | null>("user", () => null);
 
-    // Computed property to check if the user is logged in
-    const loggedIn = computed(() => userState.value !== null);
+  // Computed property to check if the user is logged in
+  const loggedIn = computed(() => userState.value !== null);
 
-    // Ensure user is a ComputedRef<User | null> for reactivity and type safety
-    const user = computed(() => userState.value);
+  const isAdmin = computed(
+    () => userState.value!.role === ("Admin" as Role.ADMIN)
+  );
 
-    const setUser = (userData: User) => {
-        userState.value = userData;
-    };
+  // Ensure user is a ComputedRef<User | null> for reactivity and type safety
+  const user = computed(() => userState.value);
 
-    const clearUser = () => {
-        userState.value = null;
-    };
+  const setUser = (userData: User) => {
+    userState.value = userData;
+  };
 
-    const fetchAndSetUser = async () => {
-        try {
-            const headers = useRequestHeaders(['cookie'])
-            const userData = await userRepo.fetchUserProfile(headers);
+  const clearUser = () => {
+    userState.value = null;
+  };
 
-            setUser(userData);
+  const fetchAndSetUser = async () => {
+    try {
+      const headers = useRequestHeaders(["cookie"]);
+      const userData = await userRepo.fetchUserProfile(headers);
 
+      setUser(userData);
+    } catch (error) {
+      console.error("Failed to fetch user data:", error);
+      clearUser();
+    }
+  };
 
-        } catch (error) {
-            console.error('Failed to fetch user data:', error);
-            clearUser();
-        }
-    };
+  const updateUser = async (userData: User) => {
+    try {
+      const headers = useRequestHeaders(["cookie"]);
+      const updatedUserData = await userRepo.updateUserProfile(
+        userData,
+        headers
+      );
 
+      setUser(updatedUserData);
+    } catch (error) {
+      console.error("Failed to update user data:", error);
+      /*       clearUser(); */
+    }
+  };
 
-
-    return {
-        loggedIn,
-        user,
-        setUser,
-        clearUser,
-        fetchAndSetUser,
-    };
+  return {
+    loggedIn,
+    user,
+    setUser,
+    clearUser,
+    fetchAndSetUser,
+    updateUser,
+  };
 };
