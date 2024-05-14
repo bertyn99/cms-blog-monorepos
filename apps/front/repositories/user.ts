@@ -36,12 +36,12 @@ export const userRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => ({
       credentials: "include",
     });
   },
-  async updateUserProfile(profile: any, headers?: any) {
+  async updateUserProfile(profile: FormData, headers?: any) {
     return fetch<User>("/users/me", {
       method: "PUT",
       headers,
       credentials: "include",
-      body: JSON.stringify(profile),
+      body: profile,
     });
   },
   async changePassword(password: string) {
