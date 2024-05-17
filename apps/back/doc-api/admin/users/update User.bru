@@ -1,0 +1,19 @@
+meta {
+  name: update user
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{baseUrl}}/users/1
+  body: multipartForm
+  auth: none
+}
+
+body:multipart-form {
+  fullName: bbbbdd
+  email: admin@blog.com
+  bio: ttttt
+  password: secret
+  ~avatar: @file(C:\Users\berty\Downloads\pexels-fox-6063318.jpg)
+}
