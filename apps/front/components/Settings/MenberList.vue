@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import type { Member } from '~/types'
+import type { User } from '~/types/auth-form';
+
+
 
 defineProps({
     members: {
-        type: Array as PropType<Member[]>,
+        type: Array as PropType<User[]>,
         default: () => []
     }
 })
 
-function getItems(member: Member) {
+function getItems(member: User) {
     return [[{
         label: 'Edit member',
         click: () => console.log('Edit', member)
@@ -19,9 +21,9 @@ function getItems(member: Member) {
     }]]
 }
 
-function onRoleChange(member: Member, role: string) {
+function onRoleChange(member: User, role: string) {
     // Do something with data
-    console.log(member.username, role)
+    console.log(member.fullName, role)
 }
 </script>
 
@@ -30,20 +32,20 @@ function onRoleChange(member: Member, role: string) {
         <li v-for="(member, index) in members" :key="index"
             class="flex items-center justify-between gap-3 py-3 px-4 sm:px-6">
             <div class="flex items-center gap-3 min-w-0">
-                <UAvatar v-bind="member.avatar" size="md" />
+                <UAvatar v-bind="member?.avatar" :alt="member?.fullName" size="md" />
 
                 <div class="text-sm min-w-0">
                     <p class="text-gray-900 dark:text-white font-medium truncate">
-                        {{ member.name }}
+                        {{ member.email }}
                     </p>
                     <p class="text-gray-500 dark:text-gray-400 truncate">
-                        {{ member.username }}
+                        {{ member.fullName }}
                     </p>
                 </div>
             </div>
 
             <div class="flex items-center gap-3">
-                <USelectMenu :model-value="member.role" :options="['member', 'owner']" color="white"
+                <USelectMenu :model-value="member.role" :options="['User', 'Admin', 'Editor']" color="white"
                     :ui-menu="{ select: 'capitalize', option: { base: 'capitalize' } }"
                     @update:model-value="onRoleChange(member, $event)" />
 

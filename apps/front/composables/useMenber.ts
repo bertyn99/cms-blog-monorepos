@@ -10,7 +10,8 @@ export const useMember = () => {
 
   const fetchMembers = async () => {
     try {
-      const membersData = await userRepo.getUsers();
+      const headers = useRequestHeaders(["cookie"]);
+      const membersData = await userRepo.getUsers(headers);
       members.value = membersData;
     } catch (error) {
       console.error("Failed to fetch members:", error);
