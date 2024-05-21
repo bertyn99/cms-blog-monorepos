@@ -37,14 +37,17 @@ definePageMeta({
 
 import type { User } from '~/types'
 
-const { data: members } = await useFetch<User[]>('/api/members', { default: () => [] })
+const { members, fetchMembers } = useMember()
+
+fetchMembers()
+
 
 const q = ref('')
 const isInviteModalOpen = ref(false)
 
 const filteredMembers = computed(() => {
     return members.value.filter((member) => {
-        return member.name.search(new RegExp(q.value, 'i')) !== -1 || member.username.search(new RegExp(q.value, 'i')) !== -1
+        return member.fullName.search(new RegExp(q.value, 'i')) !== -1 || member.email.search(new RegExp(q.value, 'i')) !== -1
     })
 })
 </script>

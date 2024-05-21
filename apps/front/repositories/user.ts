@@ -87,4 +87,8 @@ export const userRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => ({
   async getRoles() {
     return fetch<Role[]>("/auth/roles");
   },
+
+  async getUsers() {
+    return fetch<User[]>("/users");
+  },
 });
