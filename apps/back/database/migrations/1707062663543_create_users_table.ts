@@ -12,12 +12,12 @@ export default class extends BaseSchema {
       table.string('avatar').nullable()
       table.text('bio', 'mediumtext').nullable()
       table
-        .enu('role', ['User', 'Admin', 'Editor'], {
-          useNative: true,
-          enumName: 'user_role',
-          existingType: false,
-        })
-        .defaultTo('User')
+        .integer('role_id')
+        .unsigned()
+        .notNullable()
+        .references('id')
+        .inTable('roles')
+        .onDelete('CASCADE')
       table.timestamp('created_at').notNullable()
       table.timestamp('updated_at').nullable()
     })
