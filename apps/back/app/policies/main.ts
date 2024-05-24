@@ -12,4 +12,7 @@
 |
 */
 
-export const policies = {}
+export const policies = {
+  BasePolicy: () => import('#policies/base_policy'),
+  AdminPolicy: () => import('#policies/admin_policy')
+}
