@@ -1,5 +1,6 @@
 import { inject } from '@adonisjs/core'
 import User from '#models/user'
+import Role from '#models/role'
 import { MultipartFile } from '@adonisjs/core/bodyparser'
 import { cuid } from '@adonisjs/core/helpers'
 import app from '@adonisjs/core/services/app'
@@ -64,14 +65,31 @@ export default class UserService {
 
   async getUserById(id: number) {
     try {
-      return await User.find(id)
+      const user = await User.find(id)
+
+      await user?.load('role')
+      console.log(user?.role)
+      return user
     } catch (error) {
       throw new Error('User not found')
     }
   }
 
   async getAllUsers() {
-    return await User.all()
+    return await User.query().preload('role')
+  }
+
+  async changeRole(userIds: number[], role: string) {
+    try {
+      // Find all users with the provided IDs
+      const users = await User.query().whereIn('id', userIds)
+      const newRole = await Role.findBy('name', role)
+      // Change the role of each user
+      await newRole?.related('users').saveMany(users)
+    } catch (error) {
+      console.error('Error changing user roles:', error)
+      throw new Error('Error changing user roles')
+    }
   }
 
   async uploadAvatar(avatar: MultipartFile, id?: string) {

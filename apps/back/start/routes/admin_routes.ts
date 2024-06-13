@@ -7,6 +7,7 @@ export default function userRoutes() {
     .group(() => {
       router.get('/', [AdminController, 'getAll'])
       router.get('/:id', [AdminController, 'getUser'])
+      router.put('/role', [AdminController, 'changeUsersRole'])
       router.put('/:id', [AdminController, 'updateUser'])
       router.delete('/:id', [AdminController, 'deleteUser'])
     })

@@ -1,0 +1,18 @@
+meta {
+  name: change users role
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/users/role
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "userIds":[6],
+    "role":"editor"
+  }
+}

@@ -40,7 +40,8 @@ export default class AuthController {
   }
 
   async getMe({ auth }: HttpContext) {
-    return auth.user
+    await auth.user?.load('role')
+    return auth?.user
   }
 
   async update({ auth, params, request, response }: HttpContext) {

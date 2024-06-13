@@ -21,6 +21,9 @@ export default class AdminUserPolicy extends BasePolicy {
     return user.id === targetUser?.id
   }
 
+  canChangeUsersRole(user: User): AuthorizerResponse {
+    return false
+  }
   canDeleteUser(user: User, targetUser: User): AuthorizerResponse {
     return user.id == targetUser.id
   }
