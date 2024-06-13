@@ -7,9 +7,10 @@ export type fieldType = {
 }[];
 
 export interface User {
+  id: string;
   fullName: string | null;
   email: string;
-  role: Role;
+  roleAccess: string;
   avatar: string | null;
   bio: string | null;
   createdAt: Date;

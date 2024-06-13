@@ -1,15 +1,9 @@
 <script setup lang="ts">
 import type { User } from '~/types/auth-form';
 
-
-
-defineProps({
-    members: {
-        type: Array as PropType<User[]>,
-        default: () => []
-    }
-})
-
+const members = defineModel('members', { type: Array as PropType<User[]>, default: [] })
+const { changeUsersRole } = useMember()
+const userIds = ref<string[]>([])
 function getItems(member: User) {
     return [[{
         label: 'Edit member',
@@ -21,10 +15,23 @@ function getItems(member: User) {
     }]]
 }
 
-function onRoleChange(member: User, role: string) {
-    // Do something with data
-    console.log(member.fullName, role)
+async function onRoleChange(member: User, role: string) {
+    // change role
+    console.log('Role change', member, role)
+
+    userIds.value.push(member.id)
+    // update role
+
+    await changeUsersRole(userIds.value, role)
+
+    //loop through the array and change the roleAccess
+    userIds.value.forEach((id) => {
+        const index = members.value.findIndex((member) => member.id === id)
+        members.value[index].roleAccess = role
+    })
 }
+
+
 </script>
 
 <template>
@@ -45,8 +52,8 @@ function onRoleChange(member: User, role: string) {
             </div>
 
             <div class="flex items-center gap-3">
-                <USelectMenu :model-value="member.role" :options="['User', 'Admin', 'Editor']" color="white"
-                    :ui-menu="{ select: 'capitalize', option: { base: 'capitalize' } }"
+                <USelectMenu :model-value="member.roleAccess" :options="['user', 'admin', 'editor']" color="white"
+                    :ui-menu="{ select: 'capitalize w-24', option: { base: 'capitalize' } }"
                     @update:model-value="onRoleChange(member, $event)" />
 
                 <UDropdown :items="getItems(member)" position="bottom-end">
