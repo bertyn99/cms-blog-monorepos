@@ -15,6 +15,7 @@ export default class extends BaseSchema {
         .integer('role_id')
         .unsigned()
         .notNullable()
+        .defaultTo(1) // Add default value here
         .references('id')
         .inTable('roles')
         .onDelete('CASCADE')

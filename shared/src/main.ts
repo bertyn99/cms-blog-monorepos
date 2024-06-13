@@ -1,10 +1,4 @@
-import type { Role, PostStatus, Post, NewPost, PostList } from "@/types/index";
+import { Role, PostStatus, Post, NewPost, PostList } from "@/types/index";
 
-
-export {
-  Role,
-  PostStatus,
-  Post,
-  NewPost,
-  PostList
-}
+export { Role, PostStatus };
+export type { Post, NewPost, PostList };

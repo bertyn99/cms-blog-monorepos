@@ -1,38 +1,27 @@
 import User from '#models/user'
 
-import { BasePolicy } from '@adonisjs/bouncer'
+import BasePolicy from '#policies/base_policy'
 import { AuthorizerResponse } from '@adonisjs/bouncer/types'
+import { Role } from '@yggdra/shared'
 
 export default class AdminUserPolicy extends BasePolicy {
   canViewListUser(user: User): AuthorizerResponse {
-    return user.role === 'Admin'
+    return user.roleId === Role.EDITOR
   }
 
   canViewUser(user: User, targetUser: User): AuthorizerResponse {
-    return user.role === 'Admin' || user.id === targetUser?.id
+    return user.id === targetUser?.id
   }
 
   canCreateUser(user: User): AuthorizerResponse {
-    return user.role === 'Admin'
+    return true
   }
 
   canUpdateUser(user: User, targetUser: User): AuthorizerResponse {
-    return user.role === 'Admin' || user.id === targetUser?.id
+    return user.id === targetUser?.id
   }
 
   canDeleteUser(user: User, targetUser: User): AuthorizerResponse {
-    return user.role === 'Admin' && user.id !== targetUser.id
-  }
-
-  canViewListPost(user: User): AuthorizerResponse {
-    return user.role === 'Admin'
-  }
-
-  canDeletePost(user: User): AuthorizerResponse {
-    return user.role === 'Admin' || user.role === 'Editor'
-  }
-
-  canCreatePost(user: User): AuthorizerResponse {
-    return user.role === 'Admin' || user.role === 'Editor'
+    return user.id == targetUser.id
   }
 }

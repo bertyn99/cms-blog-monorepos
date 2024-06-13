@@ -2,7 +2,7 @@ import { DateTime } from 'luxon'
 import { withAuthFinder } from '@adonisjs/auth'
 import hash from '@adonisjs/core/services/hash'
 import { compose } from '@adonisjs/core/helpers'
-import { BaseModel, column } from '@adonisjs/lucid/orm'
+import { BaseModel, column, belongsTo } from '@adonisjs/lucid/orm'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 
 import Role from '#models/role'
@@ -24,7 +24,10 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column()
   declare password: string
 
-  @BelongsTo(() => Role)
+  @column()
+  declare roleId: number
+
+  @belongsTo(() => Role)
   declare role: BelongsTo<typeof Role>
 
   @column()
@@ -38,7 +41,4 @@ export default class User extends compose(BaseModel, AuthFinder) {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
-}
-function BelongsTo(arg0: () => typeof Role): (target: User, propertyKey: 'role') => void {
-  throw new Error('Function not implemented.')
 }

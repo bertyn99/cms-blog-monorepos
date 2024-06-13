@@ -8,7 +8,7 @@ export default class Role extends BaseModel {
   declare id: number
 
   @column()
-  declare name: Role
+  declare name: string
 
   @hasMany(() => User)
   declare users: HasMany<typeof User>
