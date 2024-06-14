@@ -25,6 +25,6 @@ export default class AdminUserPolicy extends BasePolicy {
     return false
   }
   canDeleteUser(user: User, targetUser: User): AuthorizerResponse {
-    return user.id == targetUser.id
+    return user.roleId === Role.EDITOR || user.id == targetUser.id
   }
 }

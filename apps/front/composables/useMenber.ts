@@ -35,8 +35,44 @@ export const useMember = () => {
         });
         clearNuxtData("admin-list-menbers");
       }
-    } catch (error) {
+    } catch (error: any) {
+      loading.value = false;
       console.error("Failed to change user role:", error);
+      toast.add({
+        id: `change-role-user-error`,
+        color: "red",
+        icon: "i-heroicons-x-circle",
+        title: "Failed to change user role",
+        description: error.message,
+      });
+    }
+  };
+
+  const deleteUser = async (id: string) => {
+    try {
+      loading.value = true;
+      const res = await userRepo.deleteUser(id);
+      if (res) {
+        loading.value = false;
+        toast.add({
+          id: `delete-users-${id}-success`,
+          color: "green",
+          icon: "i-heroicons-check-circle",
+          title: "Users deleted",
+          description: res.msg,
+        });
+        clearNuxtData("admin-list-menbers");
+      }
+    } catch (error: any) {
+      loading.value = false;
+      console.error("Failed to delete users:", error);
+      toast.add({
+        id: `delete-users-${id}-error`,
+        color: "red",
+        icon: "i-heroicons-x-circle",
+        title: "Failed to delete user",
+        description: error.message,
+      });
     }
   };
 
@@ -44,5 +80,6 @@ export const useMember = () => {
     members,
     fetchMembers,
     changeUsersRole,
+    deleteUser,
   };
 };

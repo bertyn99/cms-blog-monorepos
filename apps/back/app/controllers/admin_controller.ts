@@ -53,14 +53,26 @@ export default class AAdminController {
 
     const payload = await authValidator.validate(data)
 
-    const user = await this.userService.updateUserById(params.id, request.body())
-    return response.ok(user)
+    try {
+      const user = await this.userService.updateUserById(params.id, request.body())
+      return response.ok(user)
+    } catch (error) {
+      return response.badRequest({
+        msg: error,
+      })
+    }
   }
 
   async deleteUser({ bouncer, params, response }: HttpContext) {
     await bouncer.with(AdminUserPolicy).authorize('canDeleteUser', params.id)
 
-    const user = await this.userService.deleteUserById(params.id)
-    return response.ok(user)
+    try {
+      const user = await this.userService.deleteUserById(params.id)
+      return response.ok({ msg: `User n° ${params.id} deleted successfully` })
+    } catch (error) {
+      return response.badRequest({
+        msg: error,
+      })
+    }
   }
 }

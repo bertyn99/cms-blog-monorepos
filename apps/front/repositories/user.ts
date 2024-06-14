@@ -105,4 +105,11 @@ export const userRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => ({
       credentials: "include",
     });
   },
+
+  async deleteUser(userId: string) {
+    return fetch<{ msg: string }>("/users/" + userId, {
+      method: "DELETE",
+      credentials: "include",
+    });
+  },
 });

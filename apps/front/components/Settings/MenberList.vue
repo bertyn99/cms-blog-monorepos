@@ -2,18 +2,30 @@
 import type { User } from '~/types/auth-form';
 
 const members = defineModel('members', { type: Array as PropType<User[]>, default: [] })
-const { changeUsersRole } = useMember()
+const { changeUsersRole, deleteUser } = useMember()
+const seletedMember = ref<User | null>(null)
+const showDeleteModal = ref(false)
+const showEditModal = ref(false)
 const userIds = ref<string[]>([])
 function getItems(member: User) {
     return [[{
         label: 'Edit member',
-        click: () => console.log('Edit', member)
+        click: () => {
+            seletedMember.value = member
+            showEditModal.value = true
+        }
     }, {
         label: 'Remove member',
         labelClass: 'text-red-500 dark:text-red-400',
-        click: () => console.log('Remove', member)
+        click: () => {
+            seletedMember.value = member
+            showDeleteModal.value = true
+        }
+
     }]]
 }
+
+
 
 async function onRoleChange(member: User, role: string) {
     // change role
@@ -62,4 +74,6 @@ async function onRoleChange(member: User, role: string) {
             </div>
         </li>
     </ul>
+    <SettingsModalDeleteMenber v-model:isOpen="showDeleteModal" :member="seletedMember" />
+    <SettingsModalEditMenber v-model:isOpen="showEditModal" :member="seletedMember" />
 </template>
