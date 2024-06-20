@@ -18,11 +18,12 @@
                 </div>
             </template>
 
-            <UForm ref="form" :state="state" class="space-y-6" @submit="onSubmit" :validate="validate" @error="onError">
-                <UFormGroup v-for="field in fields" :key="field.label" :label="field.label"
-                    :name="field.label.toLowerCase()">
-                    <UInput v-model="state[field.label.toLowerCase()]" :placeholder="field.placeholder"
-                        :type="field.type" />
+            <UForm ref="form" :state="state" class="space-y-6" @submit="onSubmit" :validate="validate">
+                <UFormGroup v-for="field in fields" :key="field.label" :label="field.label" :name="field.name">
+                    <UInput v-if="field.type !== 'textarea'" v-model="state[field.name]"
+                        :placeholder="field.placeholder" :type="field.type" />
+                    <UTextarea v-else v-model="state[field.label.toLowerCase()]" :placeholder="field.placeholder" />
+
                 </UFormGroup>
 
                 <UButton type="submit" :disabled="loading" block>
@@ -34,11 +35,15 @@
 </template>
 
 <script setup lang="ts">
-import vine from '@vinejs/vine';
+import type { PropType } from '#imports';
+import vine, { errors } from '@vinejs/vine';
+import type { User } from '~/types/auth-form';
+import type { FormError, FormErrorEvent } from '#ui/types'
+
 
 const { member } = defineProps({
     member: {
-        type: Object,
+        type: Object as PropType<User>,
         required: true,
     },
 });
@@ -50,7 +55,7 @@ const fields = [
         name: "fullName",
         type: "text",
         label: "Full Name",
-        placeholder: "John Doe",
+        placeholder: "John De",
 
     },
     {
@@ -67,8 +72,14 @@ const fields = [
         placeholder: "Enter your password",
     },
     {
+        name: "confirmPassword",
+        label: "Confirm Password",
+        type: "password",
+        placeholder: "Enter your password",
+    },
+    {
         name: "bio",
-        type: "text",
+        type: "textarea",
         label: "Bio",
         placeholder: "Few sentence about you",
 
@@ -79,23 +90,59 @@ const loading = ref(false);
 //generate a reactive state object that adapts with the fields
 const state = reactive<{ [key: string]: any }>(
     {
-        fullName: member.fullName,
-        email: member.email,
-        password: member.password,
-        bio: member.bio,
-        avatar: member.avatar,
+        fullName: member?.fullName,
+        email: member?.email,
+        password: null,
+        confirmPassword: null,
+        bio: member?.bio,
+        avatar: member?.avatar,
     }
 );
+
 
 const schema = vine.object({
     fullName: vine.string().minLength(4),
     email: vine.string().email(),
     password: vine
         .string()
-        .minLength(4)
-        .maxLength(32),
+        .minLength(8)
+        .maxLength(32).confirmed().optional(),
     bio: vine.string().optional(),
-    avatar: vine.any()
+    avatar: vine.any().optional()
 })
 
+const validate = async (state: any) => {
+    const errorsR: FormError[] = [];
+    try {
+        const validator = vine.compile(schema)
+        await validator.validate(
+            state
+        )
+    } catch (error) {
+        if (error instanceof errors.E_VALIDATION_ERROR) {
+            error.messages.forEach((message: any) => {
+                errorsR.push({
+                    path: message.field,
+                    message: message.message,
+                });
+            });
+
+            console.log(errorsR)
+        }
+    }
+    return errorsR;
+};
+
+const onSubmit = async () => {
+    loading.value = true;
+    try {
+
+        console.log(state)
+        // await updateUser(state)
+        /*   isOpen.value = false  */
+    } catch (error) {
+        console.log(error)
+    }
+    loading.value = false;
+}
 </script>

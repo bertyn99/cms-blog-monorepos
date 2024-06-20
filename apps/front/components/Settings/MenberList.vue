@@ -74,6 +74,6 @@ async function onRoleChange(member: User, role: string) {
             </div>
         </li>
     </ul>
-    <SettingsModalDeleteMenber v-model:isOpen="showDeleteModal" :member="seletedMember" />
-    <SettingsModalEditMenber v-model:isOpen="showEditModal" :member="seletedMember" />
+    <SettingsModalDeleteMenber v-model:isOpen="showDeleteModal" :member="seletedMember" v-if="showDeleteModal" />
+    <SettingsModalEditMenber v-model:isOpen="showEditModal" :member="seletedMember" v-if="showEditModal" />
 </template>
