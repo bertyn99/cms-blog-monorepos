@@ -116,7 +116,7 @@ const hasMultipleProviders = computed(() => props.providers.length > 1);
 
 <template>
   <div :class="wrapper">
-    <UIcon :name="icon" class="w-16 h-16 mx-auto text-primary-500 dark:text-primary-400" />
+    <UIcon :name="icon" class="w-16 h-16 mx-auto text-center text-primary-500 dark:text-primary-400" />
     <h2 class="text-2xl text-gray-900 dark:text-white font-bold">
       {{ title }}
     </h2>
@@ -138,7 +138,7 @@ const hasMultipleProviders = computed(() => props.providers.length > 1);
 
         <UButton type="submit" :disabled="loading" block>{{
           submitButton ?? "Submit"
-        }}</UButton>
+          }}</UButton>
       </UForm>
     </UContainer>
   </div>
