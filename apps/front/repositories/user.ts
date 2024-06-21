@@ -36,12 +36,32 @@ export const userRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => ({
       credentials: "include",
     });
   },
-  async updateUserProfile(profile: any, headers?: any) {
+  async updateUserProfile(profile: FormData, headers?: any) {
     return fetch<User>("/users/me", {
       method: "PUT",
       headers,
       credentials: "include",
-      body: JSON.stringify(profile),
+      body: profile,
+    });
+  },
+
+  async updateMemberProfile(profile: FormData, id: string, headers?: any) {
+    return fetch<{ msg: string }>("/users/" + id, {
+      method: "PUT",
+      headers,
+      credentials: "include",
+      body: profile,
+    });
+  },
+
+  async updateUsersRoles(userIds: string[], role: string) {
+    return fetch<{ msg: string }>("/users/role", {
+      method: "PUT",
+      credentials: "include",
+      body: JSON.stringify({
+        userIds,
+        role,
+      }),
     });
   },
   async changePassword(password: string) {
@@ -86,5 +106,19 @@ export const userRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => ({
   },
   async getRoles() {
     return fetch<Role[]>("/auth/roles");
+  },
+
+  async getUsers(headers?: any) {
+    return fetch<User[]>("/users", {
+      headers,
+      credentials: "include",
+    });
+  },
+
+  async deleteUser(userId: string) {
+    return fetch<{ msg: string }>("/users/" + userId, {
+      method: "DELETE",
+      credentials: "include",
+    });
   },
 });

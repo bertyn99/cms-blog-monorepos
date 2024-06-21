@@ -40,18 +40,32 @@ export default class AuthController {
   }
 
   async getMe({ auth }: HttpContext) {
-    return auth.user
+    await auth.user?.load('role')
+    return auth?.user
   }
 
-  async update({ auth, params, request }: HttpContext) {
+  async update({ auth, params, request, response }: HttpContext) {
     const data = request.all()
+
+    const medias = request.files('avatar', {
+      size: '6mb',
+      extnames: ['jpg', 'png', 'jpeg', 'webp', 'mp4', 'avif', 'pdf', 'txt'],
+    })
+    if (medias.length > 1) {
+      return response.badRequest({
+        msg: 'Too much file uploaded',
+      })
+    }
+
     const payload = await authValidator.validate(data)
-    console.log(auth.user)
+
     try {
-      const user = await this.userService.updateUserById(auth.user!.id, payload)
+      console.log(medias)
+      const user = await this.userService.updateUserById(auth.user!.id, payload, medias[0])
 
       return user
     } catch (error) {
+      console.log(error)
       return { error: error }
     }
   }

@@ -2,8 +2,10 @@ import { DateTime } from 'luxon'
 import { withAuthFinder } from '@adonisjs/auth'
 import hash from '@adonisjs/core/services/hash'
 import { compose } from '@adonisjs/core/helpers'
-import { BaseModel, column } from '@adonisjs/lucid/orm'
-import type { Role } from '@yggdra/shared'
+import { BaseModel, column, belongsTo, computed } from '@adonisjs/lucid/orm'
+import type { BelongsTo } from '@adonisjs/lucid/types/relations'
+
+import Role from '#models/role'
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
   passwordColumnName: 'password',
@@ -22,8 +24,20 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column()
   declare password: string
 
-  @column()
-  declare role: Role
+  @column({
+    serializeAs: null,
+  })
+  declare roleId: number
+
+  @belongsTo(() => Role, {
+    serializeAs: null,
+  })
+  declare role: BelongsTo<typeof Role>
+
+  @computed()
+  get roleAccess() {
+    return this.role.name
+  }
 
   @column()
   declare avatar: string | null

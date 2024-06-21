@@ -12,7 +12,7 @@ export default class MediaController {
 
     const medias = request.files('medias', {
       size: '6mb',
-      extnames: ['jpg', 'png', 'jpeg', 'webp', 'mp4', 'avif', 'pdf'],
+      extnames: ['jpg', 'png', 'jpeg', 'webp', 'mp4', 'avif', 'pdf', 'txt'],
     })
     if (!medias.length) {
       return response.badRequest({

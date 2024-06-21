@@ -21,9 +21,16 @@ const links = [[{
 }]]
 
 const route = useRoute()
-
+const { user } = useUserSession()
 //check if we are on the members page
 const isMembersPage = computed(() => route.path.includes('members'))
+
+const linkFilterByRole = computed(() => {
+
+    return user?.value?.roleAccess == 'admin' || user?.value?.roleAccess == 'editor' ? links : links[0].filter(link => link.label != 'Members')
+})
+
+console.log(linkFilterByRole.value)
 </script>
 
 <template>
@@ -39,7 +46,7 @@ const isMembersPage = computed(() => route.path.includes('members'))
     </DashboardNavbar>
 
     <div class="py-0 px-1.5 overflow-x-auto border-b">
-        <UHorizontalNavigation :links="links" />
+        <UHorizontalNavigation :links="linkFilterByRole" />
     </div>
 
     <NuxtPage />

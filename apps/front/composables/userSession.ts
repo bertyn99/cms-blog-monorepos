@@ -12,10 +12,10 @@ export const useUserSession = () => {
 
   // Computed property to check if the user is logged in
   const loggedIn = computed(() => userState.value !== null);
-
+  /* 
   const isAdmin = computed(
     () => userState.value!.role === ("Admin" as Role.ADMIN)
-  );
+  ); */
 
   // Ensure user is a ComputedRef<User | null> for reactivity and type safety
   const user = computed(() => userState.value);
@@ -52,7 +52,7 @@ export const useUserSession = () => {
     }
   };
 
-  const updateUser = async (userData: User) => {
+  const updateUser = async (userData: FormData) => {
     try {
       const headers = useRequestHeaders(["cookie"]);
       const updatedUserData = await userRepo.updateUserProfile(

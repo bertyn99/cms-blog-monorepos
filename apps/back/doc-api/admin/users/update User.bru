@@ -5,16 +5,15 @@ meta {
 }
 
 put {
-  url: {{baseUrl}}/users/me
+  url: {{baseUrl}}/users/4
   body: multipartForm
   auth: none
 }
 
 body:multipart-form {
-  fullName: bbbb
-  email: admin@blog.com
+  fullName: bbbbdd
+  email: admin@cms.com
   bio: ttttt
   password: secret
-  password_confirmation: secret
   ~avatar: @file(C:\Users\berty\Downloads\pexels-fox-6063318.jpg)
 }
