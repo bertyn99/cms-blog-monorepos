@@ -2,7 +2,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import UserService from '#services/user_service'
 import { inject } from '@adonisjs/core'
 import AdminUserPolicy from '#policies/admin_policy'
-import { authValidator } from '#validators/user_validator'
+import { updateUserValidator } from '#validators/user_validator'
 
 @inject()
 export default class AAdminController {
@@ -51,12 +51,13 @@ export default class AAdminController {
       })
     }
 
-    const payload = await authValidator.validate(data)
+    const payload = await updateUserValidator.validate(data)
 
     try {
-      const user = await this.userService.updateUserById(params.id, request.body())
-      return response.ok(user)
+      const user = await this.userService.updateUserById(params.id, payload, medias)
+      return response.ok({ msg: 'User updated successfully', user })
     } catch (error) {
+      console.log(error)
       return response.badRequest({
         msg: error,
       })

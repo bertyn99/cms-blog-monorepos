@@ -126,8 +126,6 @@ const validate = async (state: any) => {
                     message: message.message,
                 });
             });
-
-            console.log(errorsR)
         }
     }
     return errorsR;

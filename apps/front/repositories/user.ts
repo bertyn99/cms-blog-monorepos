@@ -45,6 +45,15 @@ export const userRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => ({
     });
   },
 
+  async updateMemberProfile(profile: FormData, headers?: any) {
+    return fetch<User>("/users/me", {
+      method: "PUT",
+      headers,
+      credentials: "include",
+      body: profile,
+    });
+  },
+
   async updateUsersRoles(userIds: string[], role: string) {
     return fetch<{ msg: string }>("/users/role", {
       method: "PUT",
