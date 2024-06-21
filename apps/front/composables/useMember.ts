@@ -33,7 +33,7 @@ export const useMember = () => {
           title: "User role changed",
           description: res.msg,
         });
-        clearNuxtData("admin-list-menbers");
+        refreshNuxtData("admin-list-menbers");
       }
     } catch (error: any) {
       loading.value = false;
@@ -65,7 +65,7 @@ export const useMember = () => {
           title: "User updated",
           description: updatedUserData.msg,
         });
-        clearNuxtData("admin-list-menbers");
+        refreshNuxtData("admin-list-menbers");
       }
     } catch (error: any) {
       console.error("Failed to update user data:", error);
@@ -93,7 +93,10 @@ export const useMember = () => {
           title: "Users deleted",
           description: res.msg,
         });
-        clearNuxtData("admin-list-menbers");
+        refreshNuxtData("admin-list-menbers");
+
+        //remove member from members list
+        /*  members.value = members.value.filter((member) => member.id !== id); */
       }
     } catch (error: any) {
       loading.value = false;

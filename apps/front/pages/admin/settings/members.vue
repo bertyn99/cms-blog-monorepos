@@ -39,7 +39,7 @@ import type { User } from '~/types'
 
 const { members, fetchMembers } = useMember()
 
-const { pending } = await useAsyncData('admin-list-menbers', () => fetchMembers())
+const { data, pending } = await useAsyncData('admin-list-menbers', () => fetchMembers())
 
 
 const q = ref('')
@@ -47,7 +47,7 @@ const isInviteModalOpen = ref(false)
 
 const filteredMembers = computed(() => {
     return members.value.filter((member) => {
-        return member?.fullName.search(new RegExp(q.value, 'i')) !== -1 || member.email.search(new RegExp(q.value, 'i')) !== -1
+        return member?.fullName?.search(new RegExp(q.value, 'i')) !== -1 || member.email.search(new RegExp(q.value, 'i')) !== -1
     })
 })
 </script>

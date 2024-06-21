@@ -52,7 +52,7 @@ export default class AAdminController {
     } */
 
     const payload = await updateUserValidator.validate(data)
-    console.log(medias)
+
     try {
       const user = await this.userService.updateUserById(params.id, payload, medias)
       return response.ok({ msg: 'User updated successfully' })
