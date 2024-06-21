@@ -48,6 +48,38 @@ export const useMember = () => {
     }
   };
 
+  const updateMember = async (userData: FormData, id: string) => {
+    try {
+      /*  const headers = useRequestHeaders(["cookie"]); */
+      const updatedUserData = await userRepo.updateMemberProfile(
+        userData,
+        id
+        /*       headers */
+      );
+
+      if (updatedUserData) {
+        toast.add({
+          id: `update-user-${id}-success`,
+          color: "green",
+          icon: "i-heroicons-check-circle",
+          title: "User updated",
+          description: updatedUserData.msg,
+        });
+        clearNuxtData("admin-list-menbers");
+      }
+    } catch (error: any) {
+      console.error("Failed to update user data:", error);
+      toast.add({
+        id: `update-user-${id}-error`,
+        color: "red",
+        icon: "i-heroicons-x-circle",
+        title: "Failed to update user",
+        description: error.message,
+      });
+      /*       clearUser(); */
+    }
+  };
+
   const deleteUser = async (id: string) => {
     try {
       loading.value = true;
@@ -80,6 +112,7 @@ export const useMember = () => {
     members,
     fetchMembers,
     changeUsersRole,
+    updateMember,
     deleteUser,
   };
 };

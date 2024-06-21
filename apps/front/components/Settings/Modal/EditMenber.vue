@@ -50,6 +50,8 @@ const { member } = defineProps({
 
 const isOpen = defineModel('isOpen', { type: Boolean, default: false })
 
+const { updateMember } = useMember();
+
 const fields = [
     {
         name: "fullName",
@@ -135,12 +137,23 @@ const onSubmit = async () => {
     loading.value = true;
     try {
 
-        console.log(state)
-        // await updateUser(state)
+        //create form data
+        const formData = new FormData();
+        for (const key in state) {
+            if (state[key]) {
+                formData.append(key, state[key]);
+            }
+        }
+        console.log('ici')
+
+        await updateMember(formData, member.id)
         /*   isOpen.value = false  */
+        loading.value = false;
+
     } catch (error) {
         console.log(error)
+        loading.value = false;
     }
-    loading.value = false;
+
 }
 </script>

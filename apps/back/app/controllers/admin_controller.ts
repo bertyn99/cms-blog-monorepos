@@ -41,21 +41,21 @@ export default class AAdminController {
     await bouncer.with(AdminUserPolicy).authorize('canUpdateUser', params.id)
     const data = request.all()
 
-    const medias = request.files('avatar', {
+    const medias = request.file('avatar', {
       size: '6mb',
       extnames: ['jpg', 'png', 'jpeg', 'webp', 'mp4', 'avif', 'pdf', 'txt'],
     })
-    if (medias.length > 1) {
+    /* if (medias.length > 1) {
       return response.badRequest({
         msg: 'Too much file uploaded',
       })
-    }
+    } */
 
     const payload = await updateUserValidator.validate(data)
-
+    console.log(medias)
     try {
       const user = await this.userService.updateUserById(params.id, payload, medias)
-      return response.ok({ msg: 'User updated successfully', user })
+      return response.ok({ msg: 'User updated successfully' })
     } catch (error) {
       console.log(error)
       return response.badRequest({

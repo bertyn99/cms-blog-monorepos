@@ -42,7 +42,7 @@ export default class UserService {
   async updateUserById(id: number, data: any, avatar?: any) {
     const user = await User.find(id)
     user?.merge(data)
-    console.log(avatar)
+
     if (avatar) {
       let uid = null
       let f = null
