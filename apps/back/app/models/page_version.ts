@@ -11,8 +11,11 @@ export default class PageVersion extends BaseModel {
   @column()
   declare pageId: number
 
-  @column()
-  declare content: object // Assuming content is stored as JSONB
+  @column({
+    prepare: (value: any) => JSON.stringify(value),
+    consume: (value: string) => JSON.parse(value),
+  })
+  declare payload: any // Assuming content is stored as JSONB
 
   @column()
   declare metadata: object // Assuming metadata is stored as JSONB
