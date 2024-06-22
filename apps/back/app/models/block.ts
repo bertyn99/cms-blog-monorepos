@@ -2,7 +2,7 @@ import { DateTime } from 'luxon'
 import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
 import Page from '#models/page'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
-export default class Component extends BaseModel {
+export default class Block extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
   @column({ isPrimary: true })

@@ -4,7 +4,7 @@ import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import User from '#models/user'
 import PageTranslation from '#models/page_translation'
 import PageVersion from '#models/page_version'
-import Component from '#models/component'
+import Block from '#models/block'
 
 export default class Page extends BaseModel {
   @column({ isPrimary: true })
@@ -22,8 +22,8 @@ export default class Page extends BaseModel {
   @hasMany(() => PageVersion)
   declare versions: HasMany<typeof PageVersion>
 
-  @hasMany(() => Component)
-  declare components: HasMany<typeof Component>
+  @hasMany(() => Block)
+  declare content: HasMany<typeof Block>
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
