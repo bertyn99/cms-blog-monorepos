@@ -72,6 +72,7 @@
 </template>
 
 <script setup>
+import CodeBlockShiki from 'tiptap-extension-code-block-shiki'
 const props = defineProps({
   content: String
 })
@@ -91,7 +92,9 @@ const editor = useEditor({
         "w-full prose my-6 mx-2 focus:outline-none text-gray-900 dark:text-white ",
     },
   },
-  extensions: [TiptapStarterKit, TiptapImage, TiptapMarkdown],
+  extensions: [TiptapStarterKit.configure({ codeBlock: false }), CodeBlockShiki.configure({
+    defaultTheme: 'tokyo-night'
+  }), TiptapImage, TiptapMarkdown],
 });
 
 onBeforeUnmount(() => {
