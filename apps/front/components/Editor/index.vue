@@ -92,7 +92,7 @@ const editor = useEditor({
         "w-full prose my-6 mx-2 focus:outline-none text-gray-900 dark:text-white ",
     },
   },
-  extensions: [TiptapStarterKit.configure({ codeBlock: false }), CodeBlockShiki.configure({
+  extensions: [TiptapStarterKit.configure({ codeBlock: false, link: false }), CodeBlockShiki.configure({
     defaultTheme: 'tokyo-night'
   }), TiptapImage, TiptapMarkdown],
 });
