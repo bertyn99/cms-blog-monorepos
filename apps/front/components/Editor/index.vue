@@ -9,7 +9,13 @@
 
 <script setup>
 /* import CodeBlockShiki from 'tiptap-extension-code-block-shiki' */
-import CustomLinkCms from '~/utils';
+import {
+  Hyperlink
+} from '@docs.plus/extension-hyperlink';
+import { previewHyperlinkModal } from '~/utils/modal/previewHyperlink';
+import { setHyperlinkModal } from '~/utils/modal/setHyperlink';
+
+
 const props = defineProps({
   content: String
 })
@@ -30,7 +36,18 @@ const editor = useEditor({
     },
   },
   extensions: [TiptapStarterKit.configure({/*  codeBlock false, */ }), /* CodeBlockShiki.configure({
-  }) */, TiptapImage, TiptapMarkdown, CustomLinkCms],
+  }) */, TiptapImage, TiptapMarkdown, Hyperlink.configure({
+    modals: {
+      previewHyperlink: (data) => {
+        console.log(data);
+        return previewHyperlinkModal(data);
+      },
+      setHyperlink: (data) => {
+        console.log(data);
+        return setHyperlinkModal(data);
+      },
+    },
+  })],
 });
 
 onBeforeUnmount(() => {
@@ -39,3 +56,5 @@ onBeforeUnmount(() => {
 
 
 </script>
+
+<style scoped></style>

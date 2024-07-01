@@ -4,7 +4,7 @@ import type { ShallowRef } from 'vue';
 
 
 
-const { editor } = defineProps<{ editor: ShallowRef<TiptapEditor> }>()
+const { editor } = defineProps<{ editor: TiptapEditor }>()
 
 
 //dropdown type of text
@@ -13,7 +13,7 @@ const items = [
         label: "p",
         icon: "i-material-symbols-light-format-paragraph",
         click: () => {
-            editor?.value?.chain().focus().setParagraph().run();
+            editor?.chain().focus().setParagraph().run();
         },
     },
 
@@ -23,7 +23,7 @@ const items = [
         icon: "i-ci-heading-h1",
         click: () => {
             console.log(editor)
-            editor?.value?.chain().focus().toggleHeading({ level: 1 }).run();
+            editor?.chain().focus().toggleHeading({ level: 1 }).run();
         },
     },
 
@@ -32,7 +32,7 @@ const items = [
         icon: "i-ci-heading-h2",
         click: () => {
             console.log(editor);
-            editor?.value?.chain().focus().toggleHeading({ level: 2 }).run();
+            editor?.chain().focus().toggleHeading({ level: 2 }).run();
         },
     },
 
@@ -41,7 +41,7 @@ const items = [
         icon: "i-ci-heading-h3",
         click: () => {
             console.log(editor);
-            editor?.value?.chain().focus().toggleHeading({ level: 3 }).run();
+            editor?.chain().focus().toggleHeading({ level: 3 }).run();
         },
     },
 
@@ -50,7 +50,7 @@ const items = [
         icon: "i-ci-heading-h4",
         click: () => {
             console.log(editor);
-            editor?.value?.chain().focus().toggleHeading({ level: 4 }).run();
+            editor?.chain().focus().toggleHeading({ level: 4 }).run();
         },
 
     },
@@ -60,7 +60,7 @@ const items = [
         icon: "i-ci-heading-h5",
         click: () => {
             console.log(editor);
-            editor?.value?.chain().focus().toggleHeading({ level: 5 }).run();
+            editor?.chain().focus().toggleHeading({ level: 5 }).run();
         },
     },
 ];
@@ -71,6 +71,28 @@ watch(selected, (value) => {
 
     value.click();
 });
+
+const setLink = () => {
+    if (!editor) {
+        return null;
+    }
+    const previousUrl = editor.getAttributes("link").href;
+    /*     const url = window.prompt("URL", previousUrl);
+     */
+    // cancelled
+    if (previousUrl === null) {
+        return;
+    }
+
+    // empty
+    if (previousUrl === "") {
+        editor.chain().focus().extendMarkRange("hyperlink")?.unsetHyperlink().run();
+        return;
+    }
+
+    // update link
+    editor.chain().focus().extendMarkRange("hyperlink")?.setHyperlink().run();
+};
 </script>
 
 <template>
@@ -132,9 +154,8 @@ watch(selected, (value) => {
             class="flex-1">
             <span class="sr-only">blockquote</span>
         </UButton>
-        <UButton @click="editor.chain().focus().toggleBlockquote().run()"
-            :class="{ 'is-active': editor.isActive('blockquote') }" variant="soft" icon="i-ph-link-simple-bold"
-            class="flex-1">
+        <UButton @click="setLink" :class="{ 'is-active': editor.isActive('blockquote') }" variant="soft"
+            icon="i-mdi-link-variant" class="flex-1">
             <span class="sr-only">add Link</span>
         </UButton>
 
