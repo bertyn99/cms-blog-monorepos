@@ -14,6 +14,7 @@ import {
 } from '@docs.plus/extension-hyperlink';
 import { previewHyperlinkModal } from '~/utils/modal/previewHyperlink';
 import { setHyperlinkModal } from '~/utils/modal/setHyperlink';
+import { SearchAndReplace } from '~/tiptap/search_and_replace';
 
 
 const props = defineProps({
@@ -37,7 +38,12 @@ const editor = useEditor({
     },
   },
   extensions: [TiptapStarterKit.configure({/*  codeBlock false, */ }), /* CodeBlockShiki.configure({
-  }) */, TiptapImage, TiptapMarkdown, Hyperlink.configure({
+  }) */, TiptapImage, TiptapMarkdown,
+  SearchAndReplace.configure({
+    searchResultClass: "search-result", // class to give to found items. default 'search-result'
+    caseSensitive: false, // no need to explain
+    disableRegex: false, // also no need to explain
+  }), Hyperlink.configure({
     modals: {
       previewHyperlink: (data) => {
         return previewHyperlinkModal(props.locale, data);
