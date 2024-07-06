@@ -1,6 +1,7 @@
-export function previewHyperlinkModal(options: any) {
-  const href = options.link.href;
+import { editHyperlinkHandler } from "./editHyperlink";
 
+export function previewHyperlinkModal(locale: string, options: any) {
+  const href = options.link.href;
   const hyperlinkModal = document.createElement("div");
   const removeButton = document.createElement("button");
   const copyButton = document.createElement("button");
@@ -29,6 +30,37 @@ export function previewHyperlinkModal(options: any) {
   );
 
   newBubble.append(hrefTitle);
+  console.log("href url", href);
+  //fetch metadata from server
+  $fetch("/api/metadata", {
+    method: "POST",
+    body: { url: href },
+  })
+    .then((data: any) => {
+      // Create a new bubble with the title
+      hrefTitle.setAttribute("href", href);
+
+      hrefTitle.innerText = data.title || data["og:title"] || href;
+      newBubble.replaceChildren(hrefTitle);
+      console.log(data);
+      // Create an image element if image exists in metadata
+      if (data.icon || data.image || data["og:image"]) {
+        const img = document.createElement("img");
+        img.src = data.icon || data.image || data["og:image"];
+        img.classList.add(
+          "w-6",
+          "h-6",
+          "aspect-square",
+          "rounded-md",
+          "mx-1.5"
+        );
+        img.alt = data.title || data["og:title"] || "hyperlink image";
+        newBubble.appendChild(img);
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching metadata:", error);
+    });
 
   hyperlinkModal.classList.add(
     "bg-white",
@@ -93,12 +125,16 @@ export function previewHyperlinkModal(options: any) {
   editButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" class=" w-6 h-6 fill-current" viewBox="0 0 24 24"><path fill="currentColor" d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157l3.712 3.712l1.157-1.157a2.625 2.625 0 0 0 0-3.712Zm-2.218 5.93l-3.712-3.712l-12.15 12.15a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32L19.513 8.2Z"/></svg>`;
 
   removeButton.addEventListener("click", () => {
-    options.tippy.hide();
+    options.tippy?.hide();
     return options.editor.chain().focus().unsetHyperlink().run();
   });
 
+  editButton.addEventListener("click", () =>
+    editHyperlinkHandler(locale, { ...options, hyperlinkModal })
+  );
+
   copyButton.addEventListener("click", () => {
-    options.tippy.hide();
+    options.tippy?.hide();
     navigator.clipboard.writeText(href);
   });
 

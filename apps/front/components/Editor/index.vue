@@ -17,15 +17,16 @@ import { setHyperlinkModal } from '~/utils/modal/setHyperlink';
 
 
 const props = defineProps({
-  content: String
+  content: String,
+  locale: String,
 })
+
 
 const emit = defineEmits(['update:content']);
 const editor = useEditor({
   content: props.content,
   onUpdate: ({ editor }) => {
     // HTML
-    console.log(editor);
     emit('update:content', editor.storage.markdown.getMarkdown())
 
   },
@@ -39,12 +40,10 @@ const editor = useEditor({
   }) */, TiptapImage, TiptapMarkdown, Hyperlink.configure({
     modals: {
       previewHyperlink: (data) => {
-        console.log(data);
-        return previewHyperlinkModal(data);
+        return previewHyperlinkModal(props.locale, data);
       },
       setHyperlink: (data) => {
-        console.log(data);
-        return setHyperlinkModal(data);
+        return setHyperlinkModal(props.locale, data);
       },
     },
   })],

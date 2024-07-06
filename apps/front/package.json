@@ -40,6 +40,7 @@
     "@yggdra/shared": "workspace:*",
     "date-fns": "^3.6.0",
     "i": "^0.3.7",
+    "metadata-scraper": "^0.2.61",
     "shiki": "^1.9.1",
     "tiptap-extension-code-block-shiki": "^0.2.1",
     "universal-cookie": "^6",

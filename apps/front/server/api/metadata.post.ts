@@ -1,6 +1,5 @@
 import { defineEventHandler, readBody, createError } from "h3";
-import urlMetadata from "url-metadata";
-
+import getMetaData from "metadata-scraper";
 export default defineEventHandler(async (event) => {
   const { url } = await readBody(event);
 
@@ -12,16 +11,16 @@ export default defineEventHandler(async (event) => {
   }
 
   const options = {
-    /*    requestHeaders: {
-      "User-Agent": "MyApp/1.0 (contact@example.com)",
-    }, */
+    requestHeaders: {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+    },
     timeout: 15000, // 15 seconds
     descriptionLength: 200, // Adjust as needed
     ensureSecureImageRequest: true,
   };
 
   try {
-    const metadata = await urlMetadata(url, options);
+    const metadata = await getMetaData(url);
     return metadata;
   } catch (error) {
     if (error instanceof Error) {
