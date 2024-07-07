@@ -93,6 +93,84 @@ const setLink = () => {
     // update link
     editor.chain().focus().extendMarkRange("hyperlink")?.setHyperlink().run();
 };
+
+
+//search and replace
+const searchTerm = ref<string>("tiptap");
+
+const replaceTerm = ref<string>("");
+
+const caseSensitive = ref<boolean>(false);
+
+const updateSearchReplace = (clearIndex: boolean = false) => {
+    if (!editor) return;
+
+    if (clearIndex) editor.commands.resetIndex();
+
+    editor.commands.setSearchTerm(searchTerm.value);
+    editor.commands.setReplaceTerm(replaceTerm.value);
+    editor.commands.setCaseSensitive(caseSensitive.value);
+};
+
+const goToSelection = () => {
+    if (!editor) return;
+
+    const { results, resultIndex } = editor.storage.searchAndReplace;
+    const position: Range = results[resultIndex];
+
+    if (!position) return;
+
+    editor.commands.setTextSelection(position);
+
+    const { node } = editor.view.domAtPos(
+        editor.state.selection.anchor
+    );
+    node instanceof HTMLElement &&
+        node.scrollIntoView({ behavior: "smooth", block: "center" });
+};
+
+
+watch(
+    () => searchTerm.value.trim(),
+    (val, oldVal) => {
+        if (!val) clear();
+        if (val !== oldVal) updateSearchReplace(true);
+    }
+);
+
+watch(
+    () => replaceTerm.value.trim(),
+    (val, oldVal) => (val === oldVal ? null : updateSearchReplace())
+);
+
+watch(
+    () => caseSensitive.value,
+    (val, oldVal) => (val === oldVal ? null : updateSearchReplace(true))
+);
+
+const replace = () => {
+    editor?.commands.replace();
+    goToSelection();
+};
+
+const next = () => {
+    editor?.commands.nextSearchResult();
+    goToSelection();
+};
+
+const previous = () => {
+    editor?.commands.previousSearchResult();
+    goToSelection();
+};
+
+const clear = () => {
+    searchTerm.value = replaceTerm.value = "";
+    editor.commands.resetIndex();
+};
+
+const replaceAll = () => editor?.commands.replaceAll();
+
+onMounted(() => setTimeout(updateSearchReplace));
 </script>
 
 <template>
@@ -169,4 +247,60 @@ const setLink = () => {
         </UButton>
     </div>
 
+    <div class="flex flex-col gap-6">
+        <section class="flex gap-6">
+            <div>
+                <label for="search-term" class="block text-sm font-medium text-gray-700">Search</label>
+                <div class="mt-1">
+                    <input v-model="searchTerm" @keydown.enter.prevent="updateSearchReplace" type="text"
+                        placeholder="Search..." autofocus="true"
+                        class="block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+                </div>
+            </div>
+
+            <div>
+                <label for="search-term" class="block text-sm font-medium text-gray-700">Replace</label>
+                <div class="mt-1">
+                    <input v-model="replaceTerm" @keydown.enter.prevent="replace" type="text" placeholder="Replace..."
+                        class="block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+                </div>
+            </div>
+
+            <div>
+                <label for="search-term" class="block text-sm font-medium text-gray-700">Case sensitive</label>
+                <div class="mt-1">
+                    <input v-model="caseSensitive" @input="updateSearchReplace" type="checkbox"
+                        class="border-gray-300 rounded-md shadow-sm w-5 h-5 mt-2" />
+                </div>
+            </div>
+        </section>
+
+        <span class="inline-flex rounded-md isolate">
+            <button @click="clear" type="button"
+                class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                Clear
+            </button>
+            <button @click="previous" type="button"
+                class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                Previous
+            </button>
+            <button @click="next" type="button"
+                class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                Next
+            </button>
+            <button @click="replace" type="button"
+                class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                Replace
+            </button>
+            <button @click="replaceAll" type="button"
+                class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                Replace All
+            </button>
+
+            <div class="block text-sm font-medium text-gray-700 py-2 px-4">
+                Results: {{ editor?.storage?.searchAndReplace?.resultIndex + 1 }} / {{
+                    editor?.storage?.searchAndReplace?.results.length }}
+            </div>
+        </span>
+    </div>
 </template>

@@ -29,6 +29,7 @@ import {
   type Transaction,
 } from "@tiptap/pm/state";
 import { Node as PMNode } from "@tiptap/pm/model";
+import { SearchUI } from "./search_ui";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -65,6 +66,16 @@ declare module "@tiptap/core" {
        * @description Replace all instances of search result with given replace term.
        */
       replaceAll: () => ReturnType;
+
+      /**
+       * @description Toggle search UI.
+       */
+      toggleSearchUI: () => ReturnType;
+
+      /**
+       * @description Set search term and search.
+       */
+      setSearchTermAndSearch: (searchTerm: string) => ReturnType;
     };
   }
 }
@@ -233,7 +244,9 @@ const replaceAll = (
     resultsCopy = rebaseNextResultResponse[1];
   }
 
-  dispatch(tr);
+  if (dispatch) {
+    dispatch(tr);
+  }
 };
 
 export const searchAndReplacePluginKey = new PluginKey(
@@ -277,6 +290,7 @@ export const SearchAndReplace = Extension.create<
       lastSearchTerm: "",
       caseSensitive: false,
       lastCaseSensitive: false,
+      showSearchUI: false,
       resultIndex: 0,
       lastResultIndex: 0,
     };
@@ -360,13 +374,45 @@ export const SearchAndReplace = Extension.create<
 
           return false;
         },
+      toggleSearchUI:
+        () =>
+        ({ editor }) => {
+          editor.storage.searchAndReplace.showSearchUI =
+            !editor.storage.searchAndReplace.showSearchUI;
+          return true;
+        },
+
+      setSearchTermAndSearch:
+        (searchTerm: string) =>
+        ({ editor }) => {
+          editor.commands.setSearchTerm(searchTerm);
+          editor.commands.resetIndex();
+          editor.view.update({ state: editor.view.state.tr });
+          return true;
+        },
     };
   },
+  addKeyboardShortcuts() {
+    return {
+      "Mod-f": () => {
+        const { state } = this.editor;
+        const { from, to } = state.selection;
+        const selectedText = state.doc.textBetween(from, to);
+        if (selectedText) {
+          /* this.editor.commands.setSearchTermAndSearch(selectedText); */
+          this.editor.commands.setSearchTerm(selectedText);
+        }
 
+        this.editor.commands.toggleSearchUI();
+
+        return true;
+      },
+    };
+  },
   addProseMirrorPlugins() {
     const editor = this.editor;
     const { searchResultClass, disableRegex } = this.options;
-
+    let searchUI: SearchUI | null = null;
     const setLastSearchTerm = (t: string) =>
       (editor.storage.searchAndReplace.lastSearchTerm = t);
     const setLastCaseSensitive = (t: boolean) =>
@@ -424,6 +470,30 @@ export const SearchAndReplace = Extension.create<
           },
         },
       }),
+      /*  new Plugin({
+        view: (view) => {
+          searchUI = new SearchUI(editor);
+
+          view.dom.parentNode?.insertBefore(
+            searchUI!.getElement(),
+            view.dom.nextSibling
+          );
+
+          return {
+            update() {
+              if (searchUI) {
+                const { showSearchUI } = editor.storage.searchAndReplace;
+                searchUI!.getElement().style.display = showSearchUI
+                  ? "block"
+                  : "none";
+              }
+            },
+            destroy: () => {
+              searchUI!.getElement().remove();
+            },
+          };
+        },
+      }), */
     ];
   },
 });
