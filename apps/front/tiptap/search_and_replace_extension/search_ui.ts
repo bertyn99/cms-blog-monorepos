@@ -13,9 +13,9 @@ export class SearchUI {
   private render() {
     this.container.innerHTML = `
         <div class="flex items-center space-x-2">
-          <input type="text" placeholder="Search..." class="flex-grow px-1.5 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+          <input type="text" placeholder="Search..."  value="" class="flex-grow px-1.5 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent">
           <button class="search px-1.5 py-1.5 bg-primary-500 text-white rounded-md hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50">
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 16 16"  class="w-6 h-6"><path fill="currentColor" fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06zM10.5 7a3.5 3.5 0 1 1-7 0a3.5 3.5 0 0 1 7 0" clip-rule="evenodd"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 16 16"  class="w-5 h-5"><path fill="currentColor" fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06zM10.5 7a3.5 3.5 0 1 1-7 0a3.5 3.5 0 0 1 7 0" clip-rule="evenodd"/></svg>
           </button>
         </div>
         <div class="flex items-center space-x-2 mt-2">
@@ -31,7 +31,9 @@ export class SearchUI {
         </div>
       `;
 
-    const input = this.container.querySelector("input") as HTMLInputElement;
+    const inputSearch = this.container.querySelector(
+      "input"
+    ) as HTMLInputElement;
     const searchButton = this.container.querySelector(
       ".search"
     ) as HTMLButtonElement;

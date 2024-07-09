@@ -177,6 +177,9 @@ importers:
       shiki:
         specifier: ^1.9.1
         version: 1.9.1
+      tippy.js:
+        specifier: ^6.3.7
+        version: 6.3.7
       tiptap-extension-code-block-shiki:
         specifier: ^0.2.1
         version: 0.2.1(@tiptap/core@2.3.1)(@tiptap/extension-code-block@2.3.1)(@tiptap/pm@2.3.1)(shiki@1.9.1)

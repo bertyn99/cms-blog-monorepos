@@ -247,7 +247,7 @@ onMounted(() => setTimeout(updateSearchReplace));
         </UButton>
     </div>
 
-    <div class="flex flex-col gap-6">
+    <!--  <div class="flex flex-col gap-6">
         <section class="flex gap-6">
             <div>
                 <label for="search-term" class="block text-sm font-medium text-gray-700">Search</label>
@@ -302,5 +302,5 @@ onMounted(() => setTimeout(updateSearchReplace));
                     editor?.storage?.searchAndReplace?.results.length }}
             </div>
         </span>
-    </div>
+    </div> -->
 </template>

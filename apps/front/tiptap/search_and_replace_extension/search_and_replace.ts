@@ -29,6 +29,7 @@ import {
   type Transaction,
 } from "@tiptap/pm/state";
 import { Node as PMNode } from "@tiptap/pm/model";
+import tippy, { type Instance as TippyInstance } from "tippy.js";
 import { SearchUI } from "./search_ui";
 
 declare module "@tiptap/core" {
@@ -412,7 +413,8 @@ export const SearchAndReplace = Extension.create<
   addProseMirrorPlugins() {
     const editor = this.editor;
     const { searchResultClass, disableRegex } = this.options;
-    let searchUI: SearchUI | null = null;
+    let tippyInstance: TippyInstance | null = null;
+
     const setLastSearchTerm = (t: string) =>
       (editor.storage.searchAndReplace.lastSearchTerm = t);
     const setLastCaseSensitive = (t: boolean) =>
@@ -471,25 +473,105 @@ export const SearchAndReplace = Extension.create<
         },
       }),
       new Plugin({
+        key: new PluginKey("searchAndReplaceUI"),
         view: (view) => {
-          searchUI = new SearchUI(editor);
+          const element = document.createElement("div");
+          element.className = "search-and-replace-ui";
+          element.innerHTML = `
+           <div class="search-container">
+            <button class="close-button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 16 16" class="icon"><path fill="currentColor" d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94z"/></svg>
+            </button>
+            <input type="text" placeholder="Search..." class="search-input">
+            <div class="button-container">
+             <button class=" prev-button nav-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="m7 14l5-5l5 5z"/></svg>
+              </button>
+              <button class="next-button nav-button-last">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M11.475 14.475L7.85 10.85q-.075-.075-.112-.162T7.7 10.5q0-.2.138-.35T8.2 10h7.6q.225 0 .363.15t.137.35q0 .05-.15.35l-3.625 3.625q-.125.125-.25.175T12 14.7t-.275-.05t-.25-.175"/></svg>
+              </button>
+              <button class="search-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 16 16" class="icon"><path fill="currentColor" fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06zM10.5 7a3.5 3.5 0 1 1-7 0a3.5 3.5 0 0 1 7 0" clip-rule="evenodd"/></svg>
+              </button>
+            </div>
+          </div>
+          `;
 
-          view.dom.parentNode?.insertBefore(
-            searchUI!.getElement(),
-            view.dom.nextSibling
-          );
+          const searchInput = element.querySelector(
+            ".search-input"
+          ) as HTMLInputElement;
+
+          searchInput.addEventListener("input", () => {
+            editor.commands.setSearchTerm(searchInput.value);
+          });
+
+          const goToSelection = () => {
+            if (!editor) return;
+
+            const { results, resultIndex } = editor.storage.searchAndReplace;
+            const position: Range = results[resultIndex];
+
+            if (!position) return;
+
+            editor.commands.setTextSelection(position);
+
+            const { node } = editor.view.domAtPos(
+              editor.state.selection.anchor
+            );
+            node instanceof HTMLElement &&
+              node.scrollIntoView({ behavior: "smooth", block: "center" });
+          };
+
+          element
+            .querySelector(".search-button")
+            ?.addEventListener("click", () => {
+              // Implement search logic here
+            });
+
+          element
+            .querySelector(".next-button")
+            ?.addEventListener("click", () => {
+              editor?.commands.nextSearchResult();
+              goToSelection();
+            });
+
+          element
+            .querySelector(".prev-button")
+            ?.addEventListener("click", () => {
+              editor?.commands.previousSearchResult();
+              goToSelection();
+            });
+
+          element
+            .querySelector(".close-button")
+            ?.addEventListener("click", () => {
+              editor.commands.toggleSearchUI();
+            });
+
+          tippyInstance = tippy(view.dom, {
+            content: element,
+            interactive: true,
+            trigger: "manual",
+            placement: "top-end",
+            offset: [0, -8],
+            theme: "light-border",
+            arrow: false,
+          });
 
           return {
-            update() {
-              if (searchUI) {
-                const { showSearchUI } = editor.storage.searchAndReplace;
-                searchUI!.getElement().style.display = showSearchUI
-                  ? "block"
-                  : "none";
+            update: () => {
+              const { showSearchUI, searchTerm } =
+                editor.storage.searchAndReplace;
+              if (showSearchUI) {
+                tippyInstance?.show();
+                searchInput.value = searchTerm;
+                searchInput.focus();
+              } else {
+                tippyInstance?.hide();
               }
             },
             destroy: () => {
-              searchUI!.getElement().remove();
+              tippyInstance?.destroy();
             },
           };
         },
