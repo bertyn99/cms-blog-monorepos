@@ -546,6 +546,7 @@ export const SearchAndReplace = Extension.create<
             .querySelector(".close-button")
             ?.addEventListener("click", () => {
               editor.commands.toggleSearchUI();
+              editor.commands.setSearchTerm("");
             });
 
           tippyInstance = tippy(view.dom, {
