@@ -159,6 +159,18 @@ importers:
       '@tiptap/extension-link':
         specifier: ^2.4.0
         version: 2.4.0(@tiptap/core@2.3.1)(@tiptap/pm@2.3.1)
+      '@tiptap/extension-table':
+        specifier: ^2.4.0
+        version: 2.4.0(@tiptap/core@2.3.1)(@tiptap/pm@2.3.1)
+      '@tiptap/extension-table-cell':
+        specifier: ^2.4.0
+        version: 2.4.0(@tiptap/core@2.3.1)
+      '@tiptap/extension-table-header':
+        specifier: ^2.4.0
+        version: 2.4.0(@tiptap/core@2.3.1)
+      '@tiptap/extension-table-row':
+        specifier: ^2.4.0
+        version: 2.4.0(@tiptap/core@2.3.1)
       '@vinejs/vine':
         specifier: ^1.7.1
         version: 1.7.1
@@ -3802,6 +3814,40 @@ packages:
     dependencies:
       '@tiptap/core': 2.3.1(@tiptap/pm@2.3.1)
     dev: true
+
+  /@tiptap/extension-table-cell@2.4.0(@tiptap/core@2.3.1):
+    resolution: {integrity: sha512-zylResMWLvV17Z6+GEDjvvl+YpJqJhNMyJsZPZNx/72OcNCDN3p2d6RGFwhpnCpdzZDD6LGaIgWaTj9oeg53SA==}
+    peerDependencies:
+      '@tiptap/core': ^2.0.0
+    dependencies:
+      '@tiptap/core': 2.3.1(@tiptap/pm@2.3.1)
+    dev: false
+
+  /@tiptap/extension-table-header@2.4.0(@tiptap/core@2.3.1):
+    resolution: {integrity: sha512-FZCOyJHSFsMTCfBh49J1DlwgpUIM5Ivpr57Za8FVvUkk8RKUIOKpNsZqxE+Wrw+2Bvy5H4X7Azb588x0NDqfOQ==}
+    peerDependencies:
+      '@tiptap/core': ^2.0.0
+    dependencies:
+      '@tiptap/core': 2.3.1(@tiptap/pm@2.3.1)
+    dev: false
+
+  /@tiptap/extension-table-row@2.4.0(@tiptap/core@2.3.1):
+    resolution: {integrity: sha512-K4FDI4YzyLWZbhIZYYL15uqs6M3QsPZGTpTdkSaxcKMLholcskDSHhJmySxnrjI0+JNAtyIiqlWBfA1/9Zyhng==}
+    peerDependencies:
+      '@tiptap/core': ^2.0.0
+    dependencies:
+      '@tiptap/core': 2.3.1(@tiptap/pm@2.3.1)
+    dev: false
+
+  /@tiptap/extension-table@2.4.0(@tiptap/core@2.3.1)(@tiptap/pm@2.3.1):
+    resolution: {integrity: sha512-ceIUnPSqVCb+qC0XZSgApoG3dL3MRvWrGl1nIMxEqPgMsD/MP6MsYV1Lx/GmtdUlEEsV1624cGTBiRzeCuWkZA==}
+    peerDependencies:
+      '@tiptap/core': ^2.0.0
+      '@tiptap/pm': ^2.0.0
+    dependencies:
+      '@tiptap/core': 2.3.1(@tiptap/pm@2.3.1)
+      '@tiptap/pm': 2.3.1
+    dev: false
 
   /@tiptap/extension-text@2.3.1(@tiptap/core@2.3.1):
     resolution: {integrity: sha512-ZM+Bpty9jChEN/VjUP/fX1Fvoz0Z3YLdjj9+pFA0H7woli+TmxWY6yUUTA2SBDb2mJ52yNOUfRE/sYx6gkDuBQ==}

@@ -96,7 +96,7 @@ const setLink = () => {
 
 
 //search and replace
-const searchTerm = ref<string>("tiptap");
+const searchTerm = ref<string>("");
 
 const replaceTerm = ref<string>("");
 
@@ -231,6 +231,11 @@ onMounted(() => setTimeout(updateSearchReplace));
             :class="{ 'is-active': editor.isActive('blockquote') }" variant="soft" icon="i-tabler-blockquote"
             class="flex-1">
             <span class="sr-only">blockquote</span>
+        </UButton>
+        <UButton @click="editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()"
+            :class="{ 'is-active': editor.isActive('blockquote') }" variant="soft" icon="i-tabler-table-plus"
+            class="flex-1">
+            <span class="sr-only">Table</span>
         </UButton>
         <UButton @click="setLink" :class="{ 'is-active': editor.isActive('blockquote') }" variant="soft"
             icon="i-mdi-link-variant" class="flex-1">

@@ -16,6 +16,10 @@ import {
 import { previewHyperlinkModal } from '~/utils/modal/previewHyperlink';
 import { setHyperlinkModal } from '~/utils/modal/setHyperlink';
 import { SearchAndReplace } from '~/tiptap/search_and_replace_extension/search_and_replace';
+import Table from '@tiptap/extension-table'
+import TableCell from '@tiptap/extension-table-cell'
+import TableHeader from '@tiptap/extension-table-header'
+import TableRow from '@tiptap/extension-table-row'
 
 
 const props = defineProps({
@@ -35,16 +39,23 @@ const editor = useEditor({
   editorProps: {
     attributes: {
       class:
-        "w-full prose prose-sm sm:prose lg:prose-lg xl:prose-xl mx-2 my-6 focus:outline-none text-gray-900 dark:text-white  ",
+        "w-full prose prose-sm sm:prose lg:prose-lg xl:prose-xl prose-th:py-3 prose-th:px-4 prose-th:text-left prose-th:font-semibold prose-th:text-gray-900 prose-th:bg-gray-100 prose-th:border-b prose-th:border-gray-200 prose-td:py-3 prose-td:px-4 prose-td:text-gray-600 prose-td:border-b prose-td:border-gray-200 dark:prose-invert dark:prose-th:bg-slate-700 dark:prose-th:text-slate-200 dark:prose-td:text-slate-300 dark:prose-th:border-slate-600 dark:prose-td:border-slate-700 mx-2 my-6 focus:outline-none text-gray-900 dark:text-white  ",
     },
   },
   extensions: [TiptapStarterKit.configure({/*  codeBlock false, */ }), /* CodeBlockShiki.configure({
     }) */, TiptapImage, TiptapMarkdown,
+  Table.configure({
+    resizable: true,
+  }),
+    TableRow,
+    TableHeader,
+    TableCell,
   SearchAndReplace.configure({
     searchResultClass: "search-result", // class to give to found items. default 'search-result'
     caseSensitive: false, // no need to explain
     disableRegex: false, // also no need to explain
-  }), Hyperlink.configure({
+  }),
+  Hyperlink.configure({
     modals: {
       previewHyperlink: (data) => {
         return previewHyperlinkModal(props.locale, data);
