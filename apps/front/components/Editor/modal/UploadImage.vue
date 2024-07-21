@@ -166,12 +166,13 @@ const updateSelectedFile = (value: any) => {
 
 const addSelectedImage = (listFiles: any) => {
     console.log('addSelectedImage', listFiles);
-
+    const config = useRuntimeConfig();
     listFiles.forEach((file: any) => {
-
-        editor?.chain().focus().setImage({ src: file.url }).run()
+        editor?.chain().focus().setImage({ src: config.public.api + '/' + file.filePath }).run()
 
     })
+
+    isOpen.value = false
 
 }
 
