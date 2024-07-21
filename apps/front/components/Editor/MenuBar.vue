@@ -2,6 +2,7 @@
 import type { TiptapEditor } from '#imports';
 import type { ShallowRef } from 'vue';
 
+const isOpen = ref(false)
 
 
 const { editor } = defineProps<{ editor: TiptapEditor }>()
@@ -168,6 +169,16 @@ const clear = () => {
     editor.commands.resetIndex();
 };
 
+
+const showModaladdImage = () => {
+
+    isOpen.value = true;
+    /*  const url = window.prompt('URL')
+ 
+     if (url) {
+         editor?.chain().focus().setImage({ src: url }).run()
+     } */
+}
 const replaceAll = () => editor?.commands.replaceAll();
 
 onMounted(() => setTimeout(updateSearchReplace));
@@ -233,11 +244,14 @@ onMounted(() => setTimeout(updateSearchReplace));
             <span class="sr-only">blockquote</span>
         </UButton>
         <UButton @click="editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()"
-            :class="{ 'is-active': editor.isActive('blockquote') }" variant="soft" icon="i-tabler-table-plus"
-            class="flex-1">
+            :class="{ 'is-active': editor.isActive('table') }" variant="soft" icon="i-tabler-table-plus" class="flex-1">
             <span class="sr-only">Table</span>
         </UButton>
-        <UButton @click="setLink" :class="{ 'is-active': editor.isActive('blockquote') }" variant="soft"
+        <UButton @click="showModaladdImage" :class="{ 'is-active': editor.isActive('blockquote') }" variant="soft"
+            icon="i-heroicons-photo" class="flex-1">
+            <span class="sr-only">image</span>
+        </UButton>
+        <UButton @click="setLink" :class="{ 'is-active': editor.isActive('link') }" variant="soft"
             icon="i-mdi-link-variant" class="flex-1">
             <span class="sr-only">add Link</span>
         </UButton>
@@ -251,6 +265,8 @@ onMounted(() => setTimeout(updateSearchReplace));
             <span class="sr-only">redo</span>
         </UButton>
     </div>
+
+    <EditorModalUploadImage v-if="isOpen" v-model="isOpen" :editor="editor" />
 
     <!--  <div class="flex flex-col gap-6">
         <section class="flex gap-6">
