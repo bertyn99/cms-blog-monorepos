@@ -8,17 +8,27 @@ const { links } = defineProps({
   },
 });
 
-const settingsLink = [
+const { loggedIn, user } = useUserSession()
+
+console.log('user', user)
+const settingsLink = computed(() => user.value?.roleAccess == "admin" ? [
   {
     label: "General",
-    to: "/admin/settings/general",
+    to: "/admin/settings",
   },
   {
-    label: "Users",
-    to: "/admin/settings/users",
+    label: "Members",
+    to: "/admin/settings/menbers",
   },
 
-]
+] : [
+  {
+    label: "General",
+    to: "/admin/settings",
+  },
+
+])
+
 
 const { metaSymbol } = useShortcuts()
 

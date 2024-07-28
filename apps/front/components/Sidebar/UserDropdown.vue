@@ -27,12 +27,7 @@ const items = computed(() => [
         icon: 'i-heroicons-question-mark-circle',
         shortcuts: ['?'],
         /*    click: () => isHelpSlideoverOpen.value = true */
-    }]/* , [{
-        label: 'Documentation',
-        icon: 'i-heroicons-book-open',
-        to: 'https://ui.nuxt.com/pro/getting-started',
-        target: '_blank'
-    }] */,
+    }],
     [{
         label: 'Sign out',
         icon: 'i-heroicons-arrow-left-on-rectangle',
