@@ -7,89 +7,112 @@ For more information on how to use Nuxt 3 and Nuxt UI, please refer to the follo
 - [Tailwind Documentation](https://ui.nuxt.com/)
 
 These resources provide comprehensive guides and API references to help you understand and use Nuxt 3 and Nuxt UI effectively.
-## Architecture
 
-This project follows a specific directory structure:
+# Architecture
 
-- `app.vue`: This is the main Vue component.
-- `components/`: This directory contains Vue components that are used in various parts of the application.
-- `composables/`: This directory contains Vue composables, which are reusable logic functions in Vue.
-- `layouts/`: This directory contains layout components, which dictate how other components are arranged on the page.
-- `pages/`: This directory contains the Vue components that are mapped to routes.
-- `plugins/`: This directory contains JavaScript plugins that you want to run before instantiating the root Vue.js application.
-- `public/`: This directory contains static resources that are directly served by the server.
-- `server/`: This directory contains server-side code.
-- `types/`: This directory contains TypeScript type definitions.
-- `utils/`: This directory contains utility functions.
+This project follows a monorepo structure with two main applications: a backend application (AdonisJS) and a frontend application (Nuxt.js), along with a shared directory.
 
-## Setup
+## Backend (apps/back)
 
-Make sure to install the dependencies:
+The backend application is built with AdonisJS and includes:
 
-```bash
-# npm
-npm install
+- `app/`: Contains the main application logic (controllers, models, services, etc.)
+- `bin/`: Scripts for server management and testing
+- `commands/`: Custom CLI commands (e.g., `schedule_posts.ts`)
+- `config/`: Application configuration files
+- `database/`: Database migrations and seeders
+- `doc-api/`: API endpoint test files (.bru format for Bruno)
+- `start/`: Application startup files
+- `tests/`: Test files
+- Configuration files: `ace.js`, `adonisrc.ts`, `.env.example`, `.gitignore`
 
-# pnpm
-pnpm install
+Recent updates:
 
-# yarn
-yarn install
+- Added media routes and validators
+- Implemented user and role management features
+- Refactored editor functionality
 
-# bun
-bun install
-```
+## Frontend (apps/front)
 
-## Development Server
+The frontend application is built with Nuxt.js and includes:
 
-Start the development server on `http://localhost:3000`:
+- `components/`: Reusable Vue components
+- `composables/`: Composable functions for shared logic
+- `layouts/`: Layout components
+- `middleware/`: Custom middleware
+- `pages/`: Page components, including admin pages
+- `plugins/`: Nuxt.js plugins
+- `public/`: Static assets
+- `repositories/`: Data fetching and API interaction logic
+- `server/`: Server-side logic
+- `tiptap/`: Custom tiptap editor components
+- `types/`: TypeScript type definitions
+- `utils/`: Utility functions
+- Configuration files: `app.config.ts`, `app.vue`, `nuxt.config.ts`, `tailwind.config.ts`
 
-```bash
-# npm
-npm run dev
+Recent updates:
 
-# pnpm
-pnpm run dev
+- Added media link to admin navigation
+- Refactored editor functionality
+- Updated npm dependencies and plugins
+- Implemented user and role management features
 
-# yarn
-yarn dev
+## Shared (shared/)
 
-# bun
-bun run dev
-```
+The `shared/` directory contains code shared between the frontend and backend applications.
 
-## Production
+Each application has its own `package.json` for managing dependencies, and there is a `pnpm-workspace.yaml` file at the root of the project for managing the monorepo with pnpm.
 
-Build the application for production:
+# Setup
 
-```bash
-# npm
-npm run build
+Follow these steps to set up and launch the project in development mode:
 
-# pnpm
-pnpm run build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
+### 1. Clone the Repository
 
 ```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
+git clone https://github.com/your-repo/cms-blog-monorepos.git
+cd cms-blog-monorepos
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+# Features
+
+## User Profile
+
+The User Profile feature allows users to customize their experience and manage their account settings within the CMS.
+
+Key components:
+
+- Profile editing: Users can update their name, email, and password
+- Avatar upload: Users can upload and set a custom profile picture
+- Account settings: Management of email notifications and privacy preferences
+- Activity log: View recent login sessions and content interactions
+
+Implementation details:
+
+- Accessible from the dashboard or navigation menu
+- Includes theme preference management
+- Requires updates to the user authentication system and frontend interface
+
+## User and Role Management
+
+This feature enhances administrators' ability to manage user accounts and control access within the CMS.
+
+User Management:
+
+- Create, edit, and delete user accounts
+- View and search/filter user lists
+- Enable/disable user accounts
+
+Role Management:
+
+- Create, edit, and delete user roles with customizable permissions
+- Define granular permissions for CMS features
+- Assign roles to user accounts
+
+Implementation details:
+
+- Accessible from the admin dashboard or navigation menu
+- Implements role-based access control (RBAC)
+- Requires updates to the authentication system, database schema, and admin interface
+
+Both features significantly improve the CMS's user management capabilities and overall security.
