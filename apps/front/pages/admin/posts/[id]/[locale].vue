@@ -27,7 +27,7 @@
 
           </div>
           <ClientOnly fallback-tag="span" fallback="Loading Editor...">
-            <Editor v-model:content="post.content" />
+            <Editor v-model:content="post.content" :locale="post.locale" />
           </ClientOnly>
           <!-- <UButton type="submit" label="Save" /> -->
         </UForm>

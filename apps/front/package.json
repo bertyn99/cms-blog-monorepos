@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "@headlessui/vue": "^1.7.19",
+    "@iconify/json": "^2.2.223",
     "@tiptap/extension-image": "^2.2.3",
     "@vueuse/core": "^10.9.0",
     "@vueuse/nuxt": "^10.9.0",
@@ -23,6 +24,7 @@
     "vue-router": "^4.2.5"
   },
   "dependencies": {
+    "@docs.plus/extension-hyperlink": "^1.5.2",
     "@iconify-json/ci": "^1.1.13",
     "@iconify-json/fluent": "^1.1.48",
     "@iconify-json/heroicons": "^1.1.20",
@@ -33,11 +35,21 @@
     "@iconify-json/twemoji": "^1.1.15",
     "@nuxt/ui": "^2.14.0",
     "@nuxt/ui-pro": "^1.0.1",
+    "@tiptap/extension-link": "^2.4.0",
+    "@tiptap/extension-table": "^2.4.0",
+    "@tiptap/extension-table-cell": "^2.4.0",
+    "@tiptap/extension-table-header": "^2.4.0",
+    "@tiptap/extension-table-row": "^2.4.0",
     "@vinejs/vine": "^1.7.1",
     "@yggdra/shared": "workspace:*",
     "date-fns": "^3.6.0",
     "i": "^0.3.7",
+    "metadata-scraper": "^0.2.61",
+    "shiki": "^1.9.1",
+    "tippy.js": "^6.3.7",
+    "tiptap-extension-code-block-shiki": "^0.2.1",
     "universal-cookie": "^6",
+    "url-metadata": "^4.1.1",
     "v-calendar": "^3.1.2",
     "{collection_name}": "link:@iconify-json/{collection_name}"
   }

@@ -29,6 +29,10 @@
     <UTable :columns="columns" :rows="formatedDataArray" v-model="selectedPost" :loading="pending"
         :loading-state="{ icon: 'i-heroicons-arrow-path-20-solid', label: 'Loading...' }">
 
+
+        <template #content="{ row }">
+            <span class="truncate ">{{ row.content }}</span>
+        </template>
         <template #actions-data="{ row }">
             <div class="flex">
                 <UButton :to="`/admin/posts/${row.postId}/${selectedLocale?.locale}`" class="mr-1"
@@ -221,6 +225,8 @@ const formatedDataArray = computed(() => {
     if (data.value && data.value?.data.length > 0) {
         return data.value?.data.map(item => {
             const { locale, ...rest } = item;
+            // truncate content
+            item.content = item.content.length > 45 ? item.content.substring(0, 45) + '...' : item.content
             return rest
         })
     }

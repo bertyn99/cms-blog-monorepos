@@ -1,160 +1,123 @@
-<template>
-  <div class="my-4">
-    <div v-if="editor" class="flex shadow-sm bg-blue-50 dark:bg-blue-950">
-      <USelectMenu :options="items" selected-icon="i-heroicons-hand-thumb-up-solid" v-model="selected"
-        :ui="{ background: 'bg-blue-50 dark:bg-blue-950' }" class="w-full lg:w-32">
-        <template #option="{ option: type }">
-          <UIcon :name="type.icon" dynamic />
-        </template>
-      </USelectMenu>
-
-
-      <UButton @click="editor.chain().focus().toggleBold().run()"
-        :disabled="!editor.can().chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }"
-        icon="i-heroicons-bold" :paddded="false" variant="soft" class="flex-1">
-        <span class="sr-only">bold</span>
-      </UButton>
-      <UButton @click="editor.chain().focus().toggleItalic().run()"
-        :disabled="!editor.can().chain().focus().toggleItalic().run()"
-        :class="{ 'is-active': editor.isActive('italic') }" icon="i-heroicons-italic" variant="soft" class="flex-1">
-        <span class="sr-only">italic</span>
-      </UButton>
-      <UButton @click="editor.chain().focus().toggleStrike().run()"
-        :disabled="!editor.can().chain().focus().toggleStrike().run()"
-        :class="{ 'is-active': editor.isActive('strike') }" icon="i-mdi-format-strikethrough" variant="soft"
-        class="flex-1">
-        <span class="sr-only">strike</span>
-      </UButton>
-      <UButton @click="editor.chain().focus().toggleCode().run()"
-        :disabled="!editor.can().chain().focus().toggleCode().run()" :class="{ 'is-active': editor.isActive('code') }"
-        icon="i-heroicons-code-bracket" variant="soft" class="flex-1">
-        <span class="sr-only">code</span>
-      </UButton>
-      <UButton @click="editor.chain().focus().unsetAllMarks().run()" icon="i-material-symbols-format-clear"
-        variant="soft" class="flex-1">
-        <span class="sr-only">clear marks</span>
-      </UButton>
-
-      <UButton @click="editor.chain().focus().toggleBulletList().run()"
-        :class="{ 'is-active': editor.isActive('bulletList') }"
-        icon="i-streamline-interface-text-formatting-list-bullets-points-bullet-unordered-list-lists-bullets"
-        variant="soft" class="flex-1">
-        <span class="sr-only">bullet list</span>
-      </UButton>
-      <UButton @click="editor.chain().focus().toggleOrderedList().run()"
-        :class="{ 'is-active': editor.isActive('orderedList') }" icon="i-mdi-order-numeric-descending" variant="soft"
-        class="flex-1">
-        <span class="sr-only">ordered list</span>
-      </UButton>
-      <UButton @click="editor.chain().focus().toggleCodeBlock().run()"
-        :class="{ 'is-active': editor.isActive('codeBlock') }" variant="soft" icon="i-heroicons" class="flex-1">
-        <span class="sr-only">code block</span>
-      </UButton>
-      <UButton @click="editor.chain().focus().toggleBlockquote().run()"
-        :class="{ 'is-active': editor.isActive('blockquote') }" variant="soft" icon="i-tabler-blockquote"
-        class="flex-1">
-        <span class="sr-only">blockquote</span>
-      </UButton>
-
-      <UButton @click="editor.chain().focus().undo().run()" :disabled="!editor.can().chain().focus().undo().run()"
-        variant="soft" icon="i-mdi-undo" class="flex-1">
-        <span class="sr-only">undo</span>
-      </UButton>
-      <UButton @click="editor.chain().focus().redo().run()" :disabled="!editor.can().chain().focus().redo().run()"
-        variant="soft" icon="i-mdi-redo" class="flex-1">
-        <span class="sr-only">redo</span>
-      </UButton>
+  <template>
+    <div class="my-4">
+      <EditorMenuBar :editor="editor" class="flex justify-center" />
+      <TiptapEditorContent :editor="editor"
+        class="border-2 bg-white dark:bg-gray-900 min-h-[300px] p-4 w-full h-full max-h-96 overflow-y-auto relative" />
     </div>
-    <TiptapEditorContent :editor="editor" class="border-2 bg-white dark:bg-gray-900 min-h-[300px] p-4 w-full h-full" />
-  </div>
 
-  <!-- https://cdn.dribbble.com/userupload/8828109/file/original-e23e44b4fcfb0773f922bc34c8b6e03d.png?resize=1200x900 -->
-</template>
+    <!-- https://cdn.dribbble.com/userupload/8828109/file/original-e23e44b4fcfb0773f922bc34c8b6e03d.png?resize=1200x900 -->
+  </template>
 
 <script setup>
+/* import CodeBlockShiki from 'tiptap-extension-code-block-shiki' */
+import {
+  Hyperlink
+} from '@docs.plus/extension-hyperlink';
+import { previewHyperlinkModal } from '~/utils/modal/previewHyperlink';
+import { setHyperlinkModal } from '~/utils/modal/setHyperlink';
+import { SearchAndReplace } from '~/tiptap/search_and_replace_extension/search_and_replace';
+import Table from '@tiptap/extension-table'
+import TableCell from '@tiptap/extension-table-cell'
+import TableHeader from '@tiptap/extension-table-header'
+import TableRow from '@tiptap/extension-table-row'
+
+
 const props = defineProps({
-  content: String
+  content: String,
+  locale: String,
 })
+
 
 const emit = defineEmits(['update:content']);
 const editor = useEditor({
   content: props.content,
   onUpdate: ({ editor }) => {
     // HTML
-    console.log(editor);
     emit('update:content', editor.storage.markdown.getMarkdown())
 
   },
   editorProps: {
     attributes: {
       class:
-        "w-full prose my-6 mx-2 focus:outline-none text-gray-900 dark:text-white ",
+        "w-full prose prose-sm sm:prose lg:prose-lg xl:prose-xl prose-th:py-3 prose-th:px-4 prose-th:text-left prose-th:font-semibold prose-th:text-gray-900 prose-th:bg-gray-100 prose-th:border-b prose-th:border-gray-200 prose-td:py-3 prose-td:px-4 prose-td:text-gray-600 prose-td:border-b prose-td:border-gray-200 dark:prose-invert dark:prose-th:bg-slate-700 dark:prose-th:text-slate-200 dark:prose-td:text-slate-300 dark:prose-th:border-slate-600 dark:prose-td:border-slate-700 mx-2 my-6 focus:outline-none text-gray-900 dark:text-white  ",
     },
   },
-  extensions: [TiptapStarterKit, TiptapImage, TiptapMarkdown],
+  extensions: [TiptapStarterKit.configure({/*  codeBlock false, */ }), /* CodeBlockShiki.configure({
+    }) */, TiptapImage, TiptapMarkdown,
+  Table.configure({
+    resizable: true,
+  }),
+    TableRow,
+    TableHeader,
+    TableCell,
+  SearchAndReplace.configure({
+    searchResultClass: "search-result", // class to give to found items. default 'search-result'
+    caseSensitive: false, // no need to explain
+    disableRegex: false, // also no need to explain
+  }),
+  Hyperlink.configure({
+    modals: {
+      previewHyperlink: (data) => {
+        return previewHyperlinkModal(props.locale, data);
+      },
+      setHyperlink: (data) => {
+        return setHyperlinkModal(props.locale, data);
+      },
+    },
+  })],
 });
 
 onBeforeUnmount(() => {
   unref(editor)?.destroy();
 });
 
-//dropdown type of text
-const items = [
-  {
-    label: "p",
-    icon: "i-material-symbols-light-format-paragraph",
-    click: () => {
-      editor?.value?.chain().focus().setParagraph().run();
-    },
-  },
 
-  {
-    label: "h1",
-    icon: "i-ci-heading-h1",
-    click: () => {
-      console.log(editor)
-      editor?.value?.chain().focus().toggleHeading({ level: 1 }).run();
-    },
-  },
-
-  {
-    icon: "i-ci-heading-h2",
-    click: () => {
-      console.log(editor);
-      editor?.value?.chain().focus().toggleHeading({ level: 2 }).run();
-    },
-  },
-
-  {
-    icon: "i-ci-heading-h3",
-    click: () => {
-      console.log(editor);
-      editor?.value?.chain().focus().toggleHeading({ level: 3 }).run();
-    },
-  },
-
-  {
-    icon: "i-ci-heading-h4",
-    click: () => {
-      console.log(editor);
-      editor?.value?.chain().focus().toggleHeading({ level: 4 }).run();
-    },
-
-  },
-
-  {
-    icon: "i-ci-heading-h5",
-    click: () => {
-      console.log(editor);
-      editor?.value?.chain().focus().toggleHeading({ level: 5 }).run();
-    },
-  },
-];
-
-const selected = ref(items[0]);
-
-watch(selected, (value) => {
-
-  value.click();
-});
 </script>
+
+<style lang="postcss">
+.search-result {
+  @apply bg-yellow-200;
+
+  &-current {
+    @apply bg-green-300;
+  }
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .search-container {
+    @apply flex items-center h-12 z-50 p-2 relative overflow-hidden w-full;
+  }
+
+  .close-button {
+    @apply p-1 mr-2 bg-gray-100 rounded-full text-gray-700 hover:bg-red-200 focus:outline-none focus:ring-1 focus:ring-red-500 focus:ring-opacity-50;
+  }
+
+  .search-input {
+    @apply flex-1 min-w-[4rem] px-2 py-0.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+  }
+
+  .button-container {
+    @apply absolute top-0 bottom-0 right-0 flex items-center h-full pr-2;
+  }
+
+  .search-button {
+    @apply p-1 mr-2 text-blue-400 rounded-md hover:bg-blue-100 hover:text-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:ring-opacity-50;
+  }
+
+  .nav-button {
+    @apply p-1 mr-2 text-gray-500 rounded-md hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50;
+  }
+
+  .nav-button-last {
+    @apply p-1 text-gray-500 rounded-md hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50;
+  }
+
+  .icon {
+    @apply w-5 h-5;
+  }
+}
+</style>
