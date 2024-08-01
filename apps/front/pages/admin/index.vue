@@ -16,6 +16,7 @@ const { loggedIn, user, clearUser } = useUserSession()
   </DashboardNavbar>
   <div v-if="loggedIn">
     <h1>Welcome {{ user?.fullName }}!</h1>
+    <UIcon name="i-svgeditor-align-center" />
     <!--     <p>Logged in since {{ session?.user!.createdAt }}</p> -->
     <button @click="clearUser">Logout</button>
   </div>

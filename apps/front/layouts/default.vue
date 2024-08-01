@@ -30,9 +30,8 @@ const links = [
   <div class="fixed inset-0 flex overflow-hidden">
     <SidebarPanel :links="links">
       <template #top>
-
-        <UIcon name="i-mdi:cube" />
-        <span class="text-white">John Doe</span>
+        <UIcon name="i-mdi-cube" class="text-gray-900 dark:text-gray-100 w-6 h-6" />
+        <span class="text-gray-900 dark:text-gray-100 font-bold">Mini CMS</span>
 
       </template>
     </SidebarPanel>

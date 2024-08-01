@@ -15,6 +15,7 @@ import {
 } from '@docs.plus/extension-hyperlink';
 import { previewHyperlinkModal } from '~/utils/modal/previewHyperlink';
 import { setHyperlinkModal } from '~/utils/modal/setHyperlink';
+import { ResizableMedia } from '~/tiptap/resizableMedia';
 import { SearchAndReplace } from '~/tiptap/search_and_replace_extension/search_and_replace';
 import Table from '@tiptap/extension-table'
 import TableCell from '@tiptap/extension-table-cell'
@@ -50,6 +51,7 @@ const editor = useEditor({
     TableRow,
     TableHeader,
     TableCell,
+    ResizableMedia,
   SearchAndReplace.configure({
     searchResultClass: "search-result", // class to give to found items. default 'search-result'
     caseSensitive: false, // no need to explain

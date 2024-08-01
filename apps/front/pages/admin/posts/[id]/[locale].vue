@@ -9,7 +9,7 @@
         <UButton type="submit" label="Save" @click="onSubmit" :loading="pending || loading" />
       </div>
     </div>
-    <div class="flex gap-4">
+    <div class="flex gap-4 flex-1">
       <div class="shadow-md rounded-sm bg-slate-50/25 flex-grow-2 basis-3/4 p-7">
         <UForm :state="post" ref="form">
           <div class="flex gap-4">
