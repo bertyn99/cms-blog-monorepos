@@ -1,3 +1,7 @@
+import path from "path";
+import { FileSystemIconLoader } from "./utils/loadCustomIcon";
+import { getIconCollections } from "@egoist/tailwindcss-icons";
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: {
@@ -28,6 +32,14 @@ export default defineNuxtConfig({
       // Show toasts at the top right of the screen
       position: "top-0 bottom-auto",
     },
-    icons: {},
+    icons: {
+      collections: {
+        svgeditor: FileSystemIconLoader(
+          path.resolve(__dirname, "./assets/icons/editor")
+        ),
+
+        ...getIconCollections("all"),
+      },
+    },
   },
 });
