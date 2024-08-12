@@ -1,6 +1,5 @@
 import path from "path";
 import { FileSystemIconLoader } from "./utils/loadCustomIcon";
-import { getIconCollections } from "@egoist/tailwindcss-icons";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -11,22 +10,28 @@ export default defineNuxtConfig({
       enabled: true,
     },
   },
+
   runtimeConfig: {
     public: {
       api: process.env.NUXT_PUBLIC_API_URL,
     },
   },
+
   vue: {
     propsDestructure: true,
   },
+
   //extends: ['@nuxt/ui-pro'],
   modules: ["nuxt-tiptap-editor", "@nuxt/ui", "@vueuse/nuxt"],
+
   tiptap: {
     prefix: "Tiptap", //prefix for Tiptap imports, composables not included
   },
+
   imports: {
     dirs: ["./repositories"],
   },
+
   ui: {
     notifications: {
       // Show toasts at the top right of the screen
@@ -37,9 +42,9 @@ export default defineNuxtConfig({
         svgeditor: FileSystemIconLoader(
           path.resolve(__dirname, "./assets/icons/editor")
         ),
-
-        ...getIconCollections("all"),
       },
     },
   },
+
+  compatibilityDate: "2024-08-12",
 });
