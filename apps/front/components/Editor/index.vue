@@ -1,6 +1,7 @@
   <template>
     <div class="my-4">
-      <EditorMenuBar :editor="editor" class="flex justify-center" />
+
+      <EditorMenuBar :editor="editor" class="flex justify-center" v-if="editor !== undefined" />
       <TiptapEditorContent :editor="editor"
         class="border-2 bg-white dark:bg-gray-900 min-h-[300px] p-4 w-full h-full max-h-96 overflow-y-auto relative" />
     </div>
@@ -16,6 +17,7 @@ import {
 import { previewHyperlinkModal } from '~/utils/modal/previewHyperlink';
 import { setHyperlinkModal } from '~/utils/modal/setHyperlink';
 import { ResizableMedia } from '~/tiptap/resizableMedia';
+import { SlashCommandConfigured } from '~/tiptap/slash_command/command';
 import { SearchAndReplace } from '~/tiptap/search_and_replace_extension/search_and_replace';
 import Table from '@tiptap/extension-table'
 import TableCell from '@tiptap/extension-table-cell'
@@ -52,6 +54,7 @@ const editor = useEditor({
     TableHeader,
     TableCell,
     ResizableMedia,
+    SlashCommandConfigured,
   SearchAndReplace.configure({
     searchResultClass: "search-result", // class to give to found items. default 'search-result'
     caseSensitive: false, // no need to explain
