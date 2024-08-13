@@ -11,18 +11,54 @@ import tippy, {
 } from "tippy.js";
 
 export interface SuggestionItem {
-  title: string;
+  id?: string;
+  label: string;
   description: string;
-  icon: VNode | null;
+  icon: String | null;
   searchTerms?: string[];
   command?: (props: { editor: Editor; range: Range }) => void;
 }
+
+export interface GroupSuggestions {
+  key: string;
+  commands: SuggestionItem[];
+}
 export const createSuggestionItems = (items: SuggestionItem[]) => items;
 
-const items = createSuggestionItems([
+export const suggestionItems = createSuggestionItems([
   {
-    title: "Heading 1",
-    searchTerms: ["h1", "heading 1"],
+    id: "text",
+    label: "Text",
+    description: "Just start typing with plain text.",
+    searchTerms: ["p", "paragraph"],
+    icon: "i-lucide-text",
+    command: ({ editor, range }) => {
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .toggleNode("paragraph", "paragraph")
+        .run();
+    },
+  },
+  {
+    id: "todo",
+    label: "To-do List",
+    description: "Track tasks with a to-do list.",
+    searchTerms: ["todo", "task", "list", "check", "checkbox"],
+    icon: "i-lucide-list-todo",
+    command: ({ editor, range }) => {
+      console.log("todo");
+      editor.chain().focus().deleteRange(range).toggleTaskList().run();
+    },
+  },
+  {
+    id: "heading",
+
+    label: "Heading 1",
+    description: "Big section heading.",
+    searchTerms: ["title", "big", "large"],
+    icon: "i-lucide-heading",
     command: ({ editor, range }) => {
       editor
         .chain()
@@ -31,19 +67,159 @@ const items = createSuggestionItems([
         .setNode("heading", { level: 1 })
         .run();
     },
-    description: "",
-    icon: null,
   },
   {
-    title: "Bullet List",
-    searchTerms: ["bullet list"],
+    id: "heading2",
+    label: "Heading 2",
+    description: "Medium section heading.",
+    searchTerms: ["subtitle", "medium"],
+    icon: "i-lucide-heading-2",
+    command: ({ editor, range }) => {
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .setNode("heading", { level: 2 })
+        .run();
+    },
+  },
+  {
+    id: "heading3",
+    label: "Heading 3",
+    description: "Small section heading.",
+    searchTerms: ["subtitle", "small"],
+    icon: "i-lucide-heading-3",
+    command: ({ editor, range }) => {
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .setNode("heading", { level: 3 })
+        .run();
+    },
+  },
+  {
+    id: "list",
+    label: "Bullet List",
+    description: "Create a simple bullet list.",
+    searchTerms: ["unordered", "point"],
+    icon: "i-lucide-list",
     command: ({ editor, range }) => {
       editor.chain().focus().deleteRange(range).toggleBulletList().run();
     },
-    description: "",
-    icon: null,
   },
-  // Add more items as needed
+  {
+    id: "orderedlist",
+    label: "Numbered List",
+    description: "Create a list with numbering.",
+    searchTerms: ["ordered", "number"],
+    icon: "i-lucide-list-ordered",
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).toggleOrderedList().run();
+    },
+  },
+  {
+    id: "quote",
+    label: "Quote",
+    description: "Capture a quote.",
+    searchTerms: ["blockquote"],
+    icon: "i-lucide-quote",
+    command: ({ editor, range }) =>
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .toggleNode("paragraph", "paragraph")
+        .toggleBlockquote()
+        .run(),
+  },
+  {
+    id: "code",
+    label: "Code",
+    description: "Capture a code snippet.",
+    searchTerms: ["codeblock"],
+    icon: "i-lucide-code",
+    command: ({ editor, range }) =>
+      editor.chain().focus().deleteRange(range).toggleCodeBlock().run(),
+  },
+  {
+    id: "image",
+    label: "Image",
+    description: "Upload an image from your computer.",
+    searchTerms: ["photo", "picture", "media"],
+    icon: "i-lucide-image",
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).run();
+      // upload image
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "image/*";
+      input.onchange = async () => {
+        if (input.files?.length) {
+          const file = input.files[0];
+          const pos = editor.view.state.selection.from;
+          /*        uploadFn(file, editor.view, pos); */
+        }
+      };
+      input.click();
+    },
+  },
+  {
+    id: "youtube",
+    label: "Youtube",
+    description: "Embed a Youtube video.",
+    searchTerms: ["video", "youtube", "embed"],
+    icon: "i-lucide-youtube",
+    command: ({ editor, range }) => {
+      const videoLink = prompt("Please enter Youtube Video Link");
+      const ytregex = new RegExp(
+        /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/
+      );
+
+      if (ytregex.test(videoLink)) {
+        editor
+          .chain()
+          .focus()
+          .deleteRange(range)
+          .setYoutubeVideo({
+            src: videoLink,
+          })
+          .run();
+      } else {
+        if (videoLink !== null) {
+          alert("Please enter a correct Youtube Video Link");
+        }
+      }
+    },
+  },
+  {
+    id: "twitter",
+    label: "Twitter",
+    description: "Embed a Tweet.",
+    searchTerms: ["twitter", "embed"],
+    icon: "i-lucide-twitter",
+    command: ({ editor, range }) => {
+      const tweetLink = prompt("Please enter Twitter Link");
+      const tweetRegex = new RegExp(
+        /^https?:\/\/(www\.)?x\.com\/([a-zA-Z0-9_]{1,15})(\/status\/(\d+))?(\/\S*)?$/
+      );
+
+      if (tweetRegex.test(tweetLink)) {
+        editor
+          .chain()
+          .focus()
+          .deleteRange(range)
+          .setTweet({
+            src: tweetLink,
+          })
+          .run();
+      } else {
+        if (tweetLink !== null) {
+          alert("Please enter a correct Twitter Link");
+        }
+      }
+    },
+  },
 ]);
 
 export const handleCommandNavigation = (event: KeyboardEvent) => {
@@ -126,7 +302,7 @@ const renderItems = (elementRef?: Ref<HTMLElement | null>) => {
         return true;
       }
 
-      return component?.ref?.value.onKeyDown(props);
+      return component?.ref?.onKeyDown(props);
     },
     onExit() {
       popup?.[0]?.destroy();
@@ -136,7 +312,7 @@ const renderItems = (elementRef?: Ref<HTMLElement | null>) => {
 };
 export const SlashCommandConfigured = SlashCommands.configure({
   suggestion: {
-    items: () => items,
+    items: () => suggestionItems,
     render: renderItems,
   },
 });
